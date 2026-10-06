@@ -1,19 +1,19 @@
 ---
 name: SASAGo3
 colors:
-  primary: "#1A1C1E"
-  secondary: "#6C7278"
-  tertiary: "#B8422E"
+  primary: "#52667e"
+  secondary: "#d8e7fb"
+  tertiary: "#4c5f86"
   neutral: "#F7F5F2"
 typography:
   h1:
-    fontFamily: //
-    fontSize: 3rem
+    font-family: "NeoDunggeunmo", monospace;
+    font-size: 3px;
   body-md:
-    fontFamily: //
+    fontFamily: "NeoDunggeunmo", monospace;
     fontSize: 1rem
   label-caps:
-    fontFamily: //
+    fontFamily: "NeoDunggeunmo", monospace;
     fontSize: 0.75rem
 rounded:
   sm: 4px
@@ -25,14 +25,13 @@ spacing:
 
 ## Overview
 
-Architectural Minimalism meets Journalistic Gravitas. The UI evokes a
-premium matte finish — a high-end broadsheet or contemporary gallery.
+dd
 
 ## Colors
 
-The palette is rooted in high-contrast neutrals and a single accent color.
+dd
 
-- **Primary (#??????):** Deep ink for headlines and core text.
-- **Secondary (#??????):** Sophisticated slate for borders, captions, metadata.
-- **Tertiary (#??????):** "Boston Clay" — the sole driver for interaction.
-- **Neutral (#??????):** Warm limestone foundation, softer than pure white.
+- **Primary (#??????):** dd
+- **Secondary (#??????):** dd
+- **Tertiary (#??????):** dd
+- **Neutral (#??????):** dd
