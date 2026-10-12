@@ -25,8 +25,7 @@ spacing:
 
 ## Overview
 
-Architectural Minimalism meets Journalistic Gravitas. The UI evokes a
-premium matte finish — a high-end broadsheet or contemporary gallery.
+ㅇㅇ
 
 ## Colors
 
