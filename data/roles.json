@@ -1,0 +1,26 @@
+{
+  "steady": {
+    "name": "꾸준한 탐구자",
+    "tag": "집중력 +12 · 수학 +8",
+    "description": "집중력과 수학에 강해요. 연구를 꾸준히 이어가기 좋아요.",
+    "stats": { "focus": 12, "math": 8, "stress": -5 }
+  },
+  "social": {
+    "name": "분위기 메이커",
+    "tag": "평판 +15 · 구술력 +12",
+    "description": "평판과 말하기에 강해요. 선생님·친구와 관계를 쌓기 좋아요.",
+    "stats": { "reputation": 15, "speech": 12, "focus": -4 }
+  },
+  "creative": {
+    "name": "아이디어 수집가",
+    "tag": "과학 +10 · 서술력 +12",
+    "description": "과학과 글쓰기에 강해요. 프로젝트와 대회를 즐겨 보세요.",
+    "stats": { "science": 10, "writing": 12, "hp": -4 }
+  },
+  "resilient": {
+    "name": "단단한 낙천가",
+    "tag": "체력 +18 · 스트레스 -12",
+    "description": "체력이 높고 스트레스가 낮아요. 긴 입시를 버티기 좋아요.",
+    "stats": { "hp": 18, "stress": -12, "math": -3 }
+  }
+}

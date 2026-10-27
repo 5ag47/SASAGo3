@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.vite/
+.wrangler/
+*.local
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
+.local/
+.dev.vars
+.dev.vars.*
+*.sqlite*
+*.db
+coverage/
+test-results/

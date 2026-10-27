@@ -1,0 +1,37 @@
+{
+  "milk": {
+    "name": "따뜻한 우유",
+    "description": "밤 자습 후의 작은 위로",
+    "price": 1800,
+    "effect": { "hp": 10, "stress": -4 },
+    "icon": "milk"
+  },
+  "coffee": {
+    "name": "집중의 커피",
+    "description": "정신은 맑게, 너무 자주는 말고",
+    "price": 2500,
+    "effect": { "focus": 12, "hp": -3, "stress": 2 },
+    "icon": "coffee"
+  },
+  "snack": {
+    "name": "친구와 나눌 간식",
+    "description": "당 충전과 마음 충전을 한 번에",
+    "price": 3000,
+    "effect": { "stress": -12, "charm": 2 },
+    "icon": "cookie"
+  },
+  "vitamin": {
+    "name": "비타민 한 통",
+    "description": "길게 달리려면 몸부터 챙기기",
+    "price": 5000,
+    "effect": { "hp": 20, "focus": 3 },
+    "icon": "pill"
+  },
+  "notebook": {
+    "name": "오답 노트",
+    "description": "다시 풀어보니 이제 알겠어",
+    "price": 6500,
+    "effect": { "math": 5, "writing": 2 },
+    "icon": "book"
+  }
+}
