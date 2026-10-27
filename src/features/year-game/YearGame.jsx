@@ -21,7 +21,7 @@ import Modal from '../../components/Modal.jsx';
 import { dayRoom, nightRoom } from '../../assets.js';
 import { activities, choiceDeadline, courses, DAYS, events, period } from '../../domain/catalog.js';
 import { ENDINGS } from '../../domain/engine.js';
-import { effectivePlan } from '../../domain/week.js';
+import { effectivePlan, lockedSlots } from '../../domain/week.js';
 import useGame from './useGame.js';
 import useAudio from './useAudio.js';
 import useWorldClock from './useWorldClock.js';
@@ -31,6 +31,7 @@ import WeekReviewPanel from './WeekReviewPanel.jsx';
 import Setup from './Setup.jsx';
 import Scene from './Scene.jsx';
 import Planner from './Planner.jsx';
+import DayCopy from './DayCopy.jsx';
 import ActivityPicker from './ActivityPicker.jsx';
 import TaskBoard from './TaskBoard.jsx';
 import EventDialog from './EventDialog.jsx';
@@ -133,7 +134,18 @@ export default function YearGame() {
   }
   async function choose(command) {
     const next = await send({ type: 'choose', ...command });
-    if (next && !next.pending.includes(command.event)) close();
+    if (!next) return;
+    if (
+      (command.event === 'dorm_cards' && next.minigames.cards) ||
+      (command.event === 'interview_day' && next.minigames.interview)
+    )
+      setModal({ type: 'events', eventId: command.event });
+    else if (!next.pending.includes(command.event)) close();
+  }
+  async function copyDay(sourceDay, days) {
+    if (!(await send({ type: 'copy_day', sourceDay, days }))) return false;
+    notify('요일 일정을 복사했습니다.');
+    return true;
   }
   async function fullScreen() {
     try {
@@ -251,6 +263,7 @@ export default function YearGame() {
               onPreset={async (preset) => {
                 if (await send({ type: 'preset', preset })) notify('일정을 변경했습니다.');
               }}
+              onCopy={copyDay}
               onStart={() => open(state.week > 40 ? 'admissions' : 'confirm')}
               onWeek={() => open('schedule')}
               assignment={assignment}
@@ -349,35 +362,43 @@ export default function YearGame() {
             />
           )}
           {modal.type === 'schedule' && (
-            <div className="weekly-overview">
-              {DAYS.map((day, d) => (
-                <div key={day}>
-                  <h3>{day}</h3>
-                  {[0, 1, 2].map((session) => {
-                    const index = d * 3 + session;
-                    const selected = effectivePlan(state)[index];
-                    return (
-                      <button
-                        key={session}
-                        className={activities[selected.activity].color}
-                        onClick={() => slot(index)}
-                        disabled={busy}
-                      >
-                        <small>{SESSIONS[session]}</small>
-                        <ActivityIcon id={selected.activity} />
-                        <b>{activityName(selected.activity)}</b>
-                        {selected.activity === 'study' && (
-                          <em>{courses[selected.target]?.short}</em>
-                        )}
-                        {selected.activity === 'task' && (
-                          <em>{state.tasks[selected.target]?.name}</em>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
+            <>
+              <DayCopy state={state} busy={busy} onCopy={copyDay} />
+              <div className="weekly-overview">
+                {DAYS.map((day, d) => (
+                  <div key={day}>
+                    <h3>{day}</h3>
+                    {[0, 1, 2].map((session) => {
+                      const index = d * 3 + session;
+                      const selected = effectivePlan(state)[index];
+                      return (
+                        <button
+                          key={session}
+                          className={activities[selected.activity].color}
+                          onClick={() => slot(index)}
+                          disabled={
+                            busy ||
+                            Boolean(lockedSlots(state)[index]) ||
+                            state.week > 40 ||
+                            Boolean(state.ending)
+                          }
+                        >
+                          <small>{SESSIONS[session]}</small>
+                          <ActivityIcon id={selected.activity} />
+                          <b>{activityName(selected.activity)}</b>
+                          {selected.activity === 'study' && (
+                            <em>{courses[selected.target]?.short}</em>
+                          )}
+                          {selected.activity === 'task' && (
+                            <em>{state.tasks[selected.target]?.name}</em>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
           {modal.type === 'tasks' && <TaskBoard state={state} onAssign={assign} />}
           {modal.type === 'events' && (
@@ -387,6 +408,7 @@ export default function YearGame() {
               eventId={modal.eventId}
               busy={busy}
               onChoose={choose}
+              onDone={close}
             />
           )}
           {modal.type === 'stats' && <StatsPanel state={state} />}
@@ -438,7 +460,7 @@ export default function YearGame() {
                   ))}
                 </div>
               )}
-              <NoticesPanel state={state} />
+              <NoticesPanel state={state} onReview={openEvent} />
             </>
           )}
           {modal.type === 'shop' && (

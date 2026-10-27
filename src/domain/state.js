@@ -12,10 +12,11 @@ import {
   TUTORIAL_TASKS,
   ELECTIVES,
 } from './catalog.js';
+import { emptyMinigames, validMinigames } from './minigames.js';
 
 export const SCHEMA_VERSION = 1;
 export const SAVE_KEY = 'sasago3-year-v1';
-export const CONTENT_VERSION = '2026.10.27-5';
+export const CONTENT_VERSION = '2026.10.27-6';
 export function baseState(seed = 20261013) {
   return {
     version: SCHEMA_VERSION,
@@ -51,6 +52,7 @@ export function baseState(seed = 20261013) {
     history: [],
     pending: [],
     choices: {},
+    minigames: emptyMinigames(),
     group: null,
     rejectedGroups: [],
     teachers: { math: 15, science: 15, homeroom: 20 },
@@ -67,6 +69,7 @@ export function baseState(seed = 20261013) {
 export function migrateState(value) {
   if (value?.version !== SCHEMA_VERSION) return value;
   let next = value;
+  if (value.minigames === undefined) next = { ...next, minigames: emptyMinigames() };
   if (value.electives === undefined || value.nextElectives === undefined)
     next = {
       ...next,
@@ -175,6 +178,7 @@ export function validateState(s) {
     typeof s.contentVersion !== 'string'
   )
     return false;
+  if (!validMinigames(s.minigames)) return false;
   if (
     !Number.isInteger(s.week) ||
     s.week < 0 ||

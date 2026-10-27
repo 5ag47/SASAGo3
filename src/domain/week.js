@@ -11,6 +11,7 @@ import {
 import { applyEffects, clamp, random } from './random.js';
 import { assess } from './grades.js';
 import { beginWeek, notice } from './events.js';
+import { abandonMinigame } from './minigames.js';
 import { expireTasks, workTask } from './tasks.js';
 import { assessmentsAt } from './school-calendar.js';
 import { enrollCourses, learnCourse } from './course-progress.js';
@@ -187,6 +188,7 @@ export function resolveWeek(source) {
     );
   for (const id of [...state.pending])
     if (choiceDeadline(id) <= state.week) {
+      abandonMinigame(state, id);
       state.choices[id] = 'skipped';
       state.pending = state.pending.filter((key) => key !== id);
       messages.push(`선택 마감 · ${events[id].name} (미참여)`);

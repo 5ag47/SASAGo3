@@ -217,7 +217,7 @@
       {
         "id": "play",
         "label": "친구들과 한 판",
-        "detail": "자습 1칸 놀이 · 승패는 알림에서 확인",
+        "detail": "자습 1칸 · 같은 달 패 모으기 · 고·스톱 선택",
         "reserve": { "count": 1, "activity": "game" },
         "flags": { "cardGame": true }
       },

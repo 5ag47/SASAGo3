@@ -5,10 +5,82 @@ import { createApi } from '../../server/api.js';
 import { SqliteStore } from '../../server/sqlite-store.js';
 import { ApiError } from '../../server/security.js';
 import { CONTENT_VERSION } from '../../src/domain/state.js';
+import { beginWeek } from '../../src/domain/events.js';
 
 const origin = 'https://game.example';
 const secret = 'test-only-secret-do-not-use-in-production-1234567890';
 const profile = { name: '서버 테스트', character: 'boy', role: 'steady', major: 'math' };
+test('day copy is one atomic server command and duplicate deliveries do not apply it twice', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const created = await f.post(await f.get(), { type: 'create', profile });
+  const command = { type: 'copy_day', sourceDay: 0, days: [1, 6] };
+  const key = randomUUID();
+  const copied = await f.post(created, command, { key });
+  assert.equal(copied.response.status, 200);
+  assert.equal(copied.state.revision, created.state.revision + 1);
+  assert.deepEqual(copied.state.plan.slice(18, 21), created.state.plan.slice(0, 3));
+  const duplicate = await f.post(created, command, { key });
+  assert.equal(duplicate.response.status, 200);
+  assert.equal(duplicate.state.revision, copied.state.revision);
+  const malformed = await f.post(copied, { ...command, days: [0] });
+  assert.equal(malformed.response.status, 400);
+  const injected = await f.post(copied, { ...command, stats: { math: 100 } });
+  assert.equal(injected.code, 'COMMAND_SHAPE');
+});
+
+test('the server commits each interview answer once and keeps pending progress on reload', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const created = await f.post(await f.get(), { type: 'create', profile });
+  const staged = { ...created.state, week: 36, pending: ['interview_day'] };
+  f.store.db.prepare('UPDATE players SET state=?').run(JSON.stringify(staged));
+  const key = randomUUID();
+  const command = { type: 'choose', event: 'interview_day', option: 'answer:1' };
+  const first = await f.post(created, command, { key });
+  assert.equal(first.response.status, 200);
+  const duplicate = await f.post(created, command, { key });
+  assert.deepEqual(duplicate.state.minigames.interview.answers, [1]);
+  const reloaded = await f.get();
+  assert.equal(reloaded.state.minigames.interview.phase, 'active');
+  const stale = await f.post(created, { ...command, option: 'answer:0' });
+  assert.equal(stale.response.status, 409);
+  const second = await f.post(reloaded, { ...command, option: 'answer:2' });
+  const final = await f.post(second, { ...command, option: 'answer:0' });
+  assert.equal(final.state.minigames.interview.phase, 'finished');
+  assert.deepEqual(final.state.minigames.interview.answers, [1, 2, 0]);
+  assert.equal((await f.get()).state.interviewScore, final.state.interviewScore);
+});
+
+test('card draws are server commands; invalid cards and client supplied scores cannot change the saved game', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const created = await f.post(await f.get(), { type: 'create', profile });
+  const staged = { ...created.state, week: 38, pending: [] };
+  beginWeek(staged);
+  f.store.db.prepare('UPDATE players SET state=?').run(JSON.stringify(staged));
+  const started = await f.post(created, { type: 'choose', event: 'dorm_cards', option: 'play' });
+  assert.equal(started.response.status, 200);
+  assert.equal(started.state.seed, 0);
+  assert.equal(started.state.minigames.cards.stock, undefined);
+  const command = {
+    type: 'choose',
+    event: 'dorm_cards',
+    option: `card:${started.state.minigames.cards.hand[0]}`,
+  };
+  const key = randomUUID();
+  const played = await f.post(started, command, { key });
+  const duplicate = await f.post(started, command, { key });
+  assert.equal(played.response.status, 200);
+  assert.equal(duplicate.state.minigames.cards.turn, 1);
+  assert.equal(duplicate.state.revision, played.state.revision);
+  assert.deepEqual((await f.get()).state.minigames.cards, played.state.minigames.cards);
+  const bad = await f.post(played, { ...command, option: 'card:99' });
+  assert.equal(bad.response.status, 400);
+  const injected = await f.post(played, { ...command, score: 999 });
+  assert.equal(injected.code, 'COMMAND_SHAPE');
+  assert.equal((await f.get()).state.revision, played.state.revision);
+});
 test('an outdated client receives an update prompt before reading new course IDs or mutating state', async (t) => {
   const f = fixture();
   t.after(() => f.store.close());

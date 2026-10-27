@@ -21,6 +21,21 @@ export function effectivePlan(state) {
   const locked = lockedSlots(state);
   return state.plan.map((slot, index) => locked[index] ?? slot);
 }
+export function copyDayPreview(state, sourceDay, days) {
+  const locked = lockedSlots(state);
+  return days.map((day) => ({
+    day,
+    indices: [0, 1, 2]
+      .filter((session) => !locked[sourceDay * 3 + session] && !locked[day * 3 + session])
+      .map((session) => day * 3 + session),
+  }));
+}
+export function copyDayPlan(state, sourceDay, days) {
+  const next = state.plan.map((slot) => ({ ...slot }));
+  for (const { indices } of copyDayPreview(state, sourceDay, days))
+    for (const index of indices) next[index] = { ...state.plan[sourceDay * 3 + (index % 3)] };
+  return next;
+}
 export function reserveActivities(state, reservation, event) {
   const locked = lockedSlots(state);
   const free = Array.from({ length: 21 }, (_, index) => index).filter((index) => !locked[index]);

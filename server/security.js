@@ -50,6 +50,7 @@ export async function readJson(request, maxBytes = 8192) {
 const fields = {
   create: ['type', 'profile'],
   plan: ['type', 'index', 'activity', 'target'],
+  copy_day: ['type', 'sourceDay', 'days'],
   preset: ['type', 'preset'],
   advance: ['type'],
   choose: ['type', 'event', 'option', 'answers'],

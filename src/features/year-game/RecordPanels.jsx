@@ -142,7 +142,7 @@ export function RecordsPanel({ state, onRead }) {
     </>
   );
 }
-export function NoticesPanel({ state }) {
+export function NoticesPanel({ state, onReview }) {
   const notices = state.notices.filter(
     (n) => n.kind !== 'choice' || !state.pending.some((id) => events[id]?.name === n.title),
   );
@@ -157,6 +157,20 @@ export function NoticesPanel({ state }) {
               </small>
               <h3>{n.title}</h3>
               <p>{n.text}</p>
+              {onReview &&
+                n.title === '실전 면접 기록' &&
+                state.minigames.interview?.phase === 'finished' && (
+                  <button className="subtle" onClick={() => onReview('interview_day')}>
+                    답변 돌아보기
+                  </button>
+                )}
+              {onReview &&
+                n.title === '기숙사 고스톱 결과' &&
+                state.minigames.cards?.phase === 'finished' && (
+                  <button className="subtle" onClick={() => onReview('dorm_cards')}>
+                    판 결과 보기
+                  </button>
+                )}
             </article>
           ))
         : !state.pending.length && <Empty>알림이 없습니다.</Empty>}

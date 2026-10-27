@@ -4,42 +4,14 @@ import { notice } from './events.js';
 import { applyEffects, clamp, random } from './random.js';
 import { reserveActivities } from './schedule.js';
 import { gpa, admissionScore } from './grades.js';
+import { createCardGame, playCardGame, cardOptions, cardScore } from './card-game.js';
+import { INTERVIEW_QUESTIONS } from './interview.js';
+export { INTERVIEW_QUESTIONS } from './interview.js';
 
-export const INTERVIEW_QUESTIONS = [
-  {
-    text: '처음 보는 수학 문제예요. 풀이가 바로 떠오르지 않는다면?',
-    options: [
-      '아는 척하며 답을 단정한다',
-      '조건을 정리하고 작은 예부터 살펴본다',
-      '답만 찍고 넘어간다',
-    ],
-    correct: 1,
-    explanation: '조건과 작은 예를 통해 사고 과정을 설명하는 태도를 봤어요.',
-  },
-  {
-    text: '실험 결과가 가설과 달랐어요. 발표에서 어떻게 설명할까요?',
-    options: [
-      '원하는 결과로 숫자를 바꾼다',
-      '결과를 숨기고 성공 사례만 말한다',
-      '오차와 가설을 다시 점검하고 후속 실험을 제안한다',
-    ],
-    correct: 2,
-    explanation: '예상과 다른 결과도 정직하게 해석하는 것이 탐구예요.',
-  },
-  {
-    text: '팀 프로젝트에서 역할이 충돌했다면?',
-    options: [
-      '각자의 근거를 듣고 역할·일정을 합의한다',
-      '혼자 전부 처리한다',
-      '문제를 덮어두고 마감까지 기다린다',
-    ],
-    correct: 0,
-    explanation: '역할과 합의를 분명히 하는 협업을 평가했어요.',
-  },
-];
 export function choiceOptions(state, id) {
   const event = events[id];
   if (!event) return [];
+  if (id === 'dorm_cards' && state.minigames.cards) return cardOptions(state.minigames.cards);
   if (event.kind === 'quiz')
     return quizzes[event.quiz].options.map((label, index) => ({
       id: String(index),
@@ -70,6 +42,27 @@ export function choiceOptions(state, id) {
 }
 export function applyChoice(state, id, selected, answers) {
   const event = events[id];
+  if (id === 'dorm_cards' && selected !== 'watch') {
+    if (!state.minigames.cards) {
+      reserveActivities(state, event.options.find((o) => o.id === 'play').reserve, id);
+      state.flags.cardGame = true;
+      state.minigames.cards = createCardGame(state);
+      return;
+    }
+    const game = state.minigames.cards;
+    playCardGame(state, game, selected);
+    if (game.phase !== 'finished') return;
+    state.flags.cardWins = (state.flags.cardWins ?? 0) + Number(game.result === 'won');
+    notice(
+      state,
+      '기숙사 고스톱 결과',
+      `나 ${cardScore(game.mine)}점 + 고 ${game.go}점 · 친구 ${cardScore(game.friend)}점 · ${game.result === 'won' ? '승리' : game.result === 'lost' ? '패배' : '무승부'}`,
+      'event',
+    );
+    state.choices[id] = game.result;
+    state.pending = state.pending.filter((key) => key !== id);
+    return;
+  }
   if (event.kind === 'quiz') {
     const quiz = quizzes[event.quiz];
     const answer =
@@ -83,8 +76,16 @@ export function applyChoice(state, id, selected, answers) {
       'event',
     );
   } else if (event.kind === 'interview') {
-    const correct = answers.filter((answer, i) => answer === INTERVIEW_QUESTIONS[i].correct).length;
+    const game = state.minigames.interview ?? { answers: [], phase: 'active', score: null };
+    game.answers.push(...answers);
+    state.minigames.interview = game;
+    if (game.answers.length < INTERVIEW_QUESTIONS.length) return;
+    const correct = game.answers.filter(
+      (answer, i) => answer === INTERVIEW_QUESTIONS[i].correct,
+    ).length;
     state.interviewScore = Math.round((correct / 3) * 70 + state.stats.speech * 0.3);
+    game.phase = 'finished';
+    game.score = state.interviewScore;
     applyEffects(state, { speech: correct * 2, stress: correct >= 2 ? -8 : 5 });
     notice(
       state,
@@ -130,18 +131,6 @@ export function applyChoice(state, id, selected, answers) {
         'event',
       );
     }
-    if (id === 'dorm_cards' && selected === 'play') {
-      const won = random(state) < 0.5;
-      state.flags.cardWins = (state.flags.cardWins ?? 0) + Number(won);
-      notice(
-        state,
-        '기숙사 고스톱 결과',
-        won
-          ? '이번 판 승리 · 누적 승리 ' + state.flags.cardWins + '회'
-          : '이번 판 패배 · 용돈 변동 없음',
-        'event',
-      );
-    }
     if (option.flags?.academy) academyTasks(state);
     if (option.flags?.contest)
       addTask(state, 'external-contest', {
@@ -155,6 +144,7 @@ export function applyChoice(state, id, selected, answers) {
       });
     notice(state, event.name, `선택 · ${option.label}`, 'event');
   }
-  state.choices[id] = event.kind === 'interview' ? [...answers] : selected;
+  state.choices[id] =
+    event.kind === 'interview' ? [...state.minigames.interview.answers] : selected;
   state.pending = state.pending.filter((key) => key !== id);
 }

@@ -16,6 +16,7 @@ import { applyChoice, choiceOptions, INTERVIEW_QUESTIONS } from './choices.js';
 import { effectivePlan, lockedSlots, resolveWeek } from './week.js';
 import { enrollCourses } from './course-progress.js';
 import { courseSet, electiveWindow, changeElective } from './enrollment.js';
+import { copyDayPlan, copyDayPreview } from './schedule.js';
 
 export class GameError extends Error {
   constructor(code, message) {
@@ -27,6 +28,16 @@ export class GameError extends Error {
 const requireRule = (condition, code, message) => {
   if (!condition) throw new GameError(code, message);
 };
+function markScheduleEdit(state, slots) {
+  state.flags.editedSchedule = true;
+  if (state.week !== 0) return;
+  if (slots.some((slot) => slot.activity === 'study' && courses[slot.target]?.ability === 'math'))
+    state.flags.tutorialStudy = true;
+  if (slots.some((slot) => slot.activity === 'task' && slot.target === 'practice-report'))
+    state.flags.tutorialTask = true;
+  if (slots.some((slot) => ['sleep', 'exercise', 'game', 'out'].includes(slot.activity)))
+    state.flags.tutorialRecovery = true;
+}
 export function createGame(profile, seed = 20261013) {
   requireRule(
     typeof profile?.name === 'string' &&
@@ -159,6 +170,8 @@ export function transition(source, command) {
       'GAME_CLOSED',
       '진행 중인 게임에서만 할 수 있어요.',
     );
+    if (['plan', 'preset', 'copy_day'].includes(command.type))
+      requireRule(state.week <= LAST_WEEK, 'YEAR_FINISHED', '한 해의 일정이 끝났어요.');
     if (command.type === 'plan') {
       requireRule(
         Number.isInteger(command.index) &&
@@ -198,15 +211,34 @@ export function transition(source, command) {
         '대상을 다시 골라 주세요.',
       );
       state.plan[command.index] = { activity: command.activity, target };
-      state.flags.editedSchedule = true;
-      if (state.week === 0) {
-        if (command.activity === 'study' && courses[target]?.ability === 'math')
-          state.flags.tutorialStudy = true;
-        if (command.activity === 'task' && target === 'practice-report')
-          state.flags.tutorialTask = true;
-        if (['sleep', 'exercise', 'game', 'out'].includes(command.activity))
-          state.flags.tutorialRecovery = true;
-      }
+      markScheduleEdit(state, [state.plan[command.index]]);
+    } else if (command.type === 'copy_day') {
+      requireRule(
+        Number.isInteger(command.sourceDay) &&
+          command.sourceDay >= 0 &&
+          command.sourceDay < 7 &&
+          Array.isArray(command.days) &&
+          command.days.length > 0 &&
+          command.days.length <= 6 &&
+          new Set(command.days).size === command.days.length &&
+          command.days.every(
+            (day) => Number.isInteger(day) && day >= 0 && day < 7 && day !== command.sourceDay,
+          ),
+        'COPY_DAYS_INVALID',
+        '복사할 요일과 받을 요일을 다시 선택해 주세요.',
+      );
+      requireRule(
+        copyDayPreview(state, command.sourceDay, command.days).some((day) => day.indices.length),
+        'COPY_EMPTY',
+        '복사할 수 있는 자습 시간이 없어요.',
+      );
+      state.plan = copyDayPlan(state, command.sourceDay, command.days);
+      markScheduleEdit(
+        state,
+        copyDayPreview(state, command.sourceDay, command.days).flatMap((day) =>
+          day.indices.map((index) => state.plan[index]),
+        ),
+      );
     } else if (command.type === 'elective') {
       requireRule(
         ELECTIVES.includes(command.course) &&
@@ -233,22 +265,7 @@ export function transition(source, command) {
         '일정 프리셋을 다시 골라 주세요.',
       );
       state.plan = planPreset(state, command.preset);
-      state.flags.editedSchedule = true;
-      if (state.week === 0) {
-        if (
-          state.plan.some(
-            (slot) => slot.activity === 'study' && courses[slot.target]?.ability === 'math',
-          )
-        )
-          state.flags.tutorialStudy = true;
-        if (
-          state.plan.filter((slot) => slot.activity === 'task' && slot.target === 'practice-report')
-            .length >= 2
-        )
-          state.flags.tutorialTask = true;
-        if (state.plan.some((slot) => ['sleep', 'exercise', 'game', 'out'].includes(slot.activity)))
-          state.flags.tutorialRecovery = true;
-      }
+      markScheduleEdit(state, state.plan);
     } else if (command.type === 'advance') {
       requireRule(
         state.week <= LAST_WEEK,
@@ -262,15 +279,19 @@ export function transition(source, command) {
         'EVENT_INVALID',
         '이미 결정했거나 아직 발생하지 않은 이벤트예요.',
       );
-      if (command.event === 'interview_day')
+      if (command.event === 'interview_day') {
+        const answered = state.minigames.interview?.answers.length ?? 0;
+        const single = /^answer:[0-2]$/.test(command.option ?? '') && command.answers === undefined;
         requireRule(
-          Array.isArray(command.answers) &&
-            command.answers.length === INTERVIEW_QUESTIONS.length &&
-            command.answers.every((a) => Number.isInteger(a) && a >= 0 && a < 3),
+          single ||
+            (answered === 0 &&
+              Array.isArray(command.answers) &&
+              command.answers.length === INTERVIEW_QUESTIONS.length &&
+              command.answers.every((a) => Number.isInteger(a) && a >= 0 && a < 3)),
           'ANSWERS_INVALID',
-          '세 질문에 모두 답해 주세요.',
+          '현재 질문의 답변을 선택해 주세요.',
         );
-      else {
+      } else {
         const option = choiceOptions(state, command.event).find((o) => o.id === command.option);
         requireRule(option, 'OPTION_INVALID', '선택지를 다시 골라 주세요.');
         requireRule(
@@ -279,7 +300,14 @@ export function transition(source, command) {
           '용돈이 부족해요. 다른 선택지를 골라 주세요.',
         );
       }
-      applyChoice(state, command.event, command.option, command.answers);
+      applyChoice(
+        state,
+        command.event,
+        command.option,
+        command.event === 'interview_day' && command.answers === undefined
+          ? [Number(command.option.slice(7))]
+          : command.answers,
+      );
     } else if (command.type === 'buy') {
       requireRule(Object.hasOwn(items, command.item), 'ITEM_INVALID', '상품을 다시 선택해 주세요.');
       const item = items[command.item];

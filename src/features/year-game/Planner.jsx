@@ -4,12 +4,14 @@ import { activities, courses, DAYS, period } from '../../domain/catalog.js';
 import { effectivePlan, lockedSlots } from '../../domain/week.js';
 import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
 import ContextHint from './ContextHint.jsx';
+import DayCopy from './DayCopy.jsx';
 
 export default function Planner({
   state,
   busy,
   onSlot,
   onPreset,
+  onCopy,
   onStart,
   onWeek,
   assignment,
@@ -107,6 +109,7 @@ export default function Planner({
           회복
         </button>
       </div>
+      <DayCopy state={state} busy={busy} sourceDay={day} onCopy={onCopy} />
       <div className="week-minimap" aria-label="한 주 전체 일정">
         {DAYS.map((label, d) => (
           <button
