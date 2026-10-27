@@ -13,12 +13,7 @@ export function tutorialCompletion(state, visited = []) {
           (slot) => slot.activity === 'study' && courses[slot.target]?.ability === 'math',
         )),
     tasks:
-      Boolean(state.flags.tutorialTask) &&
-      taskGameReady(state.tasks['practice-report']) &&
-      taskGameReady(state.tasks['first-study']) &&
-      (state.tasks['practice-report']?.status === 'completed' ||
-        state.plan.filter((slot) => slot.activity === 'task' && slot.target === 'practice-report')
-          .length >= 2),
+      Boolean(state.flags.tutorialTask) && state.tasks['practice-report']?.status === 'completed',
     recovery:
       Boolean(state.flags.tutorialRecovery) &&
       (state.plan.some((slot) => ['sleep', 'exercise', 'game', 'out'].includes(slot.activity)) ||
@@ -58,9 +53,9 @@ export const TUTORIAL_LESSONS = [
     target: 'tasks',
     action: '과제 배정하기',
     description:
-      '과제를 열어 미니게임을 풀고 자습시간을 배정합니다. 미니게임과 시간 배정은 원하는 순서로 할 수 있습니다. 한 주가 끝날 때 진행도가 오르면 자동으로 완료됩니다.',
+      '할 일을 자습시간에 배정하고 한 주를 진행하면 그 시간에 직접 작업합니다. 작업을 마칠 때마다 진척이 반영되고, 필요한 작업을 모두 마치면 즉시 완료됩니다.',
     practice:
-      '연습 보고서의 미니게임을 풀고 두 칸을 배정하세요. 수학 공부 1회의 미니게임도 과제 창에서 풀 수 있습니다.',
+      '연습 보고서를 두 칸 배정하세요. 일정을 실행하며 두 번 작업하면 완료됩니다. 수학 공부 1회는 실제 수학 자습으로 확인합니다.',
   },
   {
     id: 'recovery',

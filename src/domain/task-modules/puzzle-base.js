@@ -15,6 +15,9 @@ export function puzzleModule({ id, name, game }) {
     },
     complete(context) {
       const result = (context.task.special === 'contest' ? contest : time).complete(context);
+      const average = context.task.attempts?.successful
+        ? context.task.attempts.qualitySum / context.task.attempts.successful
+        : (context.task.moduleData?.quality ?? 60);
       return {
         ...result,
         score:
@@ -22,13 +25,9 @@ export function puzzleModule({ id, name, game }) {
             ? null
             : Math.round(
                 result.score *
-                  (balance.projects.qualityBase +
-                    (balance.projects.qualityWeight * (context.task.moduleData?.quality ?? 60)) /
-                      100),
+                  (balance.projects.qualityBase + (balance.projects.qualityWeight * average) / 100),
               ),
-        note: [`미니게임 ${context.task.moduleData?.quality ?? 0}점`, result.note]
-          .filter(Boolean)
-          .join(' · '),
+        note: [`작업 품질 ${Math.round(average)}점`, result.note].filter(Boolean).join(' · '),
       };
     },
   };

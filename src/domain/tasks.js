@@ -4,11 +4,19 @@ import { learnCourse } from './course-progress.js';
 import { notice } from './notifications.js';
 import { taskModuleSpec, taskModule, defaultTaskGame } from './task-modules/registry.js';
 import { processTaskWork, resolveTaskOutcome, taskIsComplete } from './task-processing.js';
+import { calendarTiming } from './calendar-date.js';
 
 export function addTask(state, id, definition) {
   if (state.tasks[id]) return;
+  const deadline = calendarTiming(
+    'deadline:' + id,
+    definition.deadline,
+    definition.deadlineDay ?? 6,
+  );
   state.tasks[id] = {
     ...structuredClone(definition),
+    deadline: deadline.week,
+    deadlineDay: deadline.day,
     module: structuredClone(definition.module ?? defaultTaskGame(definition)),
     id,
     description: definition.description ?? '',
@@ -47,6 +55,9 @@ export function finishTask(state, task, messages) {
     module: task.module?.id ?? taskModuleSpec(task).id,
     score: result.score,
     note: result.note ?? '',
+    quality: task.attempts?.successful
+      ? Math.round(task.attempts.qualitySum / task.attempts.successful)
+      : (task.moduleData?.quality ?? null),
   };
   applyEffects(state, result.effects);
   state.awards += result.awards ?? 0;
@@ -74,9 +85,13 @@ export function workTask(state, id, messages, progress = 1) {
   if (taskIsComplete(state, task)) finishTask(state, task, messages);
   return true;
 }
-export function expireTasks(state, messages) {
+export function expireTasks(state, messages, day = 6) {
   for (const task of activeTasks(state)) {
-    if (task.deadline > state.week) continue;
+    if (
+      task.deadline > state.week ||
+      (task.deadline === state.week && (task.deadlineDay ?? 6) > day)
+    )
+      continue;
     const result = resolveTaskOutcome(state, task, false);
     task.status = 'expired';
     task.result = { module: taskModuleSpec(task).id, score: result.score, note: result.note ?? '' };

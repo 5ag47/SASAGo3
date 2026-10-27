@@ -136,7 +136,12 @@ export default function useGame({
         setConflict(true);
         setIssue(error.message);
       }
-      if (['SAVE_CONFLICT', 'REVISION_CONFLICT', 'CSRF_INVALID'].includes(code)) setConflict(true);
+      if (
+        ['SAVE_CONFLICT', 'REVISION_CONFLICT', 'CSRF_INVALID', 'TASK_INPUT_CONFLICT'].includes(code)
+      ) {
+        setConflict(true);
+        setIssue(error.message);
+      }
       if (error.outcomeUnknown) {
         setConflict(true);
         setIssue(error.message);
@@ -172,6 +177,7 @@ export default function useGame({
       setConflict(false);
       setIssue(loaded.issue ?? null);
       notify('최신 저장을 불러왔어요.');
+      return loaded.state;
     } catch (error) {
       if (error.code === 'CLIENT_UPDATE_REQUIRED') {
         setUpdateRequired(true);

@@ -16,6 +16,7 @@ export function createApiTransport({
   async function request(path, options = {}) {
     const mutation = options.method === 'POST';
     for (let attempt = 0; attempt < 2; attempt++) {
+      const attemptStarted = performance.now();
       let token;
       try {
         token = await getToken();
@@ -29,6 +30,8 @@ export function createApiTransport({
       }
       let trace;
       try {
+        const tokenMs = performance.now() - attemptStarted;
+        const requestStarted = performance.now();
         const response = await fetcher(path, {
           ...options,
           headers: {
@@ -42,6 +45,8 @@ export function createApiTransport({
           signal: AbortSignal.timeout(timeoutMs),
         });
         trace = response.headers.get('X-Request-ID') ?? undefined;
+        const requestMs = performance.now() - requestStarted;
+        const decodeStarted = performance.now();
         let body;
         try {
           body = await response.json();
@@ -57,7 +62,7 @@ export function createApiTransport({
             body.message ?? '서버 요청을 완료하지 못했습니다.',
             { trace, status: response.status, transient: transientStatuses.has(response.status) },
           );
-        if (!body || typeof body !== 'object' || !body.state)
+        if (!body || typeof body !== 'object' || (!body.state && !body.delta))
           throw failure('RESPONSE_INVALID', '서버 응답을 확인하지 못했습니다.', {
             transient: true,
             trace,
@@ -67,7 +72,11 @@ export function createApiTransport({
           path,
           trace,
           attempt: attempt + 1,
-          revision: body.state.revision,
+          revision: body.state?.revision ?? body.delta.revision,
+          tokenMs: Math.round(tokenMs * 10) / 10,
+          requestMs: Math.round(requestMs * 10) / 10,
+          decodeMs: Math.round((performance.now() - decodeStarted) * 10) / 10,
+          update: body.delta ? 'task-delta' : 'full',
           replayed: Boolean(body.replayed),
         });
         return body;

@@ -4,13 +4,14 @@ import { random, applyEffects } from './random.js';
 import { taskModule, taskModuleSpec, validModuleData } from './task-modules/registry.js';
 import { requireAction } from './task-modules/action-error.js';
 
-function context(state, task) {
+export function taskContext(state, task) {
   const statsAfter = (effects) => {
     const copy = { stats: { ...state.stats } };
     applyEffects(copy, effects);
     return Object.freeze(copy.stats);
   };
   return {
+    week: state.week,
     task: Object.freeze(structuredClone(task)),
     stats: Object.freeze({ ...state.stats }),
     params: Object.freeze(structuredClone(taskModuleSpec(task).params)),
@@ -22,7 +23,7 @@ function context(state, task) {
   };
 }
 export function processTaskWork(state, task, amount) {
-  const result = taskModule(task).work({ ...context(state, task), amount });
+  const result = taskModule(task).work({ ...taskContext(state, task), amount });
   if (
     !result ||
     !Number.isFinite(result.progress) ||
@@ -35,7 +36,7 @@ export function processTaskWork(state, task, amount) {
   return result.progress;
 }
 export function taskIsComplete(state, task) {
-  const result = taskModule(task).isComplete(context(state, task));
+  const result = taskModule(task).isComplete(taskContext(state, task));
   if (typeof result !== 'boolean') throw new Error(`TASK_MODULE_COMPLETION_INVALID:${task.id}`);
   return result;
 }
@@ -48,17 +49,33 @@ export function taskGameAction(state, task, action) {
       !task.moduleData && Object.keys(action).length === 1,
       '이미 시작한 미니게임입니다.',
     );
-    data = game.create(context(state, task));
+    data = game.create(taskContext(state, task));
   } else {
     requireAction(
       task.moduleData && !task.moduleData.passed,
       '진행 중인 미니게임에서 선택해 주세요.',
     );
-    data = game.act(context(state, task), task.moduleData, action);
+    const before = task.moduleData;
+    data = game.act(taskContext(state, task), before, action);
+    const effects = taskModule(task).actionEffects?.(taskContext(state, task), before, data);
+    if (effects) applyTaskEffects(state, effects);
   }
   if (!game.valid(data) || !validModuleData(data))
     throw new Error(`TASK_GAME_STATE_INVALID:${task.id}`);
   task.moduleData = data;
+}
+export function applyTaskEffects(state, effects) {
+  if (
+    !effects ||
+    typeof effects !== 'object' ||
+    Array.isArray(effects) ||
+    Object.entries(effects).some(
+      ([id, value]) =>
+        !Object.hasOwn(STATS, id) || !Number.isFinite(value) || Math.abs(value) > 100,
+    )
+  )
+    throw new Error('TASK_MODULE_EFFECTS_INVALID');
+  applyEffects(state, effects);
 }
 export function publicTasks(tasks) {
   return Object.fromEntries(
@@ -73,7 +90,7 @@ export function publicTasks(tasks) {
 }
 export function resolveTaskOutcome(state, task, completed) {
   const handler = taskModule(task);
-  const result = handler[completed ? 'complete' : 'expire'](context(state, task));
+  const result = handler[completed ? 'complete' : 'expire'](taskContext(state, task));
   if (
     !result ||
     (result.score !== null &&

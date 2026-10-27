@@ -7,6 +7,7 @@ import { enrollCourses } from './course-progress.js';
 import { courseSet, addUrbanProject } from './enrollment.js';
 import { notice } from './notifications.js';
 import { announceChapters } from './story.js';
+import { calendarTiming } from './calendar-date.js';
 export { notice } from './notifications.js';
 export function beginWeek(state) {
   announceChapters(state);
@@ -23,9 +24,42 @@ export function beginWeek(state) {
   }
   if (state.week === 0)
     for (const [id, task] of Object.entries(TUTORIAL_TASKS)) addTask(state, id, task);
+  dispatchDayEvents(state, 0);
+  academyTasks(state);
+  addUrbanProject(state);
+  if (CLEANING_WEEKS.includes(state.week)) {
+    addTask(state, `clean-${state.week}`, {
+      name: '월말 호실·냉장고 점검',
+      description: '방 청소 한 칸을 배정하면 자동으로 완료돼요. 미완료 시 평판 -3, 벌점 +1.',
+      special: 'clean',
+      target: 1,
+      deadline: state.week,
+      reward: { reputation: 2 },
+      penalty: { reputation: -3 },
+    });
+  }
+  // Old targets may no longer be actionable after a deadline or a major change.
+  state.plan = state.plan.map((slot) => {
+    if (slot.activity === 'study' && !state.courses.includes(slot.target))
+      return { ...slot, target: state.courses[0] };
+    if (slot.activity === 'task' && state.tasks[slot.target]?.status !== 'active')
+      return { activity: 'sleep', target: null };
+    return slot;
+  });
+}
+
+export function dispatchDayEvents(state, day) {
   for (const [id, event] of Object.entries(events)) {
-    if (event.week !== state.week || (event.course && !state.courses.includes(event.course)))
+    const timing = calendarTiming('event:' + id, event.week, event.day ?? 0);
+    if (
+      timing.week !== state.week ||
+      timing.day !== day ||
+      state.flags.eventDeliveries?.[id] ||
+      (event.course && !state.courses.includes(event.course))
+    )
       continue;
+    state.flags.eventDeliveries ??= {};
+    state.flags.eventDeliveries[id] = true;
     if (event.kind === 'task') addTask(state, id, event);
     else if (['notice', 'birthday', 'admission', 'creative'].includes(event.kind)) {
       applyEffects(state, event.effect);
@@ -48,25 +82,4 @@ export function beginWeek(state) {
       notice(state, event.name, event.description, 'choice');
     }
   }
-  academyTasks(state);
-  addUrbanProject(state);
-  if (CLEANING_WEEKS.includes(state.week)) {
-    addTask(state, `clean-${state.week}`, {
-      name: '월말 호실·냉장고 점검',
-      description: '방 청소 한 칸을 배정하면 자동으로 완료돼요. 미완료 시 평판 -3, 벌점 +1.',
-      special: 'clean',
-      target: 1,
-      deadline: state.week,
-      reward: { reputation: 2 },
-      penalty: { reputation: -3 },
-    });
-  }
-  // Old targets may no longer be actionable after a deadline or a major change.
-  state.plan = state.plan.map((slot) => {
-    if (slot.activity === 'study' && !state.courses.includes(slot.target))
-      return { ...slot, target: state.courses[0] };
-    if (slot.activity === 'task' && state.tasks[slot.target]?.status !== 'active')
-      return { activity: 'sleep', target: null };
-    return slot;
-  });
 }

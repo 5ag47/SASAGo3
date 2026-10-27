@@ -13,9 +13,7 @@ export default function ContextHint({ state, onTry }) {
         <X size={12} />
       </button>
       <b>첫 자습: 수학 공부 1칸</b>
-      <button className="hint-try" onClick={onTry}>
-        시간 골라보기 <ArrowUpRight size={13} />
-      </button>
+      <span>아래 시간 칸을 눌러 활동을 골라보세요.</span>
     </aside>
   );
 }

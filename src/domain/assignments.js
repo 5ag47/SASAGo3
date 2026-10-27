@@ -43,6 +43,8 @@ export function assignmentIssues(definitions, { courses, stats }) {
     'description',
     'week',
     'deadline',
+    'day',
+    'deadlineDay',
     'course',
     'target',
     'reward',
@@ -106,6 +108,9 @@ export function assignmentIssues(definitions, { courses, stats }) {
     if (typeof task.description !== 'string' || task.description.length > 1000)
       error('description', '설명은 1,000자 이내 문자열이어야 합니다.');
     if (!integer(task.week, 0, 40)) error('week', '발생 주는 0~40의 정수입니다.');
+    for (const field of ['day', 'deadlineDay'])
+      if (task[field] !== undefined && !integer(task[field], 0, 6))
+        error(field, '요일은 월요일 0~일요일 6입니다.');
     if (!integer(task.deadline, task.week, 40))
       error('deadline', '발생 주 이후, 40주 이내로 지정하세요.');
     if (!Number.isFinite(task.target) || task.target <= 0 || task.target > 100)

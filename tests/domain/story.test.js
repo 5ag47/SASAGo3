@@ -1,3 +1,4 @@
+import { runPlannedWeek } from '../helpers/task-games.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, transition } from '../../src/domain/engine.js';
@@ -37,7 +38,7 @@ test('story pages persist and cannot change stats, money, tasks, schedule or tim
   assert.ok(validateState(state));
   assert.deepEqual(source.story, {});
   // Reading is optional and never a prerequisite for normal game commands.
-  assert.equal(transition(source, { type: 'advance' }).week, 1);
+  assert.equal(runPlannedWeek(source).week, 1);
 });
 test('future chapters, invalid actions and malformed saved progress are rejected', () => {
   const source = fresh(),

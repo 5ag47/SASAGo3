@@ -10,13 +10,16 @@ import {
 } from './catalog.js';
 import { applyEffects, clamp, random } from './random.js';
 import { assess } from './grades.js';
-import { beginWeek, notice } from './events.js';
+import { beginWeek, notice, dispatchDayEvents } from './events.js';
 import { abandonMinigame } from './minigames.js';
 import { expireTasks, workTask } from './tasks.js';
-import { assessmentsAt } from './school-calendar.js';
+import { assessmentsOnDay } from './school-calendar.js';
+import { dateOrdinal, weekDate } from './calendar-date.js';
 import { enrollCourses, learnCourse } from './course-progress.js';
 import { effectivePlan } from './schedule.js';
-import { taskGameReady } from './task-modules/registry.js';
+import { taskModule, taskGameStatus } from './task-modules/registry.js';
+import { finishTaskAttempt, beginTaskAttempt, attemptLimitReached } from './task-attempts.js';
+import { resolveStudyApplication } from './study-applications.js';
 import { balance, ACADEMIC_STATS } from './balance.js';
 import { announceChapters } from './story.js';
 export { effectivePlan, lockedSlots } from './schedule.js';
@@ -30,15 +33,14 @@ export function learningEfficiency(state) {
     (state.fatigue ? config.fatigueMultiplier : 1)
   );
 }
-export function resolveWeek(source) {
-  const state = structuredClone(source);
+export function startWeek(state) {
   enrollCourses(state);
   const beforeCourses = { ...state.courseMastery };
   const before = { ...state.stats };
   const moneyBefore = state.money;
   const messages = [];
   const actions = [];
-  const plan = effectivePlan(state);
+  const plan = structuredClone(effectivePlan(state));
   const counts = {};
   let environment = 1;
   let workCount = 0;
@@ -59,117 +61,269 @@ export function resolveWeek(source) {
       messages.push('환경 비용이 부족해 이번 주는 집에서 공부했어요.');
     }
   }
-  for (const [index, slot] of plan.entries()) {
-    let id = slot.activity;
-    let definition = activities[id];
-    const slotBefore = { ...state.stats };
-    const courseBefore = { ...state.courseMastery };
-    let note = '';
-    if ((definition.cost ?? 0) > state.money) {
-      id = 'sleep';
-      definition = activities.sleep;
-      note = '잔액 부족 → 호실 휴식';
-    }
-    if (
-      (id === 'task' && state.tasks[slot.target]?.status !== 'active') ||
-      (id === 'research' && state.tasks.thesis?.status !== 'active') ||
-      (id === 'essay' && state.tasks.essay?.status !== 'active') ||
-      (id === 'study_group' && !state.group)
-    ) {
-      id = 'sleep';
-      definition = activities.sleep;
-      note = '진행할 대상 없음 → 호실 휴식';
-    }
-    state.money = Math.max(0, state.money - (definition.cost ?? 0) + (definition.income ?? 0));
-    const study = [
-      'study',
-      'task',
-      'research',
-      'academy',
-      'science_academy',
-      'interview',
-      'essay',
-    ].includes(id);
-    if (study) workCount++;
-    counts[id] = (counts[id] ?? 0) + 1;
-    const config = balance.learning;
-    const repetition = study
-      ? Math.max(
-          config.repetitionFloor,
-          1 - Math.max(0, counts[id] - config.repetitionStart) * config.repetitionLoss,
-        )
-      : 1;
-    const efficiency = learningEfficiency(state) * environment * repetition;
-    for (const [key, value] of Object.entries(definition.effect)) {
-      applyEffects(
-        state,
-        { [key]: value },
-        value > 0 && ACADEMIC_STATS.includes(key) ? efficiency : 1,
-      );
-    }
-    if (id === 'study') {
-      const courseId = state.courses.includes(slot.target) ? slot.target : state.courses[0];
-      const ability = courses[courseId].ability;
-      applyEffects(state, { [ability]: definition.gain * efficiency });
-      learnCourse(state, courseId, efficiency);
-      if (ability === 'math') workTask(state, 'first-study', messages);
-      note = courses[courseId].name;
-    }
-    if (id === 'task') {
-      workTask(state, slot.target, messages);
-      note = `${state.tasks[slot.target].name}${taskGameReady(state.tasks[slot.target]) ? '' : ' · 미니게임 미완료, 진척 없음'}`;
-    }
-    if (id === 'research') {
-      workTask(state, 'thesis', messages);
-      note = '졸업논문 진척 +1';
-    }
-    if (id === 'essay') {
-      const progress = state.stats.reputation >= 60 ? 1.5 : 1;
-      workTask(state, 'essay', messages, progress);
-      note = `자소서 진척 +${progress}`;
-    }
-    if (id === 'clean')
-      for (const t of activeTasks(state).filter((t) => t.special === 'clean'))
-        workTask(state, t.id, messages);
-    if (id === 'study_group')
-      applyEffects(
-        state,
-        GROUPS[state.group].effect,
-        ['focused'].includes(state.group) ? efficiency : 1,
-      );
-    if (id === 'teacher') {
-      const teacher = ['math', 'science', 'homeroom'].includes(slot.target)
+  state.weekRun = {
+    week: state.week,
+    minHealth: state.stats.hp,
+    peakStress: state.stats.stress,
+    cursor: 0,
+    lastDay: -1,
+    closedDay: -1,
+    alerts: [],
+    plan,
+    counts,
+    workCount,
+    environment,
+    messages,
+    actions,
+    before,
+    beforeCourses,
+    moneyBefore,
+    seedBefore: state.seed,
+    waiting: null,
+    slot: null,
+  };
+}
+function finishRunSlot(state, slot) {
+  const run = state.weekRun;
+  run.minHealth = Math.min(run.minHealth, state.stats.hp);
+  run.peakStress = Math.max(run.peakStress, state.stats.stress);
+  run.actions.push({
+    index: slot.index,
+    activity: slot.activity,
+    target: slot.target,
+    note: slot.note,
+    delta: Object.fromEntries(
+      Object.keys(STATS).map((key) => [
+        key,
+        Math.round((state.stats[key] - slot.before[key]) * 10) / 10,
+      ]),
+    ),
+    courseDelta: Object.fromEntries(
+      Object.entries(state.courseMastery)
+        .map(([id, value]) => [
+          id,
+          Math.round((value - (slot.beforeCourses[id] ?? value)) * 10) / 10,
+        ])
+        .filter(([, value]) => value !== 0),
+    ),
+  });
+  run.cursor++;
+  run.slot = null;
+}
+function executeSlot(state) {
+  const run = state.weekRun,
+    index = run.cursor,
+    slot = run.plan[index];
+  const { messages, counts, environment } = run;
+
+  let id = slot.activity;
+  let definition = activities[id];
+  const slotBefore = { ...state.stats };
+  const courseBefore = { ...state.courseMastery };
+  let note = '';
+  const scheduledTask =
+    state.tasks[
+      id === 'task'
         ? slot.target
-        : 'homeroom';
-      state.teachers[teacher] =
-        Math.round(
-          clamp(
-            state.teachers[teacher] +
-              balance.relationships.visitGain *
-                (1 - state.teachers[teacher] / balance.relationships.softScale),
-          ) * 10,
-        ) / 10;
-    }
-    if (id === 'club' && state.flags.club)
-      applyEffects(state, state.flags.club === 'lab' ? { science: 2 } : { writing: 1.5, charm: 1 });
-    actions.push({
-      index,
-      activity: id,
-      target: slot.target,
-      note,
-      delta: Object.fromEntries(
-        Object.keys(STATS).map((k) => [k, Math.round((state.stats[k] - slotBefore[k]) * 10) / 10]),
-      ),
-      courseDelta: Object.fromEntries(
-        Object.entries(state.courseMastery)
-          .map(([course, value]) => [
-            course,
-            Math.round((value - (courseBefore[course] ?? value)) * 10) / 10,
-          ])
-          .filter(([, delta]) => delta !== 0),
-      ),
-    });
+        : id === 'research'
+          ? 'thesis'
+          : id === 'essay'
+            ? 'essay'
+            : id === 'clean'
+              ? activeTasks(state).find((t) => t.special === 'clean')?.id
+              : ''
+    ];
+  if (scheduledTask && !scheduledTask.attempts?.open && attemptLimitReached(state, scheduledTask)) {
+    id = 'sleep';
+    definition = activities.sleep;
+    note = '주간 도전 횟수 상한 · 호실 휴식';
   }
+  if ((definition.cost ?? 0) > state.money) {
+    id = 'sleep';
+    definition = activities.sleep;
+    note = '잔액 부족 → 호실 휴식';
+  }
+  if (
+    (id === 'task' && state.tasks[slot.target]?.status !== 'active') ||
+    (id === 'research' && state.tasks.thesis?.status !== 'active') ||
+    (id === 'essay' && state.tasks.essay?.status !== 'active') ||
+    (id === 'study_group' && !state.group)
+  ) {
+    id = 'sleep';
+    definition = activities.sleep;
+    note = '진행할 대상 없음 → 호실 휴식';
+  }
+  state.money = Math.max(0, state.money - (definition.cost ?? 0) + (definition.income ?? 0));
+  const study = [
+    'study',
+    'task',
+    'research',
+    'academy',
+    'science_academy',
+    'interview',
+    'essay',
+  ].includes(id);
+  if (study) run.workCount++;
+  counts[id] = (counts[id] ?? 0) + 1;
+  const config = balance.learning;
+  const repetition = study
+    ? Math.max(
+        config.repetitionFloor,
+        1 - Math.max(0, counts[id] - config.repetitionStart) * config.repetitionLoss,
+      )
+    : 1;
+  const efficiency = learningEfficiency(state) * environment * repetition;
+  for (const [key, value] of Object.entries(definition.effect)) {
+    applyEffects(
+      state,
+      { [key]: value },
+      value > 0 && ACADEMIC_STATS.includes(key) ? efficiency : 1,
+    );
+  }
+  if (id === 'study') {
+    const courseId = state.courses.includes(slot.target) ? slot.target : state.courses[0];
+    const ability = courses[courseId].ability;
+    applyEffects(state, { [ability]: definition.gain * efficiency });
+    learnCourse(state, courseId, efficiency);
+    if (ability === 'math') workTask(state, 'first-study', messages);
+    note = courses[courseId].name;
+  }
+  const target =
+    id === 'task'
+      ? slot.target
+      : id === 'research'
+        ? 'thesis'
+        : id === 'essay'
+          ? 'essay'
+          : id === 'clean'
+            ? activeTasks(state).find((t) => t.special === 'clean')?.id
+            : null;
+  const task = target ? state.tasks[target] : null;
+  if (task?.status === 'active') {
+    note = task.name;
+    const amount = id === 'essay' && state.stats.reputation >= 60 ? 1.5 : 1;
+    if (taskModule(task).game && !task.moduleData?.passed) {
+      if (task.moduleData && !task.attempts?.open) beginTaskAttempt(state, task);
+      run.slot = {
+        index,
+        activity: id,
+        target: slot.target,
+        note,
+        before: slotBefore,
+        beforeCourses: courseBefore,
+        amount,
+      };
+      run.waiting = { kind: 'task', task: task.id, index };
+      return;
+    }
+    workTask(state, task.id, messages, amount);
+  }
+  if (id === 'study_group')
+    applyEffects(
+      state,
+      GROUPS[state.group].effect,
+      ['focused'].includes(state.group) ? efficiency : 1,
+    );
+  if (id === 'teacher') {
+    const teacher = ['math', 'science', 'homeroom'].includes(slot.target)
+      ? slot.target
+      : 'homeroom';
+    state.teachers[teacher] =
+      Math.round(
+        clamp(
+          state.teachers[teacher] +
+            balance.relationships.visitGain *
+              (1 - state.teachers[teacher] / balance.relationships.softScale),
+        ) * 10,
+      ) / 10;
+  }
+  if (id === 'club' && state.flags.club)
+    applyEffects(state, state.flags.club === 'lab' ? { science: 2 } : { writing: 1.5, charm: 1 });
+
+  finishRunSlot(state, {
+    index,
+    activity: id,
+    target: slot.target,
+    note,
+    before: slotBefore,
+    beforeCourses: courseBefore,
+  });
+}
+export function finishRunTask(state, task) {
+  const run = state.weekRun;
+  if (
+    !run ||
+    run.waiting?.kind !== 'task' ||
+    run.waiting.task !== task.id ||
+    taskGameStatus(task) !== 'success'
+  )
+    throw new Error('TASK_SESSION_MISMATCH');
+  const result = finishTaskAttempt(state, task);
+  workTask(state, task.id, run.messages, run.slot.amount);
+  const completed = task.status === 'completed';
+  run.slot.note =
+    task.name + ' · 작업 ' + task.progress + '/' + task.target + ' · 품질 ' + result.quality;
+  finishRunSlot(state, run.slot);
+  run.waiting = {
+    kind: 'task_result',
+    task: task.id,
+    completed,
+    quality: result.quality,
+    progress: task.progress,
+    target: task.target,
+  };
+  if (!completed) delete task.moduleData;
+}
+export function skipRunTask(state) {
+  const run = state.weekRun;
+  if (run?.waiting?.kind !== 'task') return false;
+  const task = state.tasks[run.waiting.task];
+  if (task.attempts) task.attempts.open = false;
+  delete task.moduleData;
+  run.slot.note = task.name + ' · 작업 중단';
+  finishRunSlot(state, run.slot);
+  run.waiting = null;
+  return true;
+}
+export function resolveWeek(source) {
+  const state = structuredClone(source);
+  if (!state.weekRun) startWeek(state);
+  const run = state.weekRun;
+  if (run.waiting?.kind === 'task') return state;
+  run.waiting = null;
+  if (run.alerts.length) {
+    run.waiting = run.alerts.shift();
+    return state;
+  }
+  while (run.cursor < 21) {
+    const day = Math.floor(run.cursor / 3);
+    if (day !== run.lastDay) {
+      if (run.lastDay >= 0) closeRunDay(state, run.lastDay);
+      run.lastDay = day;
+      const beforePending = new Set(state.pending),
+        beforeTasks = new Set(Object.keys(state.tasks));
+      dispatchDayEvents(state, day);
+      const result = resolveStudyApplication(state, dateOrdinal(weekDate(state.week, day)));
+      if (result) run.alerts.push(result);
+      for (const event of state.pending.filter((id) => !beforePending.has(id)))
+        run.alerts.push({
+          kind: 'notice',
+          title: events[event].name,
+          text: events[event].description,
+          event,
+        });
+      for (const task of Object.keys(state.tasks).filter((id) => !beforeTasks.has(id)))
+        run.alerts.push({ kind: 'notice', title: '새 할 일', text: state.tasks[task].name, task });
+      if (run.alerts.length) {
+        run.waiting = run.alerts.shift();
+        return state;
+      }
+    }
+    executeSlot(state);
+    if (run.waiting) return state;
+  }
+  closeRunDay(state, 6);
+  const { messages, actions, plan, workCount, before, beforeCourses, moneyBefore } = run;
   const weekly = balance.weekly;
   const stress = weekly.baseStress + Math.round(workCount * weekly.workStress);
   applyEffects(state, { stress, hp: -weekly.healthCost, focus: -weekly.focusCost });
@@ -183,16 +337,6 @@ export function resolveWeek(source) {
     state.money -= fine;
     messages.push(`스터디 불참 벌금 -${fine}원`);
   }
-  const failedCleaning = activeTasks(state).some(
-    (t) => t.special === 'clean' && t.deadline === state.week,
-  );
-  if (failedCleaning) {
-    state.discipline++;
-    messages.push('호실 점검 미완료 · 벌점 +1');
-  }
-  expireTasks(state, messages);
-  for (const exam of assessmentsAt(state.week))
-    messages.push(`${exam.name} · ${assess(state, exam.kind).join(' / ')}`);
   if (random(state) < 0.24 && state.week > 0) {
     const good = random(state) > 0.4;
     applyEffects(state, good ? { stress: -3, reputation: 1 } : { stress: 3, hp: -2 });
@@ -201,10 +345,21 @@ export function resolveWeek(source) {
     );
   }
   state.fatigue =
-    state.stats.hp < balance.fatigue.lowHealth || state.stats.stress >= balance.fatigue.highStress
+    state.stats.hp < balance.fatigue.lowHealth ||
+    state.stats.stress >= balance.fatigue.highStress ||
+    run.minHealth <= balance.fatigue.minimumHealth ||
+    run.peakStress >= balance.fatigue.peakStress
       ? 1
       : 0;
-  if (state.fatigue)
+  if (
+    state.fatigue &&
+    (run.minHealth <= balance.fatigue.minimumHealth || run.peakStress >= balance.fatigue.peakStress)
+  )
+    messages.push(
+      '과로 누적 · 작업 중 체력 고갈 또는 극심한 스트레스 · 다음 주 학습 효율 ×' +
+        balance.learning.fatigueMultiplier,
+    );
+  else if (state.fatigue)
     messages.push(
       `만성피로 · 다음 주 학습 효율 ×${balance.learning.fatigueMultiplier}. 체력 ${balance.fatigue.lowHealth} 이상·스트레스 ${balance.fatigue.highStress} 미만으로 회복하세요.`,
     );
@@ -216,8 +371,8 @@ export function resolveWeek(source) {
       messages.push(`선택 마감 · ${events[id].name} (미참여)`);
     }
   const entry = {
-    week: source.week,
-    label: period(source.week).label,
+    week: run.week,
+    label: period(run.week).label,
     plan,
     actions,
     messages,
@@ -234,10 +389,11 @@ export function resolveWeek(source) {
         .map(([id, value]) => [id, Math.round((value - (beforeCourses[id] ?? value)) * 10) / 10])
         .filter(([, delta]) => delta !== 0),
     ),
-    seedBefore: source.seed,
+    seedBefore: run.seedBefore,
     seedAfter: state.seed,
   };
   state.history.push(entry);
+  state.weekRun = null;
   state.week++;
   if (state.week <= 40) beginWeek(state);
   else {
@@ -249,5 +405,20 @@ export function resolveWeek(source) {
     );
     announceChapters(state);
   }
+
   return state;
+}
+
+function closeRunDay(state, day) {
+  const run = state.weekRun;
+  if (day <= run.closedDay) return;
+  for (const task of activeTasks(state))
+    if (task.special === 'clean' && task.deadline <= state.week && (task.deadlineDay ?? 6) <= day) {
+      state.discipline++;
+      run.messages.push('호실 점검 미완료 · 벌점 +1');
+    }
+  expireTasks(state, run.messages, day);
+  for (const exam of assessmentsOnDay(state.week, day))
+    run.messages.push(exam.name + ' · ' + assess(state, exam.kind, exam.sourceId).join(' / '));
+  run.closedDay = day;
 }

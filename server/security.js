@@ -54,7 +54,7 @@ const fields = {
   story: ['type', 'chapter', 'action'],
   copy_day: ['type', 'sourceDay', 'days'],
   preset: ['type', 'preset'],
-  advance: ['type'],
+  advance: ['type', 'skipTask'],
   choose: ['type', 'event', 'option', 'answers'],
   buy: ['type', 'item'],
   ending: ['type', 'ending'],

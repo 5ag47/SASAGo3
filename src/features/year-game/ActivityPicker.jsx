@@ -36,7 +36,7 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
       (id === 'task' && !tasks.length) ||
       (id === 'research' && state.tasks.thesis?.status !== 'active') ||
       (id === 'essay' && state.tasks.essay?.status !== 'active') ||
-      (id === 'study_group' && !state.group)
+      (id === 'study_group' && !state.group && !state.studyApplication)
     );
   }
   return (

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createGame, transition } from '../../src/domain/engine.js';
 import { migrateState, validateState } from '../../src/domain/state.js';
 import { beginWeek } from '../../src/domain/events.js';
-import { resolveWeek } from '../../src/domain/week.js';
+import { runPlannedWeek as resolveWeek } from '../helpers/task-games.js';
 import { choiceOptions, INTERVIEW_QUESTIONS } from '../../src/domain/choices.js';
 import { solveActiveTaskGames } from '../helpers/task-games.js';
 const profile = { name: '선택과목', character: 'girl', role: 'steady', major: 'information' };
@@ -24,7 +24,7 @@ test('an information student with the urban elective can complete every school w
     }
     state = solveActiveTaskGames(state);
     state = transition(state, { type: 'preset', preset: 'tasks' });
-    state = transition(state, { type: 'advance' });
+    state = resolveWeek(state);
     assert.ok(validateState(state));
   }
   assert.equal(

@@ -15,6 +15,10 @@ export function lockedSlots(state) {
       activity: reservation.activity,
       target: reservation.target ?? null,
     };
+  if (state.weekRun) {
+    const count = state.weekRun.cursor + Number(state.weekRun.waiting?.kind === 'task');
+    for (let index = 0; index < count; index++) locked[index] = { ...state.weekRun.plan[index] };
+  }
   return locked;
 }
 export function effectivePlan(state) {

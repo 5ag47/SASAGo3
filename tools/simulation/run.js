@@ -3,7 +3,7 @@ import { choiceOptions, INTERVIEW_QUESTIONS } from '../../src/domain/choices.js'
 import { courses, events, quizzes } from '../../src/domain/catalog.js';
 import { gpa } from '../../src/domain/grades.js';
 import { lockedSlots } from '../../src/domain/schedule.js';
-import { solveActiveTaskGames } from './task-games.js';
+import { solveActiveTaskGames, runPlannedWeek } from './task-games.js';
 
 export const STRATEGIES = {
   tasks: '할 일 우선',
@@ -75,12 +75,14 @@ export function simulateYear({
   target = strategy === 'portfolio' ? 'dream' : 'balanced',
   role = 'steady',
   electives = [],
+  onWeek = () => {},
 } = {}) {
   let state = createGame({ name: '전략 검증', character: 'boy', role, major, electives }, seed);
   let minimumMoney = state.money,
     fatigueWeeks = 0,
     totalTasks = 0;
   while (state.week <= 40) {
+    onWeek(state);
     state = chooseWeek(state, strategy, target);
     state = solveActiveTaskGames(state);
     state = transition(state, {
@@ -125,7 +127,7 @@ export function simulateYear({
       if (index >= 0)
         state = transition(state, { type: 'plan', index, activity: 'clean', target: null });
     }
-    state = transition(state, { type: 'advance' });
+    state = runPlannedWeek(state);
     minimumMoney = Math.min(minimumMoney, state.money);
     fatigueWeeks += Number(Boolean(state.fatigue));
   }

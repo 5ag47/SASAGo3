@@ -18,4 +18,8 @@ export function applyEffects(state, effects = {}, multiplier = 1, { growth = tru
           ) * 10,
         ) / 10;
   }
+  if (state.weekRun?.minHealth !== undefined) {
+    state.weekRun.minHealth = Math.min(state.weekRun.minHealth, state.stats.hp);
+    state.weekRun.peakStress = Math.max(state.weekRun.peakStress, state.stats.stress);
+  }
 }

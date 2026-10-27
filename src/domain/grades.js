@@ -61,7 +61,7 @@ export function admissionThreshold(event) {
 export function admissionTargetBonus(target, profile) {
   return balance.admissions.targetBonuses[target]?.[profile] ?? 0;
 }
-export function assess(state, kind) {
+export function assess(state, kind, sourceId) {
   const term = state.week <= 16 ? 1 : 2;
   return state.courses.map((id) => {
     const ability = courseAbility(state, id);
@@ -76,7 +76,7 @@ export function assess(state, kind) {
     const condition = (state.stats.hp - 50) * 0.04 - Math.max(0, state.stats.stress - 60) * 0.12;
     const score = Math.round(clamp(examBaseScore(ability, state.week) + difficulty + condition));
     const mark = {
-      id: `${term}-${id}-${kind}-${state.week}`,
+      id: `${term}-${id}-${kind}-${state.week}${sourceId ? '-' + sourceId : ''}`,
       course: id,
       kind,
       score,
@@ -91,7 +91,7 @@ export function assess(state, kind) {
 export function admissionScore(state) {
   const thesis =
     state.tasks.thesis?.status === 'completed'
-      ? 100
+      ? (state.tasks.thesis.result?.quality ?? 100)
       : ((state.tasks.thesis?.progress ?? 0) / 12) * 100;
   const essay = Math.min(100, ((state.tasks.essay?.progress ?? 0) / 8) * 100);
   const recommendation = state.flags.recommender ? state.teachers[state.flags.recommender] : 10;

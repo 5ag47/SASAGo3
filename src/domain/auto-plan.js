@@ -42,9 +42,21 @@ export function buildPreset(state, preset = 'balanced') {
       : balance.presets.workSlots;
   const workSlots = free.slice(0, Math.max(0, budget - fixedWork));
   const tasks = activeTasks(state).sort((a, b) => a.deadline - b.deadline || a.start - b.start);
-  const queue = tasks.flatMap((task) =>
-    Array.from({ length: taskEstimate(state, task) }, () => task),
-  );
+  const queue = tasks.flatMap((task) => {
+    const limit = task.module?.params?.weeklyLimit;
+    const available = Number.isInteger(limit)
+      ? Math.max(0, limit - (task.attempts?.week === state.week ? task.attempts.weekCount : 0))
+      : 21;
+    const estimate = taskEstimate(state, task);
+    const spread =
+      task.target >= 8
+        ? Math.max(
+            balance.presets.longProjectSlots,
+            Math.ceil(estimate / Math.max(1, task.deadline - state.week + 1)),
+          )
+        : estimate;
+    return Array.from({ length: Math.min(estimate, available, spread) }, () => task);
+  });
   const taskBudget =
     preset === 'tasks'
       ? workSlots.length

@@ -13,7 +13,8 @@
   "presets": {
     "workSlots": 9,
     "recoveryWorkSlots": 5,
-    "balancedTaskSlots": 4
+    "balancedTaskSlots": 4,
+    "longProjectSlots": 2
   },
   "exams": {
     "base": 52,
@@ -79,6 +80,8 @@
     "repetitionFloor": 0.55
   },
   "fatigue": {
+    "minimumHealth": 5,
+    "peakStress": 95,
     "lowHealth": 25,
     "highStress": 80
   }

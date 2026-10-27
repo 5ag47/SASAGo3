@@ -23,6 +23,17 @@ import { TASK_GAME_VIEW_IDS } from '../src/features/year-game/task-games/catalog
 import { balance } from '../src/domain/balance.js';
 import { balanceIssues } from '../src/domain/balance-validation.js';
 import { chapters, chapterIssues } from '../src/domain/story.js';
+import { calendar, calendarIssues, calendarTiming } from '../src/domain/calendar-date.js';
+import { CALENDAR_SOURCE_IDS } from '../src/domain/calendar-entries.js';
+assert.deepEqual(
+  calendarIssues(calendar, {
+    eventIds: Object.keys(events),
+    courseIds: Object.keys(courses),
+    sourceIds: CALENDAR_SOURCE_IDS,
+  }),
+  [],
+  'Invalid calendar definitions',
+);
 assert.deepEqual(chapterIssues(chapters), [], 'Invalid story chapters');
 assert.deepEqual(balanceIssues(balance), [], 'Invalid balance configuration');
 for (const module of Object.values(TASK_MODULES))
@@ -96,6 +107,11 @@ for (const [id, event] of Object.entries(events)) {
   assert.ok(kinds.includes(event.kind), `${id}: unknown event kind`);
   assert.ok(event.name && event.description);
   assert.ok(Number.isInteger(event.week) && event.week >= 0 && event.week <= 40);
+  if (event.day !== undefined)
+    assert.ok(
+      Number.isInteger(event.day) && event.day >= 0 && event.day <= 6,
+      `${id}: invalid weekday`,
+    );
   if (event.course) assert.ok(Object.hasOwn(courses, event.course));
   if (event.kind === 'quiz') assert.ok(Object.hasOwn(quizzes, event.quiz));
   if (event.profile)
@@ -108,6 +124,12 @@ for (const [id, event] of Object.entries(events)) {
   if (event.kind === 'task') {
     assert.ok(event.target > 0);
     assert.ok(event.deadline >= event.week && event.deadline <= 40);
+    const start = calendarTiming(`event:${id}`, event.week, event.day ?? 0);
+    const deadline = calendarTiming(`deadline:${id}`, event.deadline, event.deadlineDay ?? 6);
+    assert.ok(
+      deadline.week * 7 + deadline.day >= start.week * 7 + start.day,
+      `${id}: calendar deadline cannot precede the task start`,
+    );
     effects(event.reward);
     effects(event.penalty);
   }

@@ -7,8 +7,19 @@ export function GroupPanel({ state, onRecruit }) {
     <>
       <div className="group-intro">
         <Users size={35} />
-        <h3>{state.group ? GROUPS[state.group].name : '가입한 스터디 없음'}</h3>
+        <h3>
+          {state.group
+            ? GROUPS[state.group].name
+            : state.studyApplication
+              ? '지원 결과 대기'
+              : '가입한 스터디 없음'}
+        </h3>
       </div>
+      {state.studyApplication && (
+        <p className="dialog-lead">
+          {GROUPS[state.studyApplication.group].name} · 다음날 결과 도착
+        </p>
+      )}
       {!state.group && state.pending.includes('winter_study') && (
         <button className="primary full" onClick={onRecruit}>
           모집 공고 보기

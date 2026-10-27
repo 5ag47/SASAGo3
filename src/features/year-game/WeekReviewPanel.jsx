@@ -1,5 +1,5 @@
 import { AlertTriangle, ArrowRight, Check, ChevronRight } from 'lucide-react';
-import { choiceDeadline, events, period } from '../../domain/catalog.js';
+import { choiceDeadline, events, period, effectText } from '../../domain/catalog.js';
 import { reviewPlan } from '../../domain/planning.js';
 import { nextAssessments } from '../../domain/school-calendar.js';
 import './planning.css';
@@ -32,21 +32,6 @@ export default function WeekReviewPanel({
           <span>회복 활동</span>
         </div>
       </div>
-      {review.unprepared.length > 0 && (
-        <section className="review-tasks">
-          <h3>배정한 과제의 미니게임이 남아 있습니다</h3>
-          {review.unprepared.map((task) => (
-            <button key={task.id} onClick={() => onTaskGame(task.id)}>
-              <AlertTriangle size={16} />
-              <span>
-                <b>{task.name}</b>
-                <small>미니게임 미완료 · 이번 주 진척 없음</small>
-              </span>
-              <ArrowRight size={14} />
-            </button>
-          ))}
-        </section>
-      )}
       {review.due.length > 0 && (
         <section className="review-tasks" aria-label="마감 과제 시간 배정">
           <h3>이번 주 마감</h3>
@@ -66,6 +51,30 @@ export default function WeekReviewPanel({
               <ArrowRight size={14} />
             </button>
           ))}
+        </section>
+      )}
+      {review.taskRisks.length > 0 && (
+        <section className="review-tasks">
+          <h3>반복 작업 부담</h3>
+          {review.taskRisks.map((risk) => (
+            <button key={risk.id} onClick={() => onTask(risk.id)}>
+              <AlertTriangle size={16} />
+              <span>
+                <b>
+                  {risk.name} · {risk.planned}회 배정
+                </b>
+                <small>도전 비용 합계(예상) · {effectText(risk.effects)}</small>
+                {risk.cap && (
+                  <small>
+                    주간 상한 {risk.cap}회 · 남은 도전 {risk.possible}회
+                  </small>
+                )}
+              </span>
+            </button>
+          ))}
+          <p className="review-warning">
+            체력 고갈이나 극심한 스트레스는 회복 후에도 다음 주 피로로 남을 수 있습니다.
+          </p>
         </section>
       )}
       {exams.length > 0 && (

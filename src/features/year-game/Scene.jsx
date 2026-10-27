@@ -19,7 +19,11 @@ export default function Scene({ state, night, onOpen, onTask }) {
             <h2>
               <ClipboardList size={17} /> 할 일
             </h2>
-            <button onClick={() => onOpen('tasks')} aria-label="할 일 전체 보기">
+            <button
+              data-tutorial="tasks"
+              onClick={() => onOpen('tasks')}
+              aria-label="할 일 전체 보기"
+            >
               <ArrowUpRight size={16} />
             </button>
           </div>
@@ -66,7 +70,11 @@ export default function Scene({ state, night, onOpen, onTask }) {
               <Heart size={14} /> 능력치{' '}
               {state.fatigue ? <small className="fatigue-tag">피로</small> : null}
             </h2>
-            <button onClick={() => onOpen('stats')} aria-label="능력치 자세히 보기">
+            <button
+              data-tutorial="stats"
+              onClick={() => onOpen('stats')}
+              aria-label="능력치 자세히 보기"
+            >
               <ArrowUpRight size={14} />
             </button>
           </div>

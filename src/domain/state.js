@@ -14,6 +14,10 @@ import {
 import { emptyMinigames, validMinigames } from './minigames.js';
 import { buildPreset } from './auto-plan.js';
 import { validStory, chapters } from './story.js';
+import { validStudyApplication } from './study-applications.js';
+import { validTaskAttempts } from './task-attempts.js';
+import { validWeekRun } from './week-run-validation.js';
+import { upgradeTaskFlow } from './task-flow-migration.js';
 import { validTaskStages, TASK_FORMATS } from './assignments.js';
 import {
   moduleIssues,
@@ -24,7 +28,7 @@ import {
 
 export const SCHEMA_VERSION = 1;
 export const SAVE_KEY = 'sasago3-year-v1';
-export const CONTENT_VERSION = '2026.10.27-8';
+export const CONTENT_VERSION = '2026.10.28-1';
 export function baseState(seed = 20261013) {
   return {
     version: SCHEMA_VERSION,
@@ -62,10 +66,18 @@ export function baseState(seed = 20261013) {
     choices: {},
     minigames: emptyMinigames(),
     story: {},
+    weekRun: null,
+    studyApplication: null,
     group: null,
     rejectedGroups: [],
     teachers: { math: 15, science: 15, homeroom: 20 },
-    flags: { environment: 'home', camp: 'none', target: 'balanced', taskGamesVersion: 1 },
+    flags: {
+      environment: 'home',
+      camp: 'none',
+      target: 'balanced',
+      taskGamesVersion: 1,
+      taskFlowVersion: 2,
+    },
     fatigue: 0,
     discipline: 0,
     awards: 0,
@@ -96,6 +108,34 @@ export function migrateState(value) {
   }
   if (value.minigames === undefined) next = { ...next, minigames: emptyMinigames() };
   if (value.story === undefined) next = { ...next, story: {} };
+  if (value.weekRun === undefined) next = { ...next, weekRun: null };
+  if (value.studyApplication === undefined) next = { ...next, studyApplication: null };
+  if (next.weekRun && next.weekRun.minHealth === undefined)
+    next = {
+      ...next,
+      weekRun: {
+        ...next.weekRun,
+        minHealth: Math.min(next.weekRun.before.hp, next.stats.hp),
+        peakStress: Math.max(next.weekRun.before.stress, next.stats.stress),
+        closedDay: -1,
+        alerts: [],
+      },
+    };
+  if (
+    next.tasks &&
+    Object.values(next.tasks).some((task) => task.attempts && task.attempts.sequence === undefined)
+  )
+    next = {
+      ...next,
+      tasks: Object.fromEntries(
+        Object.entries(next.tasks).map(([id, task]) => [
+          id,
+          task.attempts && task.attempts.sequence === undefined
+            ? { ...task, attempts: { ...task.attempts, sequence: 0, receipts: [] } }
+            : task,
+        ]),
+      ),
+    };
   if (value.electives === undefined || value.nextElectives === undefined)
     next = {
       ...next,
@@ -152,6 +192,7 @@ export function migrateState(value) {
         },
       };
   }
+  if (next.created && next.flags && !next.flags.taskFlowVersion) next = upgradeTaskFlow(next);
   return next;
 }
 export function balancedPlan(state) {
@@ -167,6 +208,7 @@ export function validateState(s) {
     return false;
   if (!validMinigames(s.minigames)) return false;
   if (!validStory(s.story)) return false;
+  if (!validStudyApplication(s.studyApplication) || !validWeekRun(s)) return false;
   if (
     !Number.isInteger(s.week) ||
     s.week < 0 ||
@@ -257,8 +299,11 @@ export function validateState(s) {
         t.target > 0 &&
         t.progress <= t.target &&
         validTaskStages(t) &&
+        (t.deadlineDay === undefined ||
+          (Number.isInteger(t.deadlineDay) && t.deadlineDay >= 0 && t.deadlineDay <= 6)) &&
         moduleIssues(t.module).length === 0 &&
         validModuleData(t.moduleData) &&
+        validTaskAttempts(t.attempts) &&
         (t.moduleData === undefined ||
           !taskModule(t).game ||
           taskModule(t).game.valid(t.moduleData)) &&

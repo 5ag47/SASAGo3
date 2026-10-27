@@ -1,6 +1,7 @@
 import { baseState, CONTENT_VERSION } from '../src/domain/state.js';
 import { transition, GameError } from '../src/domain/engine.js';
 import { publicTasks } from '../src/domain/task-processing.js';
+import { publicWeekRun, taskDelta } from './game-updates.js';
 import {
   ApiError,
   csrfToken,
@@ -38,6 +39,7 @@ export function createApi({
       ...state,
       seed: 0,
       tasks: publicTasks(state.tasks),
+      weekRun: publicWeekRun(state.weekRun),
       history: state.history.map(({ seedBefore, seedAfter, ...entry }) => entry),
     };
   }
@@ -166,7 +168,13 @@ export function createApi({
         }),
       );
       return output(
-        { state: publicState(next), csrf: await csrfToken(secret, player, now()) },
+        {
+          ...(body.command?.type === 'task_game' &&
+          request.headers.get('X-Game-Update') === 'task-v1'
+            ? { delta: taskDelta(state, next, body.command.task) }
+            : { state: publicState(next) }),
+          csrf: await csrfToken(secret, player, now()),
+        },
         200,
         trace,
       );

@@ -4,7 +4,7 @@ import { balance, ACADEMIC_STATS } from '../../src/domain/balance.js';
 import { balanceIssues } from '../../src/domain/balance-validation.js';
 import { createGame, transition, endingAvailable } from '../../src/domain/engine.js';
 import { addTask, workTask } from '../../src/domain/tasks.js';
-import { resolveWeek } from '../../src/domain/week.js';
+import { runPlannedWeek as resolveWeek } from '../helpers/task-games.js';
 import { random } from '../../src/domain/random.js';
 import { events } from '../../src/domain/catalog.js';
 import { resolveAdmission } from '../../src/domain/grades.js';
@@ -87,6 +87,12 @@ test('puzzle mistakes reduce a project mark without blocking completion or payin
     deadline: 3,
     module: { id: 'order_v1', params: {} },
   });
+  perfect.plan = Array.from({ length: 21 }, (_, index) =>
+    index === 0
+      ? { activity: 'task', target: 'quality_task' }
+      : { activity: 'sleep', target: null },
+  );
+  perfect = transition(perfect, { type: 'advance' });
   perfect = transition(perfect, {
     type: 'task_game',
     task: 'quality_task',
@@ -105,8 +111,8 @@ test('puzzle mistakes reduce a project mark without blocking completion or payin
   assert.ok(
     mistaken.tasks.quality_task.result.score >= perfect.tasks.quality_task.result.score * 0.9,
   );
-  assert.equal(perfect.money, 30000);
-  assert.equal(mistaken.money, 30000);
+  assert.equal(perfect.money, 40000);
+  assert.equal(mistaken.money, 40000);
 });
 test('admission rounding and the displayed mark use the same pass boundary', () => {
   const state = fresh();

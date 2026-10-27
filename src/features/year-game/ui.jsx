@@ -93,10 +93,11 @@ export function PanelHeading({ eyebrow, title, children }) {
     </div>
   );
 }
-export function ChoiceButton({ title, description, onClick, selected, disabled, icon }) {
+export function ChoiceButton({ title, description, onClick, selected, disabled, icon, anchor }) {
   return (
     <button
       className={`choice-row ${selected ? 'selected' : ''}`}
+      data-tutorial={anchor}
       onClick={onClick}
       disabled={disabled}
       aria-pressed={selected}

@@ -1,3 +1,4 @@
+import { runPlannedWeek as resolveWeek } from '../helpers/task-games.js';
 import test from 'node:test';
 import { solveActiveTaskGames } from '../helpers/task-games.js';
 import assert from 'node:assert/strict';
@@ -6,7 +7,7 @@ import { baseState, migrateState, validateState } from '../../src/domain/state.j
 import { beginWeek } from '../../src/domain/events.js';
 import { courseAbility } from '../../src/domain/course-progress.js';
 import { assess, resolveAdmission } from '../../src/domain/grades.js';
-import { effectivePlan, lockedSlots, resolveWeek } from '../../src/domain/week.js';
+import { effectivePlan, lockedSlots } from '../../src/domain/week.js';
 import { reviewPlan, taskAllocation } from '../../src/domain/planning.js';
 import { assessmentsAt, nextAssessments } from '../../src/domain/school-calendar.js';
 import { events, courses, quizzes, period } from '../../src/domain/catalog.js';

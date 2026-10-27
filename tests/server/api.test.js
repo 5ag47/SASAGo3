@@ -7,10 +7,40 @@ import { ApiError } from '../../server/security.js';
 import { CONTENT_VERSION } from '../../src/domain/state.js';
 import { beginWeek } from '../../src/domain/events.js';
 import { availableChapters } from '../../src/domain/story.js';
+import { applyServerUpdate } from '../../src/platform/server-updates.js';
+import { validateState } from '../../src/domain/state.js';
 
 const origin = 'https://game.example';
 const secret = 'test-only-secret-do-not-use-in-production-1234567890';
 const profile = { name: '서버 테스트', character: 'boy', role: 'steady', major: 'math' };
+test('small task updates preserve client history, hide the target and recover a lost reply as a full snapshot', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const created = await f.post(await f.get(), { type: 'create', profile });
+  const running = await f.post(created, { type: 'advance' });
+  const id = 'practice-report';
+  const started = await f.post(running, { type: 'task_game', task: id, action: { type: 'start' } });
+  const key = randomUUID(),
+    command = { type: 'task_game', task: id, action: { type: 'ready' } };
+  const response = await f.post(started, command, { key, headers: { 'X-Game-Update': 'task-v1' } });
+  assert.equal(response.response.status, 200);
+  assert.equal(response.state, undefined);
+  assert.equal(response.delta.task.moduleData.goal, null);
+  assert.equal(response.delta.weekRun.seedBefore, 0);
+  assert.equal(response.delta.history, undefined);
+  const next = applyServerUpdate(started.state, response, id);
+  assert.ok(validateState(next));
+  assert.equal(next.history, started.state.history);
+  assert.equal(next.tasks[id].moduleData.phase, 'input');
+  const replay = await f.post(started, command, { key, headers: { 'X-Game-Update': 'task-v1' } });
+  assert.ok(replay.state);
+  assert.equal(replay.replayed, true);
+  assert.deepEqual(applyServerUpdate(started.state, replay, id), replay.state);
+  assert.throws(
+    () => applyServerUpdate({ ...started.state, revision: 99 }, response, id),
+    (error) => error.code === 'RESPONSE_INVALID' && error.outcomeUnknown,
+  );
+});
 test('story reading uses atomic server saves and rejects client progress injection', async (t) => {
   const f = fixture();
   t.after(() => f.store.close());
@@ -33,12 +63,15 @@ test('task mini-games persist per action, hide a recalled pattern and accept a d
   t.after(() => f.store.close());
   const created = await f.post(await f.get(), { type: 'create', profile });
   const task = 'practice-report';
+  const beforeTime = await f.post(created, { type: 'task_game', task, action: { type: 'start' } });
+  assert.equal(beforeTime.code, 'TASK_TIME_REQUIRED');
+  const scheduled = await f.post(created, { type: 'advance' });
   const start = { type: 'task_game', task, action: { type: 'start' } };
   const key = randomUUID();
-  const started = await f.post(created, start, { key });
+  const started = await f.post(scheduled, start, { key });
   assert.equal(started.response.status, 200);
   const goal = [...started.state.tasks[task].moduleData.goal];
-  const duplicate = await f.post(created, start, { key });
+  const duplicate = await f.post(scheduled, start, { key });
   assert.equal(duplicate.state.revision, started.state.revision);
   assert.deepEqual(duplicate.state.tasks[task].moduleData.goal, goal);
   let session = await f.post(started, { type: 'task_game', task, action: { type: 'ready' } });
@@ -60,8 +93,8 @@ test('task mini-games persist per action, hide a recalled pattern and accept a d
   for (const cell of goal)
     session = await f.post(session, { type: 'task_game', task, action: { type: 'toggle', cell } });
   session = await f.post(session, { type: 'task_game', task, action: { type: 'check' } });
-  assert.equal(session.state.tasks[task].moduleData.passed, true);
-  assert.equal(session.state.tasks[task].progress, 0);
+  assert.equal(session.state.weekRun.waiting.kind, 'task_result');
+  assert.equal(session.state.tasks[task].progress, 1);
   assert.equal(session.state.tasks['first-study'].moduleData, undefined);
 });
 test('day copy is one atomic server command and duplicate deliveries do not apply it twice', async (t) => {
@@ -290,8 +323,10 @@ test('authenticated server creates and advances state without accepting client-c
     option: 'friends',
   });
   const after = await f.post(chosen, { type: 'advance' });
-  assert.equal(after.state.week, 1);
-  assert.equal(after.state.history[0].seedAfter, undefined);
+  assert.equal(after.state.week, 0);
+  assert.equal(after.state.weekRun.waiting.kind, 'notice');
+  assert.equal(after.state.group, 'friends');
+  assert.equal(after.state.weekRun.seedBefore, 0);
   const tamper = await f.post(after, { type: 'advance', stats: { math: 100 } });
   assert.equal(tamper.response.status, 400);
   assert.equal(tamper.code, 'COMMAND_SHAPE');

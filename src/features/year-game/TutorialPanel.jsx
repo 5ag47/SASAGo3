@@ -59,7 +59,7 @@ export default function TutorialPanel({ tutorial, state, onLesson }) {
             <p>{lesson.practice}</p>
           </div>
           <button className="primary full" onClick={() => onLesson({ ...lesson, target })}>
-            {action}
+            직접 찾아보기
             <ChevronRight size={15} />
           </button>
         </section>

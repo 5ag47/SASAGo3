@@ -8,7 +8,7 @@ import { taskModule, taskGameReady } from '../../src/domain/task-modules/registr
 import { addTask, workTask, expireTasks } from '../../src/domain/tasks.js';
 import { migrateState, validateState } from '../../src/domain/state.js';
 import { publicTasks } from '../../src/domain/task-processing.js';
-import { solveTaskGame } from '../helpers/task-games.js';
+import { solveTaskGame, runPlannedWeek } from '../helpers/task-games.js';
 const context = { courses, stats: STATS };
 const definition = {
   kind: 'task',
@@ -23,11 +23,21 @@ const definition = {
 const fresh = () =>
   createGame({ name: '모듈 검증', character: 'boy', role: 'steady', major: 'math' });
 const move = (state, task, action) => transition(state, { type: 'task_game', task, action });
+function atWork(state, task, slots = 1) {
+  state.plan = Array.from({ length: 21 }, (_, i) =>
+    i < slots ? { activity: 'task', target: task } : { activity: 'sleep', target: null },
+  );
+  return transition(state, { type: 'advance' });
+}
 
 test('all 94 existing authored tasks and runtime tutorial tasks have playable modules', () => {
   assert.equal(Object.keys(assignments).filter((id) => assignments[id].kind === 'task').length, 94);
   for (const task of Object.values(assignmentEvents)) assert.ok(taskModule(task).game, task.name);
-  for (const task of Object.values(fresh().tasks)) assert.ok(taskModule(task).game, task.id);
+  for (const task of Object.values(fresh().tasks))
+    assert.ok(
+      task.special === 'tutorial' ? task.module.id === 'time_v1' : taskModule(task).game,
+      task.id,
+    );
   assert.equal(assignmentIssues(assignments, context).length, 0);
 });
 test('individual module overrides group modules; conflicting groups fail before application', () => {
@@ -74,6 +84,7 @@ test('repeated assignments get separate IDs, snapshots and mini-game data', () =
   let state = fresh();
   addTask(state, 'repeat_task', expanded.repeat_task);
   addTask(state, 'repeat_task--w3', expanded['repeat_task--w3']);
+  state = atWork(state, 'repeat_task');
   state = move(state, 'repeat_task', { type: 'start' });
   assert.equal(state.tasks['repeat_task--w3'].moduleData, undefined);
   assert.notEqual(state.tasks.repeat_task.module, state.tasks['repeat_task--w3'].module);
@@ -81,8 +92,9 @@ test('repeated assignments get separate IDs, snapshots and mini-game data', () =
 test('order module survives reload, penalizes mistakes, and does not grant progress before scheduled work', () => {
   let state = fresh();
   addTask(state, 'ordered_task', { ...definition, module: { id: 'order_v1', params: {} } });
-  const messages = [],
-    money = state.money;
+  const messages = [];
+  state = atWork(state, 'ordered_task', 2);
+  const money = state.money;
   workTask(state, 'ordered_task', messages);
   assert.equal(state.tasks.ordered_task.progress, 0);
   state = move(state, 'ordered_task', { type: 'start' });
@@ -94,10 +106,10 @@ test('order module survives reload, penalizes mistakes, and does not grant progr
   });
   state = migrateState(JSON.parse(JSON.stringify(state)));
   state = solveTaskGame(state, 'ordered_task');
-  assert.equal(state.tasks.ordered_task.moduleData.quality, 90);
-  assert.equal(state.tasks.ordered_task.progress, 0);
-  workTask(state, 'ordered_task', messages);
-  workTask(state, 'ordered_task', messages);
+  assert.equal(state.tasks.ordered_task.attempts.lastQuality, 90);
+  assert.equal(state.tasks.ordered_task.progress, 1);
+  state = transition(state, { type: 'advance' });
+  state = solveTaskGame(state, 'ordered_task');
   assert.equal(state.tasks.ordered_task.status, 'completed');
   const math = state.stats.math;
   workTask(state, 'ordered_task', messages);
@@ -106,7 +118,7 @@ test('order module survives reload, penalizes mistakes, and does not grant progr
   assert.ok(validateState(state));
 });
 test('pattern module hides the target after preview and rejects submitted pass or score fields', () => {
-  let state = move(fresh(), 'practice-report', { type: 'start' });
+  let state = move(atWork(fresh(), 'practice-report'), 'practice-report', { type: 'start' });
   const goal = [...state.tasks['practice-report'].moduleData.goal];
   assert.deepEqual(publicTasks(state.tasks)['practice-report'].moduleData.goal, goal);
   state = move(state, 'practice-report', { type: 'ready' });
@@ -116,9 +128,10 @@ test('pattern module hides the target after preview and rejects submitted pass o
   });
   for (const cell of goal) state = move(state, 'practice-report', { type: 'toggle', cell });
   state = move(state, 'practice-report', { type: 'check' });
-  assert.ok(taskGameReady(state.tasks['practice-report']));
+  assert.equal(state.tasks['practice-report'].progress, 1);
+  assert.equal(state.weekRun.waiting.kind, 'task_result');
   assert.throws(() => move(state, 'practice-report', { type: 'start' }), {
-    code: 'TASK_GAME_ACTION',
+    code: 'TASK_TIME_REQUIRED',
   });
 });
 test('stages advance with work after the game; expiry and completion rewards cannot repeat', () => {
@@ -130,12 +143,12 @@ test('stages advance with work after the game; expiry and completion rewards can
       { id: 'last_step', name: '뒤 단계', target: 1 },
     ],
   });
-  state = solveTaskGame(state, 'staged_task');
-  workTask(state, 'staged_task', []);
+  state = solveTaskGame(atWork(state, 'staged_task'), 'staged_task');
   assert.deepEqual(
     taskStages(state.tasks.staged_task).map((stage) => stage.status),
     ['completed', 'active'],
   );
+  state = runPlannedWeek(state);
   state.week = 3;
   expireTasks(state, []);
   const stress = state.stats.stress;

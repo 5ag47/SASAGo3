@@ -6,24 +6,46 @@ export function solveTaskGame(source, taskId) {
     state = transition(state, { type: 'task_game', task: taskId, action });
   };
   const task = state.tasks[taskId];
+  if (state.weekRun?.waiting?.kind !== 'task' || state.weekRun.waiting.task !== taskId)
+    return state;
   if (!taskModule(task).game || task.moduleData?.passed || task.status !== 'active') return state;
   if (!task.moduleData) move({ type: 'start' });
-  let data = state.tasks[taskId].moduleData;
-  if (data.kind === 'order') {
+  const current = state.tasks[taskId],
+    data = current.moduleData,
+    actions = [];
+  if (data.kind === 'order')
     for (const card of [...data.cards].sort((a, b) => a - b).slice(data.index))
-      move({ type: 'pick', card });
-  } else {
+      actions.push({ type: 'pick', card });
+  else {
     const goal = [...data.goal];
-    if (data.phase === 'preview') move({ type: 'ready' });
-    for (const cell of data.selected) move({ type: 'toggle', cell });
-    for (const cell of goal) move({ type: 'toggle', cell });
-    move({ type: 'check' });
+    if (data.phase === 'preview') actions.push({ type: 'ready' });
+    for (const cell of data.selected) actions.push({ type: 'toggle', cell });
+    for (const cell of goal) actions.push({ type: 'toggle', cell });
+    actions.push({ type: 'check' });
   }
+  move({
+    type: 'batch',
+    attempt: current.attempts.total,
+    from: current.attempts.sequence,
+    actions,
+  });
   return state;
 }
 export function solveActiveTaskGames(source) {
+  return source.weekRun?.waiting?.kind === 'task'
+    ? solveTaskGame(source, source.weekRun.waiting.task)
+    : source;
+}
+export function runPlannedWeek(source) {
   let state = source;
-  for (const task of Object.values(state.tasks))
-    if (task.status === 'active') state = solveTaskGame(state, task.id);
+  const week = state.week;
+  let steps = 0;
+  do {
+    if (++steps > 1000) throw new Error('SIMULATION_WEEK_LOOP');
+    state =
+      state.weekRun?.waiting?.kind === 'task'
+        ? solveTaskGame(state, state.weekRun.waiting.task)
+        : transition(state, { type: 'advance' });
+  } while (state.week === week);
   return state;
 }

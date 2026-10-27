@@ -60,7 +60,7 @@ export default function Planner({
           </button>
         ))}
       </div>
-      <div className="session-cards">
+      <div className="session-cards" data-tutorial="schedule">
         {SESSIONS.map((label, i) => {
           const index = day * 3 + i;
           const slot = plan[index];
@@ -139,12 +139,19 @@ export default function Planner({
       {fee > 0 && <p className="plan-cost">예정 지출 {fee.toLocaleString()}원</p>}
       <button
         className="primary start-week"
+        data-tutorial="confirm"
         disabled={busy || Boolean(state.ending)}
         onClick={onStart}
       >
         <Play size={17} fill="currentColor" />
         <span>
-          {state.week > 40 ? '나의 결말 선택하기' : busy ? '한 주를 기록하는 중…' : '한 주 진행'}
+          {state.week > 40
+            ? '나의 결말 선택하기'
+            : busy
+              ? '기록하는 중…'
+              : state.weekRun
+                ? '이어서 진행'
+                : '한 주 진행'}
         </span>
         <ArrowRight size={18} />
       </button>

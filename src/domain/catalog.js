@@ -8,6 +8,7 @@ import quizzes from '../../data/quizzes.json' with { type: 'json' };
 import resources from '../../data/resources.json' with { type: 'json' };
 import assignments from '../../data/assignments.json' with { type: 'json' };
 import { expandAssignments } from './assignments.js';
+import { calendarTiming } from './calendar-date.js';
 const assignmentEvents = expandAssignments(assignments);
 const events = { ...storyEvents, ...lifeEvents, ...assignmentEvents };
 
@@ -90,6 +91,7 @@ export const GROUPS = {
 export const LAST_WEEK = 40;
 export const TUTORIAL_TASKS = {
   'first-study': {
+    module: { id: 'time_v1', params: {} },
     name: '수학 공부 1회',
     description: '수학 과목 자습 한 칸을 배정하세요.',
     target: 1,
@@ -143,7 +145,8 @@ export function period(week) {
 export const activeTasks = (state) =>
   Object.values(state.tasks).filter((t) => t.status === 'active');
 export function choiceDeadline(id) {
-  return (
+  const original = events[id]?.week ?? 40;
+  const deadline =
     {
       winter_study: 4,
       academy_offer: 4,
@@ -155,8 +158,8 @@ export function choiceDeadline(id) {
       mock_interview: 28,
     }[id] ??
     events[id]?.week ??
-    40
-  );
+    40;
+  return Math.min(40, calendarTiming(`event:${id}`, original).week + deadline - original);
 }
 export function effectText(effect = {}) {
   return Object.entries(effect)

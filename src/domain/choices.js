@@ -6,6 +6,7 @@ import { reserveActivities } from './schedule.js';
 import { gpa, admissionScore, admissionTargetBonus, admissionThreshold } from './grades.js';
 import { createCardGame, playCardGame, cardOptions, cardScore } from './card-game.js';
 import { INTERVIEW_QUESTIONS } from './interview.js';
+import { submitStudyApplication } from './study-applications.js';
 export { INTERVIEW_QUESTIONS } from './interview.js';
 
 export function choiceOptions(state, id) {
@@ -105,23 +106,8 @@ export function applyChoice(state, id, selected, answers) {
       'event',
     );
   } else if (event.kind === 'study') {
-    const group = GROUPS[selected];
-    if (random(state) >= group.chance) {
-      state.rejectedGroups.push(selected);
-      applyEffects(state, { stress: 2 });
-      notice(
-        state,
-        '이번 팀과는 인연이 닿지 않았어요',
-        '다른 스터디에 지원해 보세요. 찐친 스터디는 언제나 환영이에요.',
-      );
-      return;
-    }
-    state.group = selected;
-    notice(
-      state,
-      '새로운 스터디에 합류했어요',
-      `${group.name} · 일정에 스터디를 넣어 참여하세요. 한 주 불참 시 500원 벌금이에요.`,
-    );
+    submitStudyApplication(state, selected);
+    return;
   } else if (event.kind === 'registration') state.nextMajor = selected;
   else if (event.kind === 'recommendation') {
     state.flags.recommender = selected;

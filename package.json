@@ -17,6 +17,7 @@
     "tasks:editor:build": "vite build --config tools/task-editor/vite.config.mjs",
     "tasks:apply": "node tools/apply-assignments.mjs",
     "balance:simulate": "node tools/simulate-game.mjs",
+    "perf:input": "node tools/benchmark-input.mjs",
     "cloud:secret": "node tools/provision-cloud-secret.mjs",
     "cloud:deploy": "npm run build:secure && wrangler deploy",
     "cloud:backup": "node tools/cloud-backup.mjs",

@@ -1,3 +1,4 @@
+import { runPlannedWeek as resolveWeek } from '../helpers/task-games.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, transition, endingAvailable, planPreset } from '../../src/domain/engine.js';
@@ -6,7 +7,7 @@ import { activities, courses, events, MAJORS, REQUIRED, roles } from '../../src/
 import { choiceOptions, INTERVIEW_QUESTIONS } from '../../src/domain/choices.js';
 import { beginWeek } from '../../src/domain/events.js';
 import { courseGrades, gpa, assess } from '../../src/domain/grades.js';
-import { effectivePlan, resolveWeek } from '../../src/domain/week.js';
+import { effectivePlan } from '../../src/domain/week.js';
 import { solveActiveTaskGames } from '../helpers/task-games.js';
 const profile = { name: '테스트', character: 'boy', role: 'steady', major: 'math' };
 const fresh = (seed = 123) => createGame(profile, seed);
@@ -71,7 +72,7 @@ test('invalid commands and a closed game cannot mutate a source state', () => {
   ])
     assert.throws(() => transition(state, command));
   assert.deepEqual(state, before);
-  assert.throws(() => transition(baseState(), { type: 'advance' }));
+  assert.throws(() => resolveWeek(baseState()));
 });
 test('a player can study or advance before responding to optional events', () => {
   const s = fresh();
@@ -81,7 +82,7 @@ test('a player can study or advance before responding to optional events', () =>
     activity: 'study',
     target: 'linear_algebra',
   });
-  const after = transition(edited, { type: 'advance' });
+  const after = resolveWeek(edited);
   assert.equal(after.week, 1);
   assert.ok(after.pending.includes('winter_study'));
   assert.equal(after.group, null);
@@ -95,11 +96,14 @@ test('expired choices are recorded as skipped without making a choice for the pl
   assert.ok(!after.pending.includes('winter_study'));
 });
 test('failed study applications exclude only that team and preserve another choice', () => {
-  const state = transition(fresh(2000), {
+  let state = transition(fresh(1500), {
     type: 'choose',
     event: 'winter_study',
     option: 'focused',
   });
+  assert.equal(state.group, null);
+  assert.equal(state.studyApplication.group, 'focused');
+  state = resolveWeek(state);
   if (state.group === null) {
     assert.ok(state.rejectedGroups.includes('focused'));
     assert.ok(state.pending.includes('winter_study'));
@@ -109,7 +113,7 @@ test('failed study applications exclude only that team and preserve another choi
 test('a math study slot automatically checks off the first tutorial task', () => {
   const state = fill(ready(), 'sleep');
   state.plan[0] = { activity: 'study', target: 'linear_algebra' };
-  const after = transition(state, { type: 'advance' });
+  const after = resolveWeek(state);
   assert.equal(after.tasks['first-study'].status, 'completed');
   assert.ok(after.stats.math > state.stats.math);
   assert.equal(after.week, 1);
@@ -133,7 +137,7 @@ test('recovery restores health and reduces stress but weekly baseline is still l
 });
 test('a finished task is not silently reassigned to a new task next week', () => {
   const state = fill(ready(), 'task', 'practice-report');
-  const after = transition(state, { type: 'advance' });
+  const after = resolveWeek(state);
   assert.equal(after.tasks['practice-report'].status, 'completed');
   assert.equal(after.tasks.thesis.status, 'active');
   assert.ok(after.plan.every((slot) => slot.activity === 'sleep'));
@@ -144,7 +148,9 @@ test('workload adds stress and a fatigue debuff applies to the following week', 
   state.stats.stress = 75;
   const after = resolveWeek(state);
   assert.equal(after.fatigue, 1);
-  assert.ok(after.history[0].messages.some((m) => m.includes('만성피로')));
+  assert.ok(
+    after.history[0].messages.some((m) => m.includes('만성피로') || m.includes('과로 누적')),
+  );
   const normal = fill(ready(), 'study', 'linear_algebra');
   normal.stats.math = 0;
   const tired = { ...structuredClone(normal), fatigue: 1 };
@@ -152,8 +158,8 @@ test('workload adds stress and a fatigue debuff applies to the following week', 
 });
 test('same seed and same commands produce identical outcomes and deltas', () => {
   const source = ready(fresh(454));
-  const a = transition(source, { type: 'advance' });
-  const b = transition(source, { type: 'advance' });
+  const a = resolveWeek(source);
+  const b = resolveWeek(source);
   assert.deepEqual(a, b);
   for (const key of Object.keys(source.stats))
     assert.equal(a.history[0].delta[key], Math.round((a.stats[key] - source.stats[key]) * 10) / 10);
@@ -282,7 +288,7 @@ test('all five majors can complete the full year with valid, bounded states', ()
         type: 'preset',
         preset: state.week % 3 === 0 ? 'balanced' : 'tasks',
       });
-      state = transition(state, { type: 'advance' });
+      state = resolveWeek(state);
       assert.ok(validateState(state));
     }
     assert.equal(state.history.length, 41);
@@ -294,7 +300,7 @@ test('all five majors can complete the full year with valid, bounded states', ()
     assert.ok(endingAvailable(state, 'work'));
     state = transition(state, { type: 'ending', ending: 'work' });
     assert.equal(state.ending.id, 'work');
-    assert.throws(() => transition(state, { type: 'advance' }));
+    assert.throws(() => resolveWeek(state));
   }
 });
 test('new catalog records have stable keys and valid course references', () => {

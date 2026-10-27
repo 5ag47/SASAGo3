@@ -15,6 +15,7 @@ const fields = {
     workSlots: [1, 21, true],
     recoveryWorkSlots: [0, 21, true],
     balancedTaskSlots: [0, 21, true],
+    longProjectSlots: [1, 21, true],
   },
   exams: {
     base: [0, 100],
@@ -46,7 +47,12 @@ const fields = {
     repetitionLoss: [0, 1],
     repetitionFloor: [0.01, 1],
   },
-  fatigue: { lowHealth: [0, 100], highStress: [0, 100] },
+  fatigue: {
+    lowHealth: [0, 100],
+    highStress: [0, 100],
+    minimumHealth: [0, 100],
+    peakStress: [0, 100],
+  },
 };
 const record = (value) => value && typeof value === 'object' && !Array.isArray(value);
 export function balanceIssues(value) {

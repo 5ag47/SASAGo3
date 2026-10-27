@@ -10,7 +10,7 @@ import { SAVE_KEY } from '../../src/domain/state.js';
 
 const vite = await createServer({
   configFile: false,
-  server: { middlewareMode: true, watch: null },
+  server: { middlewareMode: true, watch: null, hmr: false },
   esbuild: { jsx: 'automatic' },
   optimizeDeps: { noDiscovery: true, include: [], entries: [] },
   appType: 'custom',
@@ -97,18 +97,31 @@ test('story UI resumes a saved page, allows skipping and replays without changin
   await click(document.querySelector('.story-actions .primary'));
   assert.equal(calls, priorCalls);
 });
-test('pattern task UI hides the preview, resumes choices and offers scheduling after server-confirmed completion', async (t) => {
+test('pattern task UI responds immediately, resumes and confirms completion at planned time', async (t) => {
   const render = await mount(t);
   let state = fresh(),
-    assigned = false;
+    continued = false;
+  state.tasks['practice-report'].target = 1;
+  state.plan = Array.from({ length: 21 }, (_, index) =>
+    index === 0
+      ? { activity: 'task', target: 'practice-report' }
+      : { activity: 'sleep', target: null },
+  );
+  state = transition(state, { type: 'advance' });
   const props = () => ({
     task: state.tasks['practice-report'],
+    state,
+    draftKey: 'ui-pattern-draft',
     onBack() {},
     onAssign() {
-      assigned = true;
+      throw Error('completed work must not ask for scheduling');
+    },
+    onContinue() {
+      continued = true;
     },
     onAction(action) {
       state = transition(state, { type: 'task_game', task: 'practice-report', action });
+      return state;
     },
   });
   await render(TaskGamePanel, props());
@@ -129,9 +142,9 @@ test('pattern task UI hides the preview, resumes choices and offers scheduling a
   assert.equal(document.querySelectorAll('.task-pattern-grid .lit').length, 4);
   await click(document.querySelector('.primary'));
   await render(TaskGamePanel, props());
-  assert.match(document.body.textContent, /미니게임 완료/);
+  assert.match(document.body.textContent, /과제 완료/);
   await click(document.querySelector('.primary'));
-  assert.equal(assigned, true);
+  assert.equal(continued, true);
 });
 test('the authoring editor exposes task group membership and the two playable example modules', async (t) => {
   const render = await mount(t);
@@ -159,37 +172,54 @@ test('the authoring editor exposes task group membership and the two playable ex
   assert.match(document.body.textContent, /1개 과제에 모듈 적용/);
   assert.equal(document.querySelectorAll('.group-members input:checked').length, 1);
   assert.ok(
-    [...document.querySelectorAll('option')].some((option) => option.value === 'pattern_v1'),
+    [...document.querySelectorAll('option')].some((option) => option.value === 'pattern_v2'),
   );
   assert.ok([...document.querySelectorAll('option')].some((option) => option.value === 'order_v1'));
 });
-test('the full game connects task opening, mini-game completion, scheduling and automatic weekly completion', async (t) => {
+test('tutorial practice leads to the actual calendar button without opening the feature itself', async (t) => {
   const render = await mount(t);
   localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
   await render(YearGame);
-  await click(document.querySelector('.paper-task'));
-  await click(document.querySelector('#task-first-study .task-game-action'));
-  await click(document.querySelector('.task-game-panel .primary'));
-  const cards = [...document.querySelectorAll('.task-order-cards button')]
-    .map((button) => Number(button.textContent))
-    .sort((a, b) => a - b);
-  for (const card of cards)
-    await click(
-      [...document.querySelectorAll('.task-order-cards button')].find(
-        (button) => Number(button.textContent) === card,
-      ),
-    );
-  assert.match(document.querySelector('dialog').textContent, /미니게임 완료/);
-  await click(document.querySelector('.task-game-passed .primary'));
-  await click(document.querySelector('.session-card'));
-  const planned = JSON.parse(localStorage.getItem(SAVE_KEY));
-  assert.equal(planned.plan[0].activity, 'study');
-  assert.equal(planned.tasks['first-study'].progress, 0);
+  await click(document.querySelector('.tutorial-badge'));
+  await click(
+    [...document.querySelectorAll('.tutorial-workbook nav button')].find((button) =>
+      button.textContent.includes('시험과 학사'),
+    ),
+  );
+  await click(document.querySelector('.lesson-content .primary'));
+  assert.equal(document.querySelector('dialog'), null);
+  assert.ok(document.querySelector('.tutorial-guide').textContent.includes('왼쪽 아래'));
+  assert.equal(document.querySelector('.calendar-grid'), null);
+  await click(document.querySelector('[data-tutorial="calendar"]'));
+  assert.equal(document.querySelectorAll('.calendar-grid [role="gridcell"]').length, 42);
+  await click(document.querySelector('[aria-label="다음 달"]'));
+  await click(document.querySelector('[aria-label="다음 달"]'));
+  assert.match(document.querySelector('.calendar-heading h3').textContent, /4월/);
+  assert.match(document.querySelector('.tutorial-badge').textContent, /1\/8/);
+});
+test('the full game plans first, performs two work rounds and completes the report before the week ends', async (t) => {
+  const render = await mount(t);
+  localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
+  await render(YearGame);
   await click(document.querySelector('.start-week'));
   await click(document.querySelector('.week-review > .primary'));
-  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-  assert.equal(saved.tasks['first-study'].status, 'completed');
-  assert.equal(saved.week, 1);
+  for (let round = 0; round < 2; round++) {
+    await click(document.querySelector('.task-game-panel .primary'));
+    const goal = [...document.querySelectorAll('.task-pattern-grid button')].flatMap(
+      (button, index) => (button.classList.contains('lit') ? [index] : []),
+    );
+    await click(document.querySelector('.task-game-panel .primary'));
+    for (const cell of goal)
+      await click(document.querySelectorAll('.task-pattern-grid button')[cell]);
+    await click(document.querySelector('.task-game-panel .primary'));
+    const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+    assert.equal(saved.tasks['practice-report'].progress, round + 1);
+    assert.equal(saved.week, 0);
+    assert.equal(saved.tasks['practice-report'].status, round === 1 ? 'completed' : 'active');
+    await click(document.querySelector('.task-game-passed .primary'));
+  }
+  assert.equal(JSON.parse(localStorage.getItem(SAVE_KEY)).week, 1);
+  assert.match(document.querySelector('dialog').textContent, /주간 결과/);
 });
 
 test('interview UI resumes the next unanswered question after remount and displays the completed review', async (t) => {

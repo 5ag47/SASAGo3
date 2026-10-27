@@ -23,11 +23,13 @@ import { activities, choiceDeadline, courses, DAYS, events, period } from '../..
 import { ENDINGS } from '../../domain/engine.js';
 import { availableChapters, chapterProgress } from '../../domain/story.js';
 import { effectivePlan, lockedSlots } from '../../domain/week.js';
+import { weekDate } from '../../domain/calendar-date.js';
 import useGame from './useGame.js';
 import useAudio from './useAudio.js';
 import useWorldClock from './useWorldClock.js';
 import useTutorial from './useTutorial.js';
 import TutorialPanel from './TutorialPanel.jsx';
+import TutorialGuide from './TutorialGuide.jsx';
 import WeekReviewPanel from './WeekReviewPanel.jsx';
 import Setup from './Setup.jsx';
 import Scene from './Scene.jsx';
@@ -36,6 +38,7 @@ import DayCopy from './DayCopy.jsx';
 import YearReportPanel from './YearReportPanel.jsx';
 import TaskGamePanel from './TaskGamePanel.jsx';
 import StoryPanel from './StoryPanel.jsx';
+import WeekRunPanel from './WeekRunPanel.jsx';
 import ActivityPicker from './ActivityPicker.jsx';
 import TaskBoard from './TaskBoard.jsx';
 import EventDialog from './EventDialog.jsx';
@@ -65,6 +68,7 @@ const TITLES = {
   yearReport: '한 해 결산',
   taskGame: '과제 미니게임',
   story: '학교 이야기',
+  running: '주간 일정 진행',
   notices: '알림',
   shop: '매점',
   settings: '설정',
@@ -86,7 +90,7 @@ export default function YearGame() {
   const game = useGame();
   const { state, busy, send, notify } = game;
   const audio = useAudio();
-  const { night, time } = useWorldClock();
+  const { night } = useWorldClock();
   const tutorial = useTutorial(state, game.user);
   const [modal, setModal] = useState(null);
   const [assignment, setAssignment] = useState(null);
@@ -101,6 +105,8 @@ export default function YearGame() {
     setModal({ type: 'events', eventId: id });
   };
   const p = period(state.week);
+  const gameDay = Math.min(6, Math.floor((state.weekRun?.cursor ?? 0) / 3));
+  const gameDate = weekDate(state.week, gameDay).slice(5).replace('-', '.');
   async function create(profile) {
     const next = await send({ type: 'create', profile });
     if (next) {
@@ -110,8 +116,7 @@ export default function YearGame() {
   }
   function lesson(lesson) {
     tutorial.visit(lesson.id);
-    if (lesson.target === 'slot') open('schedule');
-    else open(lesson.target);
+    close();
   }
   function assign(task) {
     setAssignment(task);
@@ -134,10 +139,17 @@ export default function YearGame() {
       }
     } else setModal({ type: 'slot', index });
   }
-  async function advance() {
-    if (await send({ type: 'advance' })) {
+  function showRun(next) {
+    if (!next.weekRun) open('result');
+    else if (['task', 'task_result'].includes(next.weekRun.waiting?.kind))
+      setModal({ type: 'taskGame', taskId: next.weekRun.waiting.task });
+    else setModal({ type: 'running' });
+  }
+  async function advance(skipTask = false) {
+    const next = await send({ type: 'advance', ...(skipTask === true ? { skipTask: true } : {}) });
+    if (next) {
       setAssignment(null);
-      open('result');
+      showRun(next);
     }
   }
   function continueWeek() {
@@ -230,7 +242,9 @@ export default function YearGame() {
           <div className="window-toolbar">
             <div>
               <b>{p.label}</b>
-              <span className="world-time">{time}</span>
+              <span className="world-time">
+                {gameDate} {DAYS[gameDay]}요일
+              </span>
               {state.week === 0 && (
                 <button className="tutorial-badge" onClick={() => open('tutorial')}>
                   튜토리얼 {tutorial.count}/{tutorial.total}
@@ -252,6 +266,7 @@ export default function YearGame() {
               </span>
               <button
                 className="notification-button"
+                data-tutorial="notices"
                 onClick={() => open('notices')}
                 aria-label="알림"
               >
@@ -276,6 +291,12 @@ export default function YearGame() {
             </div>
           </div>
           <div className="game-content">
+            {state.weekRun && (
+              <button className="run-resume" disabled={busy} onClick={() => showRun(state)}>
+                {DAYS[Math.min(6, Math.floor(state.weekRun.cursor / 3))]}요일 · 일정 진행 중 ·
+                이어하기
+              </button>
+            )}
             <Scene
               state={state}
               night={night}
@@ -290,7 +311,9 @@ export default function YearGame() {
                 if (await send({ type: 'preset', preset })) notify('일정을 변경했습니다.');
               }}
               onCopy={copyDay}
-              onStart={() => open(state.week > 40 ? 'admissions' : 'confirm')}
+              onStart={() =>
+                state.weekRun ? showRun(state) : open(state.week > 40 ? 'admissions' : 'confirm')
+              }
               onWeek={() => open('schedule')}
               assignment={assignment}
               cancelAssignment={() => setAssignment(null)}
@@ -299,11 +322,15 @@ export default function YearGame() {
           </div>
           <footer className="game-menu">
             <nav aria-label="게임 메뉴">
-              <button onClick={() => open('calendar')}>
+              <button data-tutorial="calendar" onClick={() => open('calendar')}>
                 <CalendarDays size={21} />
                 <span>달력</span>
               </button>
-              <button className="mobile-planner-button" onClick={() => open('planner')}>
+              <button
+                data-tutorial="schedule"
+                className="mobile-planner-button"
+                onClick={() => open('planner')}
+              >
                 <PencilLine size={20} />
                 <span>자습</span>
               </button>
@@ -311,13 +338,18 @@ export default function YearGame() {
                 <button
                   className={['courses', 'group', 'admissions'].includes(type) ? 'extra-nav' : ''}
                   key={type}
+                  data-tutorial={type}
                   onClick={() => open(type)}
                 >
                   <Icon size={20} strokeWidth={1.6} />
                   <span>{label}</span>
                 </button>
               ))}
-              <button className="mobile-more-button" onClick={() => open('menu')}>
+              <button
+                data-tutorial="menu"
+                className="mobile-more-button"
+                onClick={() => open('menu')}
+              >
                 <MoreHorizontal size={20} />
                 <span>더보기</span>
               </button>
@@ -355,6 +387,13 @@ export default function YearGame() {
           {game.message}
         </div>
       )}
+      <TutorialGuide
+        tutorial={tutorial}
+        state={state}
+        modal={modal?.type}
+        onHelp={() => open('tutorial')}
+        onDismiss={() => tutorial.visit(null)}
+      />
       {modal && (
         <Modal
           title={TITLES[modal.type]}
@@ -441,10 +480,30 @@ export default function YearGame() {
           {modal.type === 'taskGame' && state.tasks[modal.taskId] && (
             <TaskGamePanel
               task={state.tasks[modal.taskId]}
+              state={state}
+              draftKey={`sasa-input:${game.user ?? 'local'}:${state.flags.runRevision ?? 0}:${modal.taskId}:${state.tasks[modal.taskId].attempts?.total ?? 0}`}
               busy={busy}
               onAction={(action) => send({ type: 'task_game', task: modal.taskId, action })}
+              onReload={game.reload}
+              onStop={() => setModal({ type: 'running' })}
               onAssign={() => assign(modal.taskId)}
               onBack={() => setModal({ type: 'tasks', taskId: modal.taskId })}
+              onContinue={() => advance()}
+            />
+          )}
+          {modal.type === 'running' && (
+            <WeekRunPanel
+              state={state}
+              busy={busy}
+              onContinue={() => advance()}
+              onTask={() =>
+                setModal({
+                  type: state.weekRun.waiting.kind === 'task' ? 'taskGame' : 'tasks',
+                  taskId: state.weekRun.waiting.task,
+                })
+              }
+              onEvent={openEvent}
+              onSkip={() => advance(true)}
             />
           )}
           {modal.type === 'yearReport' && <YearReportPanel state={state} />}
@@ -557,6 +616,7 @@ export default function YearGame() {
             NAV.map(([id, Icon, label]) => (
               <ChoiceButton
                 key={id}
+                anchor={id}
                 title={label}
                 icon={<Icon size={17} />}
                 onClick={() => open(id)}
@@ -566,7 +626,7 @@ export default function YearGame() {
             <WeekReviewPanel
               state={state}
               busy={busy}
-              onStart={advance}
+              onStart={() => advance()}
               onTaskGame={(taskId) => setModal({ type: 'taskGame', taskId })}
               onSchedule={() => open('schedule')}
               onTask={assign}

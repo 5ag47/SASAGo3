@@ -14,7 +14,21 @@
       "reputation": -8,
       "stress": 10
     },
-    "special": "research"
+    "special": "research",
+    "module": {
+      "id": "pattern_v2",
+      "params": {
+        "earlyWeeks": 4,
+        "earlyQuality": 90,
+        "earlyEffect": {
+          "science": 0.75,
+          "focus": 0.25
+        },
+        "overloadAfter": 2,
+        "overloadHealth": 0.75,
+        "overloadStress": 1.5
+      }
+    }
   },
   "reflection": {
     "week": 14,
@@ -94,7 +108,7 @@
       "reputation": -2
     },
     "module": {
-      "id": "order_v1",
+      "id": "order_v2",
       "params": {}
     }
   },
@@ -1657,7 +1671,7 @@
       "urban-project-40"
     ],
     "module": {
-      "id": "order_v1",
+      "id": "order_v2",
       "params": {}
     }
   },
@@ -1666,7 +1680,7 @@
     "name": "공통 과제 미니게임",
     "members": ["thesis", "reflection", "essay", "application_form", "memory_book"],
     "module": {
-      "id": "pattern_v1",
+      "id": "pattern_v2",
       "params": {}
     }
   }

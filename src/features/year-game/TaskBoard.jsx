@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, Check, Clock } from 'lucide-react';
-import { effectText, period } from '../../domain/catalog.js';
+import { effectText } from '../../domain/catalog.js';
+import { weekDate } from '../../domain/calendar-date.js';
 import { Empty, Progress } from './ui.jsx';
 import { taskAllocation } from '../../domain/planning.js';
 import './planning.css';
@@ -19,7 +20,7 @@ export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
   return (
     <>
       <p className="dialog-lead">
-        미니게임을 풀고 자습시간을 배정하세요. 한 주를 보내면 과제가 진행됩니다.
+        자습시간에 할 일을 배정하세요. 한 주를 진행하면 배정한 시간에 직접 작업합니다.
       </p>
       <div className="filter-tabs">
         {[
@@ -57,7 +58,12 @@ export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
                         ? '이번 주 마감'
                         : `${t.deadline - state.week}주 남음`}
                 </span>
-                <small>{period(t.deadline).label}</small>
+                <small>
+                  {weekDate(t.deadline, t.deadlineDay ?? 6)
+                    .slice(5)
+                    .replace('-', '.')}{' '}
+                  마감
+                </small>
               </div>
               <h3>{t.name}</h3>
               {t.format && <small>{TASK_FORMATS[t.format]}</small>}
@@ -68,11 +74,7 @@ export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
                   className={`${taskGameReady(t) ? 'subtle' : 'primary'} full task-game-action`}
                   onClick={() => onPlay(t.id)}
                 >
-                  {taskGameReady(t)
-                    ? '미니게임 결과 보기'
-                    : t.moduleData
-                      ? '미니게임 이어하기'
-                      : '미니게임 시작'}
+                  {state.weekRun?.waiting?.task === t.id ? '작업 이어하기' : '작업 내용 보기'}
                 </button>
               )}
               {t.stages && (

@@ -2,9 +2,10 @@ import time from './time-v1.js';
 import contest from './contest-v1.js';
 import order from './order-v1.js';
 import pattern from './pattern-v1.js';
+import { orderSession, patternSession } from './session-v2.js';
 
 // Only reviewed repository modules can execute. JSON selects an ID and parameters.
-const modules = [time, contest, order, pattern];
+const modules = [time, contest, order, pattern, orderSession, patternSession];
 if (new Set(modules.map((module) => module.id)).size !== modules.length)
   throw new Error('DUPLICATE_TASK_MODULE_ID');
 for (const module of modules)
@@ -31,6 +32,21 @@ for (const module of modules)
 export const TASK_MODULES = Object.freeze(
   Object.fromEntries(modules.map((module) => [module.id, Object.freeze(module)])),
 );
+for (const module of modules) {
+  if (
+    module.session &&
+    ['attemptEffects', 'actionEffects', 'finishAttempt'].some(
+      (key) => typeof module[key] !== 'function',
+    )
+  )
+    throw new Error(`TASK_SESSION_CONTRACT:${module.id}`);
+  if (module.game?.preview !== undefined && typeof module.game.preview !== 'function')
+    throw new Error(`TASK_PREVIEW_CONTRACT:${module.id}`);
+  if (module.game?.status !== undefined && typeof module.game.status !== 'function')
+    throw new Error(`TASK_STATUS_CONTRACT:${module.id}`);
+  if (module.failAttempt !== undefined && typeof module.failAttempt !== 'function')
+    throw new Error(`TASK_FAILURE_CONTRACT:${module.id}`);
+}
 export const moduleSignature = (value) =>
   JSON.stringify(value, (_, item) =>
     item && typeof item === 'object' && !Array.isArray(item)
@@ -41,11 +57,20 @@ export function taskModuleSpec(task) {
   return task.module ?? { id: task.special === 'contest' ? 'contest_v1' : 'time_v1', params: {} };
 }
 export const defaultTaskGame = (task) => ({
-  id: task.course || task.special === 'tutorial' ? 'order_v1' : 'pattern_v1',
+  id: task.course || task.special === 'tutorial' ? 'order_v2' : 'pattern_v2',
   params: {},
 });
 export const taskGameReady = (task) =>
-  Boolean(task) && (!taskModule(task).game || task.moduleData?.passed === true);
+  Boolean(task) && (!taskModule(task).game || taskGameStatus(task) === 'success');
+export function taskGameStatus(task) {
+  if (!task.moduleData) return 'playing';
+  const value =
+    taskModule(task).game?.status?.(task.moduleData) ??
+    (task.moduleData?.passed ? 'success' : 'playing');
+  if (!['playing', 'success', 'failure'].includes(value))
+    throw new Error(`TASK_STATUS_CONTRACT:${task.id}`);
+  return value;
+}
 export function taskModule(task) {
   const spec = taskModuleSpec(task);
   if (!Object.hasOwn(TASK_MODULES, spec.id)) throw new Error(`TASK_MODULE_UNKNOWN:${spec.id}`);
