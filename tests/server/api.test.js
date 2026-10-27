@@ -77,13 +77,14 @@ test('unexpected server errors expose only a trace while internal logs retain co
   assert.ok(logs[0].contentVersion);
   assert.ok(!JSON.stringify(logs).includes('private-message'));
 });
-function fixture() {
+function fixture({ nextSeed } = {}) {
   const store = new SqliteStore(':memory:');
   const api = createApi({
     store,
     secret,
     origin,
     logger: () => {},
+    nextSeed,
     authenticate: async (request) => {
       const user = request.headers.get('authorization');
       if (!['Bearer player-a', 'Bearer player-b'].includes(user))
@@ -133,6 +134,22 @@ function fixture() {
   }
   return { api, store, get, post };
 }
+test('accepted commands refresh server entropy while duplicate and stale requests cannot reroll results', async (t) => {
+  let draws = 0;
+  const f = fixture({ nextSeed: () => 1000 + draws++ });
+  t.after(() => f.store.close());
+  const session = await f.get();
+  const created = await f.post(session, { type: 'create', profile });
+  assert.equal(JSON.parse(f.store.db.prepare('SELECT state FROM players').get().state).seed, 1000);
+  const key = randomUUID();
+  const command = { type: 'plan', index: 0, activity: 'sleep', target: null };
+  const planned = await f.post(created, command, { key });
+  assert.equal(planned.state.seed, 0);
+  assert.equal(JSON.parse(f.store.db.prepare('SELECT state FROM players').get().state).seed, 1001);
+  assert.equal((await f.post(created, command, { key })).replayed, true);
+  assert.equal((await f.post(created, command)).response.status, 409);
+  assert.equal(draws, 2);
+});
 test('authenticated server creates and advances state without accepting client-computed scores', async (t) => {
   const f = fixture();
   t.after(() => f.store.close());

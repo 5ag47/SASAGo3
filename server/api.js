@@ -19,6 +19,7 @@ export function createApi({
   origin,
   now = Date.now,
   logger = console.log,
+  nextSeed = () => crypto.getRandomValues(new Uint32Array(1))[0],
 }) {
   if (!secret || secret.length < 32 || !/^https?:\/\//.test(origin ?? ''))
     throw new Error('API requires an exact public origin and a secret of at least 32 characters.');
@@ -124,7 +125,7 @@ export function createApi({
             ...baseState(crypto.getRandomValues(new Uint32Array(1))[0]),
             revision: state.revision + 1,
           }
-        : transition(state, body.command);
+        : transition({ ...state, seed: nextSeed() }, body.command);
       const committed = await store.commit(
         player,
         state.revision,

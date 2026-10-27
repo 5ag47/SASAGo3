@@ -15,7 +15,7 @@ import {
 
 export const SCHEMA_VERSION = 1;
 export const SAVE_KEY = 'sasago3-year-v1';
-export const CONTENT_VERSION = '2026.10.27-4';
+export const CONTENT_VERSION = '2026.10.27-5';
 export function baseState(seed = 20261013) {
   return {
     version: SCHEMA_VERSION,
