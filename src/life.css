@@ -76,3 +76,174 @@ fieldset.application-body{margin:0;min-width:0;border:0}
  .save-state.save-failed{display:flex;font-size:8px}.save-state.save-failed svg{display:none}
  .recovery-card{margin:30px 15px;padding:20px}
 }
+
+/* Viewport-sized game shell. Scrolling is contained in the room on small screens. */
+html,body,#root{min-height:100%;margin:0}
+.fullscreen-game.app-shell{max-width:none;width:100%;height:100dvh;margin:0;padding:0;overflow:hidden}
+.fullscreen-game .game-frame{display:flex;flex-direction:column;width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
+.fullscreen-game .game-toolbar{flex:0 0 52px;padding:0 24px;gap:12px}
+.fullscreen-game .date-display strong{font-size:14px}
+.fullscreen-game .toolbar-actions{gap:18px}
+.fullscreen-game .toolbar-actions button{padding:6px}
+.fullscreen-game .save-state{display:flex;font-size:11px;opacity:.85}
+.fullscreen-game .room{height:auto;min-height:0;flex:1;background-size:cover;background-position:center;overflow:auto}
+.fullscreen-game .room:after{display:none}
+.fullscreen-game .left-panels{left:26px;top:28px;width:240px;gap:22px}
+.fullscreen-game .right-panels{right:26px;top:28px;left:auto;width:350px}
+.fullscreen-game .task-paper{padding:24px 18px 18px;background:#fcfaf1}
+.fullscreen-game .task-check{font-size:12px;line-height:1.65;margin:16px 0 0;gap:9px}
+.fullscreen-game .paper-heading h2{font-size:20px}
+.fullscreen-game .stats-card{padding:18px;background:#fafbf9}
+.fullscreen-game .card-heading h2{font-size:15px}
+.fullscreen-game .stat-list{gap:16px}
+.fullscreen-game .stat-row{grid-template-columns:60px 1fr 26px;gap:9px;font-size:12px}
+.fullscreen-game .stat-row>span{font-size:12px}
+.fullscreen-game .stat-row b{font-size:12px;color:#566477}
+.fullscreen-game .stat-track{height:10px}
+.fullscreen-game .planner{background:#fafbf9}
+.fullscreen-game .planner-heading{padding:20px 18px 16px}
+.fullscreen-game .planner-heading h2{font-size:16px}
+.fullscreen-game .day-tabs{grid-template-columns:repeat(7,minmax(0,1fr));padding:0 12px 16px;gap:5px}
+.fullscreen-game .day-tabs button{min-width:0;padding:12px 2px;gap:10px}
+.fullscreen-game .day-tabs button>b{font-size:10px;letter-spacing:-.4px}
+.fullscreen-game .day-tabs button>span{font-size:12px}
+.fullscreen-game .application-title{padding:13px 18px;background:#edf1f3}
+.fullscreen-game .application-title h3{font-size:14px}
+.fullscreen-game .application-body{padding:18px;display:block}
+.fullscreen-game .field-label{font-size:13px}
+.fullscreen-game .application-body select{height:44px;font-size:14px}
+.fullscreen-game .application-body .field-label:nth-of-type(2){margin-top:18px}
+.fullscreen-game .apply-button{margin-top:22px;min-height:44px;font-size:14px}
+.fullscreen-game .character-area{left:46%;bottom:20px;top:auto;right:auto;transform:translateX(-50%);width:280px}
+.fullscreen-game .character-button{height:clamp(210px,49dvh,510px)}
+.fullscreen-game .character-button img{max-width:100%}
+.fullscreen-game .speech-bubble{background:#fffdf4;font-size:14px;white-space:normal;text-align:center;line-height:1.6;max-width:260px}
+.fullscreen-game .game-bottom{flex:0 0 92px;height:92px;position:relative;z-index:2;background:#fdfcf8;padding:14px 26px;gap:20px}
+.fullscreen-game .game-bottom nav{gap:25px;width:auto}
+.fullscreen-game .game-bottom nav button{min-width:48px;gap:7px}
+.fullscreen-game .game-bottom nav button span{font-size:12px}
+.fullscreen-game .bottom-right{display:flex;gap:30px;align-items:center}
+.fullscreen-game .allowance{display:flex;gap:9px;font-size:14px;white-space:nowrap;margin:0}
+.fullscreen-game .allowance b{font-size:16px;color:#596676}
+.fullscreen-game .week-actions{position:relative}
+.fullscreen-game .notification-button{position:absolute;right:0;bottom:calc(100% + 28px);width:46px;height:46px;display:grid;place-items:center;background:#fffdf6;border:1px solid #b6c2cd;border-radius:10px;box-shadow:0 3px 8px #27384920}
+.fullscreen-game .notification-button i{position:absolute;right:9px;top:7px;width:6px;height:6px;border-radius:50%;background:#bc7769}
+.fullscreen-game .start-week{min-width:224px;min-height:55px}
+.fullscreen-game .start-week span{font-size:17px}
+.modal{background:#fdfcf8}
+.stat-log-table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.stat-log-table th,.stat-log-table td{padding:15px 12px;border-bottom:1px solid #dce2df;text-align:right}
+.stat-log-table th:first-child{text-align:left}
+.stat-log-table thead th{background:#e9efeb;font-size:12px;font-weight:400;color:#596b63}
+.stat-log-table tbody th{font-weight:400;color:#3f5364}
+.stat-log-table tbody tr:nth-child(even){background:#f1f4ef}
+.stat-log-table .delta{font-size:13px;padding:5px 10px;min-width:46px}
+.history-item{padding:24px 0}
+.history-item h3{font-size:17px;margin-bottom:15px}
+.daily-log article{padding:17px 0;gap:16px}
+.daily-log article>.log-day{width:38px;height:38px;font-size:14px}
+.daily-log b{font-size:14px}
+.log-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.log-chips .delta{font-size:12px;padding:5px 8px}
+.record-money{display:flex;justify-content:space-between;padding-top:16px;font-size:13px}
+.record-details{font-size:13px}
+.notice-list article{display:flex;flex-direction:column;gap:10px;padding:18px 0;border-bottom:1px solid #dce2df}
+.notice-list time{font-size:12px;color:#7d8b95}
+.notice-list b{font-size:15px;font-weight:400}
+.week-review{grid-template-columns:repeat(4,minmax(0,1fr))}
+.week-review>div{padding:15px 10px}
+.week-review b{font-size:15px}
+.semester-complete{font-size:18px}
+.story-choices{margin:0}
+@media(max-width:1000px) and (min-width:701px){
+ .fullscreen-game .left-panels{left:18px;width:190px}
+ .fullscreen-game .right-panels{right:18px;width:310px}
+ .fullscreen-game .stats-card{padding:14px}
+ .fullscreen-game .task-paper{padding:24px 12px 15px}
+ .fullscreen-game .task-check{font-size:10px}
+ .fullscreen-game .stat-row{grid-template-columns:48px 1fr 22px;gap:5px}
+ .fullscreen-game .stat-row>span{font-size:10px}
+ .fullscreen-game .character-area{left:43%;width:220px}
+ .fullscreen-game .speech-bubble{max-width:200px;font-size:12px}
+ .fullscreen-game .game-bottom nav{gap:12px}
+ .fullscreen-game .bottom-right{gap:20px}
+}
+@media(max-height:650px) and (min-width:701px){
+ .fullscreen-game .left-panels,.fullscreen-game .right-panels{top:16px}
+ .fullscreen-game .left-panels{gap:14px}
+ .fullscreen-game .task-paper{padding-top:15px;padding-bottom:14px}
+ .fullscreen-game .task-check{margin-top:9px}
+ .fullscreen-game .stat-list{gap:10px}
+ .fullscreen-game .stats-card{padding:13px}
+ .fullscreen-game .planner-heading{padding:12px 16px}
+ .fullscreen-game .application-body{padding:12px 16px}
+ .fullscreen-game .apply-button{margin-top:14px}
+}
+@media(max-width:700px){
+ .fullscreen-game .game-toolbar{flex-basis:48px;padding:0 12px}
+ .fullscreen-game .date-display strong{font-size:11px;white-space:nowrap}
+ .fullscreen-game .toolbar-actions{gap:7px}
+ .fullscreen-game .toolbar-actions button{padding:3px}
+ .fullscreen-game .save-state{font-size:9px;margin:0}
+ .fullscreen-game .save-state svg{display:none}
+ .fullscreen-game .room{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:'left character' 'planner planner';gap:24px 12px;align-content:start;padding:24px 14px 68px;background-attachment:local;background-size:auto 100%;background-repeat:no-repeat;background-color:#e9e7dd}
+ .fullscreen-game .left-panels{grid-area:left;position:static;width:auto;gap:20px}
+ .fullscreen-game .task-paper{padding:18px 10px 14px}
+ .fullscreen-game .paper-heading h2{font-size:17px}
+ .fullscreen-game .task-check{font-size:10px;gap:6px;line-height:1.65;margin-top:11px}
+ .fullscreen-game .stats-card{padding:13px 10px}
+ .fullscreen-game .card-heading{margin-bottom:16px}
+ .fullscreen-game .card-heading h2{font-size:12px}
+ .fullscreen-game .stat-list{gap:14px}
+ .fullscreen-game .stat-row{grid-template-columns:44px 1fr 20px;gap:4px}
+ .fullscreen-game .stat-row>span{font-size:10px}
+ .fullscreen-game .stat-row b{font-size:11px}
+ .fullscreen-game .stat-track{height:8px}
+ .fullscreen-game .character-area{grid-area:character;position:static;transform:none;width:100%;align-self:end}
+ .fullscreen-game .character-button{height:250px;max-height:36dvh;width:100%}
+ .fullscreen-game .character-button img{width:100%;height:100%;object-fit:contain}
+ .fullscreen-game .speech-bubble{font-size:11px;min-height:0;padding:10px;max-width:100%;margin-bottom:15px}
+ .fullscreen-game .right-panels{grid-area:planner;position:static;width:100%}
+ .fullscreen-game .planner-heading{padding:15px}
+ .fullscreen-game .day-tabs{gap:4px;padding:0 10px 12px}
+ .fullscreen-game .day-tabs button{padding:10px 1px}
+ .fullscreen-game .day-tabs button>b{font-size:9px}
+ .fullscreen-game .application-title{padding:11px 15px}
+ .fullscreen-game .application-body{padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .fullscreen-game .application-body .field-label:nth-of-type(2){margin:0}
+ .fullscreen-game .application-body select{height:40px;font-size:13px}
+ .fullscreen-game .apply-button{margin-top:4px}
+ .fullscreen-game .game-bottom{flex:0 0 116px;height:116px;display:grid;grid-template-columns:1fr auto;grid-template-rows:48px 44px;gap:6px 10px;padding:9px 14px}
+ .fullscreen-game .game-bottom nav{grid-column:1;grid-row:1;width:auto;gap:4px;justify-content:space-between}
+ .fullscreen-game .game-bottom nav button{min-width:29px;padding:2px;gap:5px}
+ .fullscreen-game .game-bottom nav button span{font-size:10px}
+ .fullscreen-game .game-bottom nav svg{width:20px;height:20px}
+ .fullscreen-game .bottom-right,.fullscreen-game .week-actions{display:contents}
+ .fullscreen-game .allowance{grid-column:2;grid-row:1;gap:6px}
+ .fullscreen-game .allowance b{font-size:12px}
+ .fullscreen-game .allowance svg{width:16px}
+ .fullscreen-game .notification-button{bottom:calc(100% + 12px);right:14px;width:42px;height:42px}
+ .fullscreen-game .start-week{grid-column:1/-1;grid-row:2;width:100%;min-width:0;min-height:42px;padding:8px 14px;justify-content:center}
+ .fullscreen-game .start-week>span{font-size:15px}
+ .fullscreen-game .start-week>svg:last-child{position:static;margin-left:0}
+ .week-review{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .stat-log-table{font-size:12px}
+ .stat-log-table th,.stat-log-table td{padding:12px 7px}
+ .stat-log-table .delta{font-size:12px;min-width:40px;padding:4px 7px}
+}
+@media(max-width:360px){
+ .fullscreen-game .save-state:not(.save-failed){display:none}
+ .fullscreen-game .task-check{font-size:9px}
+ .fullscreen-game .room{gap:22px 8px;padding-left:10px;padding-right:10px}
+ .fullscreen-game .stat-row>span{font-size:9px}
+ .fullscreen-game .stat-row{grid-template-columns:39px 1fr 19px}
+ .fullscreen-game .allowance svg{display:none}
+ .fullscreen-game .game-bottom{padding-left:10px;padding-right:10px}
+}
+
+@media(max-width:700px){
+ .fullscreen-game .game-bottom{grid-template-columns:minmax(0,1fr) auto 34px}
+ .fullscreen-game .notification-button{position:relative;grid-column:3;grid-row:1;bottom:auto;right:auto;width:34px;height:34px;border-radius:7px;box-shadow:none}
+ .fullscreen-game .notification-button svg{width:20px;height:20px}
+ .fullscreen-game .notification-button i{top:4px;right:4px;width:5px;height:5px}
+}

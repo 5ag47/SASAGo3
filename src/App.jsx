@@ -1,16 +1,15 @@
 import { useRef, useState } from 'react';
-import { CalendarDays, CheckCheck, HelpCircle, Moon, Save, Settings, Sun, BookOpen, LogOut } from 'lucide-react';
+import { CheckCheck, HelpCircle, Settings, BookOpen } from 'lucide-react';
 import { dayRoom, nightRoom } from './assets.js';
-import { dateLabel, nextEvent } from './game.js';
+import { dateLabel } from './game.js';
 import { advanceWeek } from './systems/week.js';
 import { buyItem, useItem } from './systems/inventory.js';
 import { restoreSession, SESSION_KEY } from './systems/accounts.js';
-import { SEMESTER_WEEKS, endingFor, storyForWeek } from './data/story.js';
 import { usePlanEditor } from './hooks/usePlanEditor.js';
 import { useSavedGame } from './hooks/useSavedGame.js';
 import { useToast } from './hooks/useToast.js';
 import Auth from './components/Auth.jsx';
-import Tutorial from './components/Tutorial.jsx';
+import { useDaylight } from './hooks/useDaylight.js';
 import SaveTools from './components/SaveTools.jsx';
 import Calendar from './components/Calendar.jsx';
 import CharacterArea from './components/CharacterArea.jsx';
@@ -36,11 +35,11 @@ const TITLES = {
   bag: '가방',
   shop: '방과 후 매점',
   calendar: '주간 달력',
-  notice: 'SASA TALK',
+  notice: '알림',
   week: '이번 주 계획',
   help: '플레이 가이드',
   courses: '수강신청',
-  story: '이번 주 이야기'
+  story: '이번 주 선택'
 };
 export default function App() {
   const [account, setAccount] = useState(() => restoreSession());
@@ -70,8 +69,8 @@ function GameApp({
   const [modal, setModal] = useState(null);
   const resolving = useRef(false);
   const editor = usePlanEditor(game, setGame, notify);
-  const event = nextEvent(game.week),
-    last = game.history.at(-1);
+  const night = useDaylight();
+  const last = game.history.at(-1);
   const close = () => setModal(null);
   function open(value) {
     if (value === 'notice') setGame(old => ({
@@ -119,33 +118,25 @@ function GameApp({
     setGame(old => advanceWeek(old, index));
     open('result');
   }
-  return <div className="app-shell">
-    <header className="site-header"><a className="brand" href="./">SASA<span>Go3!</span><i>사사 고3 키우기</i></a><div className="header-right"><span className="semester"><span />{account.username} · 로컬 계정</span><button className="help-button" onClick={() => open('help')}><HelpCircle size={16} /> 플레이 가이드</button><button className="help-button" aria-label="로그아웃" onClick={logout}><LogOut size={16} /></button></div></header>
-    <main>
-      <section className="page-heading"><div><span className="eyebrow">MY LITTLE SCHOOL LIFE</span><h1>{game.name}의 고3 2학기</h1></div><button className="secondary" onClick={() => open('courses')}><BookOpen size={15} />{game.enrolled ? `수강 과목 · ${game.major}` : '수강신청'}</button></section>
-      <Tutorial game={game} onStep={tutorialStep => setGame(old => ({
-        ...old,
-        tutorialStep
-      }))} onEnroll={() => open('courses')} />
-      {game.ended && <section className="semester-banner"><span>학기 완료 · {endingFor(game.stats)}</span><button onClick={() => open('records')}>나의 기록 돌아보기 →</button></section>}
-      <section className={`game-frame ${game.night ? 'night' : ''}`} aria-label="나의 기숙사">
-        <header className="game-toolbar"><div className="date-display"><CalendarDays size={18} /><strong>{game.ended ? '2학기 완료' : dateLabel(game.week)}</strong>{event && !game.ended && <><span className="date-divider" /><span className="dday">{event.days === 0 ? 'D-DAY' : `D - ${event.days}`} <span>{event.label}</span></span></>}</div>
-          <div className="toolbar-actions"><span className={`save-state ${saveStatus === '저장 실패' ? 'save-failed' : ''}`} role="status"><CheckCheck size={14} />{saveStatus}</span><button aria-label="주간 달력 열기" onClick={() => open('calendar')}><CalendarDays size={19} /></button><button aria-label={game.night ? '낮 배경으로 변경' : '밤 배경으로 변경'} onClick={() => setGame(old => ({
-              ...old,
-              night: !old.night
-            }))}>{game.night ? <Moon size={19} /> : <Sun size={19} />}</button><button aria-label="설정" onClick={() => open('settings')}><Settings size={19} /></button><button aria-label="저장" onClick={() => notify(saveNow() ? '지금까지의 진행을 저장했어요.' : '저장에 실패했어요. 설정에서 백업을 다운로드해주세요.')}><Save size={19} /></button></div>
-        </header>
-        <div className="room" style={{
-          '--room-image': `url("${game.night ? nightRoom : dayRoom}")`
-        }}>
-          <div className="room-shade" /><aside className="left-panels"><TaskPaper plan={game.plan} /><StatsCard stats={game.stats} major={game.major} onOpen={() => open('stats')} /></aside>
-          <CharacterArea game={game} /><Planner game={game} editor={editor} onOpenCalendar={() => open('calendar')} onOpenNotice={() => open('notice')} />
-          <div className="room-label"><span />{game.night ? 'NIGHT' : 'AFTER SCHOOL'}<i />나의 기숙사</div>
+  return <main className="app-shell fullscreen-game">
+    <section className={`game-frame ${night ? 'night' : ''}`} aria-label="나의 기숙사">
+      <header className="game-toolbar">
+        <div className="date-display"><strong>{game.ended ? '학기 종료' : dateLabel(game.week)}</strong></div>
+        <div className="toolbar-actions">
+          <span className={`save-state ${saveStatus === '저장 실패' ? 'save-failed' : ''}`} role="status"><CheckCheck size={15} />{saveStatus === '저장됨' ? '자동 저장됨' : saveStatus}</span>
+          <button aria-label="수강신청" onClick={() => open('courses')}><BookOpen size={20} /></button>
+          <button aria-label="도움말" onClick={() => open('help')}><HelpCircle size={20} /></button>
+          <button aria-label="설정" onClick={() => open('settings')}><Settings size={20} /></button>
         </div>
-        <GameBottom money={game.money} ended={game.ended} onOpen={open} onStartWeek={startWeek} />
-      </section>
-      <footer className="page-footer"><span>SASAGo3! · 나만의 속도로 자라는 학기</span><span>{Math.min(game.week + 1, SEMESTER_WEEKS)} / {SEMESTER_WEEKS}주 · {game.ended ? '완료' : storyForWeek(game.week).title}</span></footer>
-    </main>
+      </header>
+      <div className="room" style={{
+        '--room-image': `url("${night ? nightRoom : dayRoom}")`
+      }}>
+        <aside className="left-panels"><TaskPaper plan={game.plan} /><StatsCard stats={game.stats} major={game.major} onOpen={() => open('stats')} /></aside>
+        <CharacterArea game={game} /><Planner game={game} editor={editor} />
+      </div>
+      <GameBottom money={game.money} ended={game.ended} unread={game.noticeReadWeek < game.week} onOpen={open} onStartWeek={startWeek} />
+    </section>
     {toast && <div role="status" className="toast">{toast}</div>}
     {modal && <Modal title={modal === 'result' && last ? `${dateLabel(last.week)} 결과` : TITLES[modal]} onClose={close} wide={['week', 'calendar', 'result', 'records'].includes(modal)}>
       {modal === 'settings' && <SettingsModal game={game} onSave={(name, character) => {
@@ -180,13 +171,7 @@ function GameApp({
       {modal === 'week' && <WeekPlanModal game={game} onStart={() => open('story')} />}
       {modal === 'story' && <StoryModal game={game} onChoose={choose} />}
       {modal === 'result' && last && <WeekResultModal entry={last} stats={game.stats} ended={game.ended} onClose={close} />}
-      {modal === 'help' && <><HelpModal /><button className="secondary" onClick={() => {
-          setGame(old => ({
-            ...old,
-            tutorialStep: 0
-          }));
-          close();
-        }}>튜토리얼 다시 보기</button></>}
+      {modal === 'help' && <HelpModal />}
     </Modal>}
-  </div>;
+  </main>;
 }

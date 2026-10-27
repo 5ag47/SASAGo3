@@ -4,7 +4,7 @@ import { EVENTS } from './data/schedule.js';
 import { COURSES } from './data/courses.js';
 import { ITEMS } from './data/items.js';
 export const SAVE_KEY = 'sasago3-save-v1';
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 export const MAX_HISTORY = 100;
 export const TASKS = ['수학 2회 이상 학습하기', '운동 또는 요양 1회 하기'];
 export function initialGame() {
@@ -25,7 +25,7 @@ export function initialGame() {
       writing: 30,
       speech: 25
     },
-    plan: ['math', 'math', 'science', 'game', 'rest', 'exercise'],
+    plan: ['math', 'math', 'science', 'game', 'rest', 'exercise', 'rest'],
     tasks: [false, false],
     history: [],
     created: false,
@@ -52,24 +52,27 @@ export function nextEvent(week) {
   })).filter(event => event.days >= 0).sort((a, b) => a.days - b.days)[0] ?? null;
 }
 export function migrateSave(value) {
-  if (value?.version === 1 || value?.version === 2) {
+  if ([1, 2, 3].includes(value?.version)) {
     return {
       ...initialGame(),
       ...value,
       version: SAVE_VERSION,
+      plan: Array.isArray(value.plan) && value.plan.length === 6 ? [...value.plan, 'rest'] : value.plan,
       ended: value.week >= 12,
       history: value.version === 1 ? [] : value.history
     };
   }
   return value;
 }
-function validPlan(plan) {
-  return Array.isArray(plan) && plan.length === DAYS.length && plan.every(id => Object.hasOwn(ACTIVITIES, id));
+function validPlan(plan, legacy = false) {
+  return Array.isArray(plan) && (plan.length === DAYS.length || legacy && plan.length === 6) && plan.every(id => Object.hasOwn(ACTIVITIES, id));
 }
 function validHistoryEntry(entry) {
-  return Number.isInteger(entry?.week) && entry.week >= 0 && validPlan(entry.plan) && STATS.every(({
+  return Number.isInteger(entry?.week) && entry.week >= 0 && validPlan(entry.plan, true) && STATS.every(({
     key
-  }) => Number.isFinite(entry.delta?.[key])) && Array.isArray(entry.notes) && entry.notes.every(note => typeof note === 'string') && (entry.daily === undefined || Array.isArray(entry.daily) && entry.daily.every(day => typeof day.day === 'string' && typeof day.label === 'string' && typeof day.summary === 'string')) && (entry.story === undefined || typeof entry.story?.title === 'string' && typeof entry.story?.outcome === 'string' && typeof entry.story?.choice === 'string') && (entry.economy === undefined || ['allowance', 'reward', 'bonus', 'fine', 'net'].every(key => Number.isFinite(entry.economy?.[key]))) && (entry.major === undefined || COURSES.includes(entry.major)) && (entry.assessment === undefined || entry.assessment === null || Number.isFinite(entry.assessment));
+  }) => Number.isFinite(entry.delta?.[key])) && Array.isArray(entry.notes) && entry.notes.every(note => typeof note === 'string') && (entry.daily === undefined || Array.isArray(entry.daily) && entry.daily.every(day => typeof day.day === 'string' && typeof day.label === 'string' && typeof day.summary === 'string' && (day.delta === undefined || day.delta !== null && typeof day.delta === 'object' && !Array.isArray(day.delta) && Object.entries(day.delta).every(([key, amount]) => STATS.some(stat => stat.key === key) && Number.isFinite(amount))))) && (entry.story === undefined || typeof entry.story?.title === 'string' && typeof entry.story?.outcome === 'string' && typeof entry.story?.choice === 'string') && (entry.economy === undefined || ['allowance', 'reward', 'bonus', 'fine', 'net'].every(key => Number.isFinite(entry.economy?.[key]))) && (entry.major === undefined || COURSES.includes(entry.major)) && (entry.assessment === undefined || entry.assessment === null || Number.isFinite(entry.assessment)) && [entry.before, entry.after].every(stats => stats === undefined || STATS.every(({
+    key
+  }) => Number.isFinite(stats?.[key]) && stats[key] >= 0 && stats[key] <= 100));
 }
 export function validSave(value) {
   return value?.version === SAVE_VERSION && typeof value.created === 'boolean' && Number.isInteger(value.week) && value.week >= 0 && value.week <= 5200 && typeof value.name === 'string' && value.name.trim().length > 0 && value.name.length <= 12 && ['boy', 'girl'].includes(value.character) && typeof value.night === 'boolean' && Number.isFinite(value.money) && value.money >= 0 && STATS.every(({

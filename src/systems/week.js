@@ -1,4 +1,4 @@
-import { ACTIVITIES, DAYS, SUNDAY_EFFECT } from '../data/activities.js';
+import { ACTIVITIES, DAYS } from '../data/activities.js';
 import { SKILL_KEYS, STATS, formatEffect } from '../data/stats.js';
 import { MAX_HISTORY } from '../game.js';
 import { storyForWeek, SEMESTER_WEEKS } from '../data/story.js';
@@ -48,7 +48,7 @@ export function resolveWeek(game) {
       const gained = isStudyGain(key, amount);
       const before = stats[key];
       stats[key] = clamp(before + (gained ? amount * value * repeat : amount));
-      changes[key] = Math.round(stats[key] - before);
+      changes[key] = Math.round(stats[key]) - Math.round(before);
       studied ||= gained;
     }
     counts[id] = done + 1;
@@ -58,15 +58,10 @@ export function resolveWeek(game) {
       day: DAYS[index],
       label: id === 'science' ? game.major : ACTIVITIES[id].label,
       summary: formatEffect(changes),
+      delta: changes,
       efficiency: Math.round(value * repeat * 100)
     });
   }
-  for (const [key, amount] of Object.entries(SUNDAY_EFFECT)) stats[key] = clamp(stats[key] + amount);
-  daily.push({
-    day: '일',
-    label: '자동 휴식',
-    summary: formatEffect(SUNDAY_EFFECT)
-  });
   const after = {},
     delta = {};
   for (const {
@@ -105,9 +100,7 @@ export function advanceWeek(game, choiceIndex = 0) {
     ...entry
   } = resolveWeek(game);
   for (const [key, amount] of Object.entries(choice.effect)) after[key] = clamp(after[key] + amount);
-  const goals = weeklyGoals(game.plan);
-  const reward = goals.filter(Boolean).length * 1000;
-  if (goals.every(Boolean)) after.reputation = clamp(after.reputation + 2);
+  const reward = 0;
   const allowance = 2000;
   const bonus = Math.max(0, Math.floor((after.reputation - 40) / 10)) * 500;
   const fine = Math.min(game.money + allowance + reward + bonus, choice.fine || 0);
@@ -116,10 +109,11 @@ export function advanceWeek(game, choiceIndex = 0) {
     key
   } of STATS) entry.delta[key] = after[key] - game.stats[key];
   const assessment = story.assessment ? Math.round(clamp((after.math + after.science) / 2 * Math.min(1.1, studyEfficiency(after).value))) : null;
-  entry.story = {
-    title: story.title,
-    choice: choice.label,
-    outcome: choice.outcome
+  entry.before = {
+    ...game.stats
+  };
+  entry.after = {
+    ...after
   };
   entry.economy = {
     allowance,

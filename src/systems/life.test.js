@@ -54,12 +54,12 @@ test('아이템 효과는 능력치 상한·하한을 넘지 않는다', () => {
   assert.equal(next.stats.hp, 100);
   assert.equal(next.stats.stress, 0);
 });
-test('목표는 체크박스가 아니라 실제 활동으로 달성하고 주당 한 번 정산된다', () => {
+test('목표를 달성해도 재화 보상은 없고 주간 용돈만 정산된다', () => {
   assert.deepEqual(weeklyGoals(['math', 'math', 'rest', 'science', 'science', 'game']), [true, true]);
   assert.deepEqual(weeklyGoals(Array(6).fill('game')), [false, false]);
   const game = initialGame();
   const next = advanceWeek(game, 0);
-  assert.equal(next.history[0].economy.reward, 2000);
+  assert.equal(next.history[0].economy.reward, 0);
   assert.equal(next.money - game.money, next.history[0].economy.net);
 });
 test('규칙 위반 선택에만 벌금을 부과하고 사건 효과까지 기록에 반영한다', () => {

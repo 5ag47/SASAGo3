@@ -59,7 +59,7 @@ test('잘못된 저장 데이터는 메인 화면을 깨뜨리지 않도록 거�
     assert.equal(validSave(value), false);
   }
 });
-test('버전 1 저장 데이터는 빈 기록과 함께 버전 3으로 옮겨진다', () => {
+test('버전 1 저장 데이터는 빈 기록과 함께 버전 4로 옮겨진다', () => {
   const {
     history,
     ...old
@@ -68,7 +68,7 @@ test('버전 1 저장 데이터는 빈 기록과 함께 버전 3으로 옮겨진
     ...old,
     version: 1
   });
-  assert.equal(migrated.version, 3);
+  assert.equal(migrated.version, 4);
   assert.deepEqual(migrated.history, []);
   assert.equal(validSave(migrated), true);
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, GraduationCap, Save } from 'lucide-react';
+import { ArrowRight, GraduationCap } from 'lucide-react';
 import { dayRoom } from '../assets.js';
 import CharacterChoices from './CharacterChoices.jsx';
 export default function Onboarding({
@@ -27,12 +27,12 @@ export default function Onboarding({
       </div>
       <form className="welcome-card" onSubmit={submit}>
         <span className="eyebrow">STEP 02 · MY CHARACTER</span><h2>나의 캐릭터</h2>
-        <p className="muted">원하는 외형과 이름을 골라주세요. 능력치 차이는 없어요.</p>
+
         <CharacterChoices value={character} onChange={setCharacter} />
         <label className="field-label" htmlFor="student-name">이름 <span>최대 12자</span></label>
         <input id="student-name" placeholder="이름을 입력해주세요" value={name} onChange={e => setName(e.target.value)} maxLength={12} required autoComplete="off" />
         <button className="primary welcome-submit" disabled={!name.trim()} type="submit">내 방으로 가기 <ArrowRight size={18} /></button>
-        <p className="local-note"><Save size={13} /> 이 브라우저에 이름과 일정이 저장돼요.</p>
+
       </form>
       <span className="welcome-footer">SASAGo3!</span>
     </main>;

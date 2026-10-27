@@ -17,7 +17,7 @@ export default function Calendar({
   const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   return <>
       <h3 className="calendar-section-label">{game.ended ? '마지막 주 계획' : '이번 주 · 월요일부터 일요일까지'}</h3>
-      <div className="week-calendar">{[...DAYS, '일'].map((day, index) => <div key={day}><span>{day}</span><b>{new Date(start.getTime() + index * DAY_MS).getUTCDate()}</b><small>{index === 6 ? '휴식' : game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</small></div>)}</div>
+      <div className="week-calendar">{DAYS.map((day, index) => <div key={day}><span>{day}</span><b>{new Date(start.getTime() + index * DAY_MS).getUTCDate()}</b><small>{game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</small></div>)}</div>
 
       <div className="calendar-nav">
         <button className="icon-button" aria-label="이전 달" onClick={() => setOffset(v => v - 1)}><ChevronLeft size={20} /></button>
@@ -25,7 +25,7 @@ export default function Calendar({
         <button className="icon-button" aria-label="다음 달" onClick={() => setOffset(v => v + 1)}><ChevronRight size={20} /></button>
       </div>
       <div className="calendar-grid">
-        {[...DAYS, '일'].map(day => <strong key={day}>{day}</strong>)}
+        {DAYS.map(day => <strong key={day}>{day}</strong>)}
         {Array.from({
         length: firstWeekday
       }, (_, i) => <div key={`empty${i}`} />)}
@@ -38,11 +38,10 @@ export default function Calendar({
         const eventLabel = eventLabels[date.toISOString().slice(0, 10)];
         return <div key={i} className={`${thisWeek ? 'this-week' : ''} ${index === 0 ? 'today' : ''}`}>
               <span>{i + 1}</span>
-              {thisWeek && <small>{index < 6 ? game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label : '휴식'}</small>}
+              {thisWeek && <small>{game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</small>}
               {eventLabel && <small>{eventLabel}</small>}
             </div>;
       })}
       </div>
-      <p className="calendar-key"><span /> 이번 주 일정 <small>선택한 활동은 메인 화면에서 변경할 수 있어요.</small></p>
     </>;
 }
