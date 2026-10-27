@@ -1,0 +1,15 @@
+[
+  {"id":"linear","name":"선형대수","credits":3,"ability":"math","majors":["physics","chemistry","cs"],"task":"선대 퀴즈 풀이","weights":{"quiz":0.2,"midterm":0.3,"final":0.3,"assignment":0.2}},
+  {"id":"physics","name":"일반물리","credits":3,"ability":"science","majors":["physics"],"task":"일물 실험 보고서","weights":{"quiz":0.2,"midterm":0.3,"final":0.3,"assignment":0.2}},
+  {"id":"physics_seminar","name":"물리세미나","credits":2,"ability":"science","majors":["physics"],"task":"물세 문제 만들기","weights":{"quiz":0.2,"midterm":0.2,"final":0.2,"assignment":0.4}},
+  {"id":"chemistry","name":"일반화학","credits":3,"ability":"science","majors":["chemistry"],"task":"아바화 퀴즈 준비","weights":{"quiz":0.2,"midterm":0.3,"final":0.3,"assignment":0.2}},
+  {"id":"chemistry_seminar","name":"화학세미나","credits":2,"ability":"science","majors":["chemistry"],"task":"화세 탐구 발표","weights":{"quiz":0.2,"midterm":0.2,"final":0.2,"assignment":0.4}},
+  {"id":"biology","name":"일반생물","credits":3,"ability":"science","majors":["biology"],"task":"생다이 관찰 기록","weights":{"quiz":0.2,"midterm":0.3,"final":0.3,"assignment":0.2}},
+  {"id":"biology_seminar","name":"생물세미나","credits":2,"ability":"science","majors":["biology"],"task":"생세 탐구 보고서","weights":{"quiz":0.2,"midterm":0.2,"final":0.2,"assignment":0.4}},
+  {"id":"project","name":"정보과학프로젝트","credits":3,"ability":"science","majors":["cs"],"task":"정과프 발표 준비","weights":{"quiz":0.1,"midterm":0.2,"final":0.2,"assignment":0.5}},
+  {"id":"algorithm","name":"고급알고리즘","credits":3,"ability":"math","majors":["cs"],"task":"고알 문제 만들기","weights":{"quiz":0.2,"midterm":0.3,"final":0.3,"assignment":0.2}},
+  {"id":"english","name":"과학기술시사영어","credits":2,"ability":"writing","majors":[],"task":"과기시영 글쓰기 발표","weights":{"quiz":0.2,"midterm":0.2,"final":0.2,"assignment":0.4}},
+  {"id":"visual","name":"비주얼커뮤니케이션","credits":1,"ability":"writing","majors":[],"task":"비커 포스터 프로젝트","weights":{"quiz":0.1,"midterm":0.2,"final":0.2,"assignment":0.5}},
+  {"id":"math_seminar","name":"수학세미나","credits":2,"ability":"math","majors":[],"task":"수세 아카이빙 보고서","weights":{"quiz":0.2,"midterm":0.2,"final":0.2,"assignment":0.4}},
+  {"id":"language","name":"외국어","credits":2,"ability":"writing","majors":[],"task":"외국어 발표 준비","weights":{"quiz":0.2,"midterm":0.3,"final":0.3,"assignment":0.2}}
+]

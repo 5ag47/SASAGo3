@@ -4,3 +4,5 @@ dist/
 *.local
 *.log
 .DS_Store
+.qa/
+.pnpm-store/
