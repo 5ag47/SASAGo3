@@ -1,0 +1,78 @@
+
+/* Student-life flow: retain the existing room art, palette and pixel typography. */
+.auth-tabs{display:flex;gap:5px;padding:5px;background:#ecefe9;border-radius:7px;margin:22px 0}
+.auth-tabs button{flex:1;padding:10px 6px;font-size:12px;border-radius:5px}
+.auth-tabs button.active{background:#fffdf8;color:#3d5d7b;box-shadow:0 2px 5px #33445515}
+.auth-card .field-label:not(:first-child){margin-top:18px}
+.auth-card .info-note{margin-bottom:0}
+.form-error{font-size:12px;color:#a25149;line-height:1.7;margin-top:14px}
+.tutorial-panel{display:flex;align-items:center;justify-content:space-between;gap:24px;border:1px solid #cddacf;background:#eaf0e8;border-radius:10px;padding:20px 24px;margin-bottom:20px}
+.tutorial-panel .eyebrow{font-size:9px;color:#7b9181}
+.tutorial-panel h2{font-size:17px;margin:9px 0}
+.tutorial-panel p{font-size:12px;color:#6f7e77;line-height:1.8;max-width:760px}
+.tutorial-actions{display:flex;flex-direction:column;gap:9px;flex-shrink:0}
+.text-button{font-size:11px;text-decoration:underline;padding:8px;color:#687d90}
+.efficiency{display:flex;align-items:center;justify-content:space-between;background:#ecf0e6;border:1px solid #dce4d5;padding:9px;border-radius:5px;margin-bottom:15px;font-size:10px;color:#61765d}
+.efficiency b{font-size:19px}.efficiency small{font-size:10px;margin-left:3px}
+.efficiency.large{padding:17px;font-size:13px}
+fieldset.application-body{margin:0;min-width:0;border:0}
+.activity-hint{line-height:1.6;align-items:flex-start}
+.course-fixed{display:flex;justify-content:space-between;align-items:center;background:#eaf0f3;padding:16px;border-radius:6px;font-size:13px}
+.course-options{border:0;padding:0;margin:24px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.course-options legend{font-size:12px;margin-bottom:12px}
+.course-options label{border:1px solid #ced7d4;background:#f3f4ee;border-radius:7px;padding:16px 10px;display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.course-options label.selected{border-color:#789185;background:#e5eee4}
+.course-options input[type=radio]{width:16px;height:16px;accent-color:#637f68}
+.story-scene h3{font-size:23px;line-height:1.5;margin:22px 0 13px}
+.story-scene>p{font-size:13px;line-height:1.9}
+.story-choices{display:flex;flex-direction:column;gap:12px;margin:25px 0}
+.story-choice{padding:17px;text-align:left;border:1px solid #c8d4d9;background:#f1f4ee;border-radius:8px}
+.story-choice:hover{background:#e2eadc}.story-choice b{font-size:13px;display:block;line-height:1.7}
+.story-choice small{display:block;font-size:10px;color:#84907e;line-height:1.8;margin-top:7px}
+.story-result{padding:16px;background:#f2f0e6;border-radius:8px;margin:15px 0}
+.story-result h3{font-size:15px;margin:9px 0}.story-result p{font-size:12px;line-height:1.8}.story-result small{font-size:10px;color:#8b9183}
+.daily-log{display:flex;flex-direction:column}
+.daily-log article{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #e7eae3;align-items:center}
+.daily-log article>span{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;background:#e8eee5;border-radius:50%;font-size:12px}
+.daily-log b{font-size:12px}.daily-log p{font-size:10px;line-height:1.7;color:#7e8990;margin-top:5px}
+.money-log>div{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid #e6e9e2;font-size:12px}
+.money-log>div:last-child{color:#526f55;font-size:14px}
+.assessment{display:flex;justify-content:space-between;background:#e4ebf1;padding:17px;border-radius:7px;margin-top:18px;font-size:13px}
+.ending-card{text-align:center;background:#e8eee2;padding:24px 15px;border:1px solid #cdd8c4;border-radius:9px;margin-bottom:20px}
+.ending-card h3{font-size:22px;line-height:1.6;margin:13px 0}.ending-card p{font-size:12px;line-height:1.8}
+.semester-banner{display:flex;justify-content:space-between;gap:16px;background:#e7eee1;border-radius:7px;padding:15px;margin-bottom:18px;font-size:12px}
+.semester-banner button{text-decoration:underline}
+.phone{background:#e8edf0;border:1px solid #c6d2d7;border-radius:20px;padding:18px}
+.phone-status{display:flex;justify-content:space-between;font-size:11px;color:#728795;border-bottom:1px solid #cdd7dd;padding-bottom:16px}
+.phone-message{background:#fffdf7;border:1px solid #dce3e1;border-radius:0 12px 12px 12px;padding:15px;margin-top:18px}
+.phone-message small{font-size:10px;color:#8c9b92}.phone-message h3{font-size:15px;line-height:1.7;margin-top:10px}.phone-message p{font-size:12px;line-height:1.8;margin:10px 0}
+.save-tools{border-top:1px solid #dde2d9;margin-top:25px;padding-top:24px}
+.save-tools h3{font-size:14px}.save-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.recovery-card{max-width:580px;margin:10vh auto;padding:30px;background:#fffdf8;border:1px solid #ccd5ce;border-radius:12px}
+.recovery-card h1{font-size:24px;margin-bottom:20px}.recovery-card>p{font-size:13px;line-height:1.8}
+.onboarding-logout{position:absolute;top:24px;right:26px;z-index:2}
+.save-state.save-failed{color:#ffd7b8;opacity:1}
+.ledger-summary{font-size:10px;line-height:1.9;color:#798973}
+.record-details{font-size:12px;margin-top:15px}.record-details summary{cursor:pointer;padding:6px 0}
+.week-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:0 0 24px}
+.week-calendar>div{display:flex;flex-direction:column;gap:10px;background:#edf1e8;border:1px solid #dce4d3;padding:12px 5px;border-radius:6px;text-align:center}
+.week-calendar span{font-size:11px}.week-calendar b{font-size:13px}.week-calendar small{font-size:10px;line-height:1.5}
+.calendar-section-label{font-size:12px;margin-bottom:13px;color:#819275}
+.shop-item .secondary{padding:8px;font-size:11px;flex-shrink:0}.shop-item p{line-height:1.7}.item-emoji{flex-shrink:0}
+.stat-row{grid-template-columns:49px 1fr 21px}
+@media(max-width:850px){.tutorial-panel{padding:16px;gap:16px}.tutorial-panel p{font-size:11px}.page-heading>.secondary{font-size:11px;padding:9px}.stat-row{grid-template-columns:43px 1fr 18px}}
+@media(max-width:650px){
+ .page-heading{gap:10px;align-items:center}.page-heading h1{font-size:18px}.page-heading>.secondary{font-size:10px;padding:8px;max-width:130px;line-height:1.5}
+ .tutorial-panel{align-items:stretch;flex-direction:column;gap:10px}.tutorial-actions{flex-direction:row;align-items:center}.tutorial-panel h2{font-size:15px}
+ .efficiency{padding:7px;margin-bottom:13px;font-size:9px}.efficiency b{font-size:16px}
+ .stat-row{grid-template-columns:42px 1fr 18px}.stat-row>span{font-size:8px}
+ .paper-footer{line-height:1.6;gap:2px}.task-check{line-height:1.7;font-size:8px}
+ .semester-banner{flex-direction:column;font-size:11px}
+ .week-calendar{gap:3px}.week-calendar b{font-size:11px}.week-calendar small{font-size:8px}.week-calendar>div{padding:10px 3px}
+ .auth-tabs button{font-size:10px}.shop-item{gap:10px}.item-emoji{width:40px;height:45px;font-size:24px}
+ .shop-item h3{font-size:12px}.phone{padding:13px}.story-scene h3{font-size:20px}
+ .toolbar-actions{gap:3px}.game-toolbar{padding:0 8px}.date-display{gap:5px}.date-display .dday{font-size:8px}
+ .onboarding-logout{top:22px;right:20px;padding:8px;font-size:10px}
+ .save-state.save-failed{display:flex;font-size:8px}.save-state.save-failed svg{display:none}
+ .recovery-card{margin:30px 15px;padding:20px}
+}

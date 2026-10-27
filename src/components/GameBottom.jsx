@@ -1,21 +1,16 @@
-import { Backpack, ChevronRight, ClipboardList, FlaskConical, Play, ShoppingBag, Wallet } from 'lucide-react';
-
-const MENU = [
-  [ClipboardList, '기록', 'records'],
-  [FlaskConical, '능력치', 'stats'],
-  [Backpack, '가방', 'bag'],
-  [ShoppingBag, '매점', 'shop'],
-];
-
-export default function GameBottom({ money, onOpen, onStartWeek }) {
-  return (
-    <footer className="game-bottom">
+import { Backpack, ChevronRight, ClipboardList, CalendarDays, FlaskConical, Play, ShoppingBag, Wallet } from 'lucide-react';
+const MENU = [[CalendarDays, '이번 주', 'calendar'], [ClipboardList, '기록', 'records'], [FlaskConical, '능력치', 'stats'], [Backpack, '가방', 'bag'], [ShoppingBag, '매점', 'shop']];
+export default function GameBottom({
+  money,
+  ended,
+  onOpen,
+  onStartWeek
+}) {
+  return <footer className="game-bottom">
       <nav aria-label="게임 메뉴">
-        {MENU.map(([Icon, label, value]) => (
-          <button key={value} onClick={() => onOpen(value)}>
+        {MENU.map(([Icon, label, value]) => <button key={value} onClick={() => onOpen(value)}>
             <Icon size={22} strokeWidth={1.65} /><span>{label}</span>
-          </button>
-        ))}
+          </button>)}
       </nav>
       <div className="bottom-right">
         <div className="allowance">
@@ -24,10 +19,9 @@ export default function GameBottom({ money, onOpen, onStartWeek }) {
         </div>
         <button className="start-week" onClick={onStartWeek}>
           <Play size={22} fill="currentColor" />
-          <span>한 주 시작<small>이번 주 계획 확인하기</small></span>
+          <span>{ended ? '학기 기록' : '한 주 시작'}<small>{ended ? '우리의 이야기 돌아보기' : '이번 주 계획 확인하기'}</small></span>
           <ChevronRight size={22} />
         </button>
       </div>
-    </footer>
-  );
+    </footer>;
 }
