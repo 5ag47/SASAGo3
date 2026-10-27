@@ -1,4 +1,4 @@
-import { courses, MAJORS, REQUIRED } from './catalog.js';
+import { assignments, MAJORS, REQUIRED } from './catalog.js';
 import { enrollCourses } from './course-progress.js';
 import { addTask } from './tasks.js';
 export const courseSet = (major, electives = []) => [
@@ -12,16 +12,9 @@ export function addUrbanProject(state) {
     !((state.week >= 1 && state.week <= 16) || (state.week >= 25 && state.week <= 40))
   )
     return;
-  const names = ['교통 동선 조사', '생활권 지도', '녹지 계획', '접근성 분석'];
-  addTask(state, `urban-project-${state.week}`, {
-    name: `도도: ${names[(state.week - 1) % 4]}`,
-    description: `${courses.urban_planning.name} 주간 프로젝트`,
-    course: 'urban_planning',
-    target: 1,
-    deadline: state.week,
-    reward: { writing: 1, reputation: 1 },
-    penalty: { reputation: -1 },
-  });
+  const id = `urban-project-${state.week}`;
+  const definition = assignments[id];
+  if (definition && definition.enabled !== false) addTask(state, id, definition);
 }
 export function electiveWindow(state, term) {
   return (

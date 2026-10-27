@@ -1,18 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowRight, Check, Clock } from 'lucide-react';
 import { effectText, period } from '../../domain/catalog.js';
 import { Empty, Progress } from './ui.jsx';
 import { taskAllocation } from '../../domain/planning.js';
 import './planning.css';
-export default function TaskBoard({ state, onAssign }) {
-  const [filter, setFilter] = useState('active');
+import { taskStages, TASK_FORMATS } from '../../domain/assignments.js';
+import './task-stages.css';
+import { taskModule, taskGameReady } from '../../domain/task-modules/registry.js';
+export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
+  const [filter, setFilter] = useState(state.tasks[focusTask]?.status ?? 'active');
+  useEffect(() => {
+    if (focusTask)
+      document.getElementById(`task-${focusTask}`)?.scrollIntoView?.({ block: 'nearest' });
+  }, [focusTask]);
   const tasks = Object.values(state.tasks)
     .filter((t) => t.status === filter)
     .sort((a, b) => a.deadline - b.deadline);
   return (
     <>
       <p className="dialog-lead">
-        클릭으로 완료 처리하지 않아요. 자습시간을 배정하고 한 주를 보내면 자동으로 체크돼요.
+        미니게임을 풀고 자습시간을 배정하세요. 한 주를 보내면 과제가 진행됩니다.
       </p>
       <div className="filter-tabs">
         {[
@@ -33,7 +40,12 @@ export default function TaskBoard({ state, onAssign }) {
       <div className="task-board">
         {tasks.length ? (
           tasks.map((t) => (
-            <article className={`task-detail ${t.status}`} key={t.id}>
+            <article
+              id={`task-${t.id}`}
+              data-focused={t.id === focusTask}
+              className={`task-detail ${t.status}`}
+              key={t.id}
+            >
               <div>
                 <span className={`task-deadline ${t.deadline === state.week ? 'urgent' : ''}`}>
                   {t.status === 'completed' ? <Check size={12} /> : <Clock size={12} />}
@@ -48,8 +60,35 @@ export default function TaskBoard({ state, onAssign }) {
                 <small>{period(t.deadline).label}</small>
               </div>
               <h3>{t.name}</h3>
+              {t.format && <small>{TASK_FORMATS[t.format]}</small>}
               <p>{t.description}</p>
               <Progress value={t.progress} max={t.target} label={t.name} />
+              {t.status === 'active' && taskModule(t).game && (
+                <button
+                  className={`${taskGameReady(t) ? 'subtle' : 'primary'} full task-game-action`}
+                  onClick={() => onPlay(t.id)}
+                >
+                  {taskGameReady(t)
+                    ? '미니게임 결과 보기'
+                    : t.moduleData
+                      ? '미니게임 이어하기'
+                      : '미니게임 시작'}
+                </button>
+              )}
+              {t.stages && (
+                <ol className="task-stages">
+                  {taskStages(t).map((stage) => (
+                    <li key={stage.id} className={stage.status}>
+                      <span>
+                        {stage.status === 'completed' ? '✓' : '·'} {stage.name}
+                      </span>
+                      <b>
+                        {stage.progress} / {stage.target}
+                      </b>
+                    </li>
+                  ))}
+                </ol>
+              )}
               {t.status === 'active' && (
                 <small className="task-allocation">
                   이번 주 배정 {taskAllocation(state, t).slots}칸
@@ -57,7 +96,8 @@ export default function TaskBoard({ state, onAssign }) {
               )}
               <footer>
                 <span>
-                  {t.progress} / {t.target}칸 · {Math.round((t.progress / t.target) * 100)}%
+                  {Math.round(t.progress * 100) / 100} / {t.target}
+                  {taskModule(t).unit} · {Math.round((t.progress / t.target) * 100)}%
                 </span>
                 {t.status === 'active' && (
                   <button onClick={() => onAssign(t.id)}>
@@ -70,6 +110,7 @@ export default function TaskBoard({ state, onAssign }) {
                 <br />
                 미완료: {effectText(t.penalty) || '추가 불이익 없음'}
               </small>
+              {t.result?.note && <p>{t.result.note}</p>}
             </article>
           ))
         ) : (

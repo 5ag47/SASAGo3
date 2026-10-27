@@ -1,17 +1,29 @@
 import { courses, activeTasks } from './catalog.js';
-import { applyEffects, clamp, random } from './random.js';
-import { courseAbility, learnCourse } from './course-progress.js';
+import { applyEffects } from './random.js';
+import { learnCourse } from './course-progress.js';
+import { notice } from './notifications.js';
+import { taskModuleSpec, taskModule, defaultTaskGame } from './task-modules/registry.js';
+import { processTaskWork, resolveTaskOutcome, taskIsComplete } from './task-processing.js';
 
 export function addTask(state, id, definition) {
   if (state.tasks[id]) return;
   state.tasks[id] = {
-    ...definition,
+    ...structuredClone(definition),
+    module: structuredClone(definition.module ?? defaultTaskGame(definition)),
     id,
     description: definition.description ?? '',
     start: state.week,
     progress: 0,
     status: 'active',
   };
+  if (definition.special !== 'tutorial')
+    notice(
+      state,
+      definition.name,
+      `${definition.target}${taskModule(state.tasks[id]).unit} · ${definition.deadline === state.week ? '이번 주 마감' : `${definition.deadline - state.week}주 뒤 마감`}`,
+      'task',
+      { task: id },
+    );
 }
 export function academyTasks(state) {
   if (!state.flags.academy || state.week < 1 || state.week > 16) return;
@@ -27,53 +39,56 @@ export function academyTasks(state) {
     });
 }
 export function finishTask(state, task, messages) {
+  if (task.status !== 'active') return;
+  const result = resolveTaskOutcome(state, task, true);
   task.progress = task.target;
   task.status = 'completed';
-  applyEffects(state, task.reward);
-  if (task.course) {
-    const ability = courseAbility(state, task.course);
-    const difficulty = Math.round((random(state) - 0.5) * 8);
+  task.result = {
+    module: task.module?.id ?? taskModuleSpec(task).id,
+    score: result.score,
+    note: result.note ?? '',
+  };
+  applyEffects(state, result.effects);
+  state.awards += result.awards ?? 0;
+  if (task.course && result.score !== null) {
     state.assessments.push({
       id: task.id,
       course: task.course,
       kind: 'project',
-      score: Math.round(clamp(65 + ability * 0.35 + difficulty)),
-      difficulty,
+      score: result.score,
+      ...(result.difficulty !== undefined ? { difficulty: result.difficulty } : {}),
       term: state.week <= 16 ? 1 : 2,
       week: state.week,
     });
   }
-  if (task.special === 'contest') {
-    const chance = clamp((state.stats.math + state.stats.science) / 180, 0.1, 0.9);
-    const won = random(state) < chance;
-    if (won) {
-      state.awards++;
-      applyEffects(state, { reputation: 6, speech: 3 });
-    }
-    messages.push(won ? '외부대회 수상 · 평판 +6 · 구술력 +3' : '외부대회 준비 완료 · 미수상');
-  }
+  if (result.note) messages.push(result.note);
   messages.push(`완료 · ${task.name}`);
 }
 export function workTask(state, id, messages, progress = 1) {
   const task = state.tasks[id];
   if (!task || task.status !== 'active') return false;
+  const gained = processTaskWork(state, task, progress);
   if (task.course)
-    learnCourse(state, task.course, 1, 2 * Math.min(progress, task.target - task.progress));
-  task.progress = Math.min(task.target, Math.round((task.progress + progress) * 10) / 10);
-  if (task.progress >= task.target) finishTask(state, task, messages);
+    learnCourse(state, task.course, 1, 2 * Math.min(gained, task.target - task.progress));
+  task.progress = Math.min(task.target, Math.round((task.progress + gained) * 1000) / 1000);
+  if (taskIsComplete(state, task)) finishTask(state, task, messages);
   return true;
 }
 export function expireTasks(state, messages) {
   for (const task of activeTasks(state)) {
     if (task.deadline > state.week) continue;
+    const result = resolveTaskOutcome(state, task, false);
     task.status = 'expired';
-    applyEffects(state, task.penalty);
-    if (task.course)
+    task.result = { module: taskModuleSpec(task).id, score: result.score, note: result.note ?? '' };
+    applyEffects(state, result.effects);
+    state.awards += result.awards ?? 0;
+    if (result.note) messages.push(result.note);
+    if (task.course && result.score !== null)
       state.assessments.push({
         id: task.id,
         course: task.course,
         kind: 'project',
-        score: Math.round((task.progress / task.target) * 55),
+        score: result.score,
         term: state.week <= 16 ? 1 : 2,
         week: state.week,
       });

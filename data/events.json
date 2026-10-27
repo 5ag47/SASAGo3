@@ -5,17 +5,6 @@
     "name": "같이 공부할 사람?",
     "description": "겨울방학 단체 채팅방에 스터디 모집 공고가 올라왔어요. 공부와 친구, 어떤 분위기가 나와 맞을까요? 지원에 실패하면 다른 팀을 고를 수 있어요."
   },
-  "thesis": {
-    "week": 1,
-    "kind": "task",
-    "name": "졸업논문: 첫 질문부터 최종 발표까지",
-    "description": "한 번에 끝내기보다 조금씩. 연구·실험·분석·발표에 총 12칸을 투자하세요.",
-    "target": 12,
-    "deadline": 16,
-    "reward": { "science": 7, "reputation": 6 },
-    "penalty": { "reputation": -8, "stress": 10 },
-    "special": "research"
-  },
   "academy_offer": {
     "week": 1,
     "kind": "choice",
@@ -27,13 +16,17 @@
         "label": "심층반에 등록하기",
         "detail": "5,000원 · 월 2개 숙제",
         "cost": 5000,
-        "flags": { "academy": true }
+        "flags": {
+          "academy": true
+        }
       },
       {
         "id": "self",
         "label": "내 속도로 자습하기",
         "detail": "집중력 +3",
-        "effect": { "focus": 3 }
+        "effect": {
+          "focus": 3
+        }
       }
     ]
   },
@@ -47,21 +40,31 @@
         "id": "lab",
         "label": "탐구·코딩 동아리",
         "detail": "과학 +3 · 동아리 활동 시 과학 보너스",
-        "effect": { "science": 3 },
-        "flags": { "club": "lab" }
+        "effect": {
+          "science": 3
+        },
+        "flags": {
+          "club": "lab"
+        }
       },
       {
         "id": "art",
         "label": "공연·영상 동아리",
         "detail": "매력 +4 · 동아리 활동 시 서술력 보너스",
-        "effect": { "charm": 4 },
-        "flags": { "club": "art" }
+        "effect": {
+          "charm": 4
+        },
+        "flags": {
+          "club": "art"
+        }
       },
       {
         "id": "none",
         "label": "이번에는 자습에 집중",
         "detail": "집중력 +3",
-        "effect": { "focus": 3 }
+        "effect": {
+          "focus": 3
+        }
       }
     ]
   },
@@ -71,18 +74,30 @@
     "name": "복도에서 만난 아재개그 퀴즈",
     "description": "세상에서 가장 뜨거운 바다는? 정답이면 스트레스가 조금 내려가요. 성적에는 반영되지 않아요.",
     "options": [
-      { "id": "hot", "label": "열바다!", "detail": "감으로 찍어 보기", "effect": { "stress": 1 } },
+      {
+        "id": "hot",
+        "label": "열바다!",
+        "detail": "감으로 찍어 보기",
+        "effect": {
+          "stress": 1
+        }
+      },
       {
         "id": "passion",
         "label": "열정의 바다?",
         "detail": "선생님 취향을 추리해 보기",
-        "effect": { "stress": -6, "reputation": 1 }
+        "effect": {
+          "stress": -6,
+          "reputation": 1
+        }
       },
       {
         "id": "skip",
         "label": "웃고 지나가기",
         "detail": "가볍게 인사하기",
-        "effect": { "charm": 1 }
+        "effect": {
+          "charm": 1
+        }
       }
     ]
   },
@@ -102,13 +117,18 @@
         "id": "help",
         "label": "유포를 멈추고 친구를 챙긴다",
         "detail": "평판 +4 · 스트레스 +2",
-        "effect": { "reputation": 4, "stress": 2 }
+        "effect": {
+          "reputation": 4,
+          "stress": 2
+        }
       },
       {
         "id": "mute",
         "label": "알림을 끄고 거리를 둔다",
         "detail": "스트레스 -3",
-        "effect": { "stress": -3 }
+        "effect": {
+          "stress": -3
+        }
       }
     ]
   },
@@ -123,19 +143,28 @@
         "label": "친구들과 회식",
         "detail": "4,000원 · 스트레스 -20 · 평판 +3",
         "cost": 4000,
-        "effect": { "stress": -20, "reputation": 3 }
+        "effect": {
+          "stress": -20,
+          "reputation": 3
+        }
       },
       {
         "id": "sleep",
         "label": "알람 없이 푹 자기",
         "detail": "체력 +20 · 스트레스 -12",
-        "effect": { "hp": 20, "stress": -12 }
+        "effect": {
+          "hp": 20,
+          "stress": -12
+        }
       },
       {
         "id": "game",
         "label": "밤새 게임 한 판 더",
         "detail": "스트레스 -25 · 체력 -8",
-        "effect": { "stress": -25, "hp": -8 }
+        "effect": {
+          "stress": -25,
+          "hp": -8
+        }
       }
     ]
   },
@@ -149,20 +178,32 @@
         "id": "stage",
         "label": "축제 무대에 올라가기",
         "detail": "이번 주 첫 2칸 행사 · 매력 +8 · 평판 +5",
-        "effect": { "charm": 8, "reputation": 5, "stress": -10 },
-        "flags": { "festival": true }
+        "effect": {
+          "charm": 8,
+          "reputation": 5,
+          "stress": -10
+        },
+        "flags": {
+          "festival": true
+        }
       },
       {
         "id": "audience",
         "label": "관객으로 가볍게 즐기기",
         "detail": "스트레스 -8 · 매력 +2",
-        "effect": { "stress": -8, "charm": 2 }
+        "effect": {
+          "stress": -8,
+          "charm": 2
+        }
       },
       {
         "id": "study",
         "label": "자습실 지키기",
         "detail": "집중력 +5 · 스트레스 +4",
-        "effect": { "focus": 5, "stress": 4 }
+        "effect": {
+          "focus": 5,
+          "stress": 4
+        }
       }
     ]
   },
@@ -177,13 +218,19 @@
         "label": "콘셉트 의상으로 추억 만들기",
         "detail": "5,000원 · 매력 +7 · 평판 +3",
         "cost": 5000,
-        "effect": { "charm": 7, "reputation": 3 }
+        "effect": {
+          "charm": 7,
+          "reputation": 3
+        }
       },
       {
         "id": "uniform",
         "label": "익숙한 교복으로",
         "detail": "평판 +2 · 스트레스 -3",
-        "effect": { "reputation": 2, "stress": -3 }
+        "effect": {
+          "reputation": 2,
+          "stress": -3
+        }
       }
     ]
   },
@@ -199,23 +246,17 @@
     "course": "general_biology",
     "name": "생물 다양성 탐사, 제주도!",
     "description": "바람과 현무암, 그리고 친구들. 스트레스 -15, 과학 +5, 체력 -8.",
-    "effect": { "stress": -15, "science": 5, "hp": -8 }
+    "effect": {
+      "stress": -15,
+      "science": 5,
+      "hp": -8
+    }
   },
   "recommendation": {
     "week": 13,
     "kind": "recommendation",
     "name": "추천서를 부탁드릴 선생님",
     "description": "상담으로 쌓은 친밀도가 추천서의 힘이 돼요. 6월 말까지 해당 선생님과 상담해 보세요."
-  },
-  "reflection": {
-    "week": 14,
-    "kind": "task",
-    "name": "1학기 활동 소감문",
-    "description": "잘한 일과 아쉬운 일을 기록으로 남겨요.",
-    "target": 2,
-    "deadline": 16,
-    "reward": { "writing": 4, "reputation": 3 },
-    "penalty": { "reputation": -4 }
   },
   "summer_place": {
     "week": 17,
@@ -227,19 +268,25 @@
         "id": "home",
         "label": "집에서 내 리듬대로",
         "detail": "매주 용돈 +2,000원 · 학습 효율 ×0.9",
-        "flags": { "environment": "home" }
+        "flags": {
+          "environment": "home"
+        }
       },
       {
         "id": "cafe",
         "label": "스터디카페",
         "detail": "매주 4,000원 · 학습 효율 ×1.15",
-        "flags": { "environment": "cafe" }
+        "flags": {
+          "environment": "cafe"
+        }
       },
       {
         "id": "managed",
         "label": "관리형 스터디카페",
         "detail": "매주 9,000원 · 효율 ×1.4 · 스트레스 +3",
-        "flags": { "environment": "managed" }
+        "flags": {
+          "environment": "managed"
+        }
       }
     ]
   },
@@ -253,19 +300,25 @@
         "id": "heavy",
         "label": "심층 특강에 집중",
         "detail": "매주 3칸 고정 학원 · 9,000원",
-        "flags": { "camp": "heavy" }
+        "flags": {
+          "camp": "heavy"
+        }
       },
       {
         "id": "light",
         "label": "특강 하나, 자습은 넉넉하게",
         "detail": "매주 1칸 고정 학원 · 3,000원",
-        "flags": { "camp": "light" }
+        "flags": {
+          "camp": "light"
+        }
       },
       {
         "id": "none",
         "label": "자율적으로 보내기",
         "detail": "21칸 모두 자유",
-        "flags": { "camp": "none" }
+        "flags": {
+          "camp": "none"
+        }
       }
     ]
   },
@@ -279,13 +332,17 @@
         "id": "enter",
         "label": "내 아이디어로 지원하기",
         "detail": "대회 준비 과제 추가 · 8월 2주 마감",
-        "flags": { "contest": true }
+        "flags": {
+          "contest": true
+        }
       },
       {
         "id": "pass",
         "label": "지금은 내실을 다지기",
         "detail": "집중력 +3",
-        "effect": { "focus": 3 }
+        "effect": {
+          "focus": 3
+        }
       }
     ]
   },
@@ -305,46 +362,36 @@
         "id": "dream",
         "label": "상향 지원 · 설카포를 향해",
         "detail": "도전 전형 · 높은 학업·면접 요구",
-        "effect": { "stress": 6 },
-        "flags": { "target": "dream" }
+        "effect": {
+          "stress": 6
+        },
+        "flags": {
+          "target": "dream"
+        }
       },
       {
         "id": "balanced",
         "label": "균형 지원 · 가능성을 넓히기",
         "detail": "실력과 활동을 고르게 평가",
-        "effect": { "stress": 3 },
-        "flags": { "target": "balanced" }
+        "effect": {
+          "stress": 3
+        },
+        "flags": {
+          "target": "balanced"
+        }
       },
       {
         "id": "safe",
         "label": "안정 지원 · 나에게 맞는 학교",
         "detail": "부담은 낮추고 성취를 연결",
-        "effect": { "stress": 1 },
-        "flags": { "target": "safe" }
+        "effect": {
+          "stress": 1
+        },
+        "flags": {
+          "target": "safe"
+        }
       }
     ]
-  },
-  "essay": {
-    "week": 25,
-    "kind": "task",
-    "name": "자기소개서 완성",
-    "description": "평판 60 이상이면 자소서 한 칸당 진척도가 1.5배예요.",
-    "target": 8,
-    "deadline": 28,
-    "special": "essay",
-    "reward": { "writing": 6, "reputation": 3 },
-    "penalty": { "stress": 12, "reputation": -5 }
-  },
-  "application_form": {
-    "week": 25,
-    "kind": "task",
-    "name": "원서 서류 점검·제출",
-    "description": "지원 정보는 평판이 높을수록 정확해져요. 서류 누락이 없도록 3칸을 투자하세요.",
-    "target": 3,
-    "deadline": 28,
-    "special": "application",
-    "reward": { "speech": 3 },
-    "penalty": { "stress": 10 }
   },
   "mock_interview": {
     "week": 26,
@@ -356,13 +403,20 @@
         "id": "question",
         "label": "면접 문제를 직접 만들기",
         "detail": "구술력 +5 · 수학 +2 · 체력 -3",
-        "effect": { "speech": 5, "math": 2, "hp": -3 }
+        "effect": {
+          "speech": 5,
+          "math": 2,
+          "hp": -3
+        }
       },
       {
         "id": "answer",
         "label": "지원자로 모의면접 보기",
         "detail": "구술력 +4 · 스트레스 +3",
-        "effect": { "speech": 4, "stress": 3 }
+        "effect": {
+          "speech": 4,
+          "stress": 3
+        }
       }
     ]
   },
@@ -377,14 +431,21 @@
         "label": "연논·심층 특강 듣기",
         "detail": "6,000원 · 수학 +8 · 서술력 +4 · 스트레스 +5",
         "cost": 6000,
-        "effect": { "math": 8, "writing": 4, "stress": 5 }
+        "effect": {
+          "math": 8,
+          "writing": 4,
+          "stress": 5
+        }
       },
       {
         "id": "rest",
         "label": "가족과 쉬어가기",
         "detail": "체력 +15 · 스트레스 -18 · 용돈 +5,000원",
         "income": 5000,
-        "effect": { "hp": 15, "stress": -18 }
+        "effect": {
+          "hp": 15,
+          "stress": -18
+        }
       }
     ]
   },
@@ -398,20 +459,27 @@
         "id": "report",
         "label": "차단하고 선생님께 알리기",
         "detail": "평판 +4",
-        "effect": { "reputation": 4 }
+        "effect": {
+          "reputation": 4
+        }
       },
       {
         "id": "ignore",
         "label": "읽지 않고 지우기",
         "detail": "스트레스 -2",
-        "effect": { "stress": -2 }
+        "effect": {
+          "stress": -2
+        }
       },
       {
         "id": "cheat",
         "label": "위험한 편법에 기대기",
         "detail": "10,000원 · 징계 +5 · 평판 -20 · 위험 엔딩",
         "cost": 10000,
-        "effect": { "reputation": -20, "stress": 15 },
+        "effect": {
+          "reputation": -20,
+          "stress": 15
+        },
         "discipline": 5
       }
     ]
@@ -455,15 +523,5 @@
     "kind": "notice",
     "name": "12월, 결과를 기다리는 시간",
     "description": "진학실에서 전형 결과와 나의 기록을 확인해 보세요. 마지막 4주를 보내면 한 해의 결말을 선택할 수 있어요."
-  },
-  "memory_book": {
-    "week": 37,
-    "kind": "task",
-    "name": "우리의 마지막 페이지",
-    "description": "졸업을 앞두고 올해의 순간을 작은 기록집으로 남겨요.",
-    "target": 3,
-    "deadline": 40,
-    "reward": { "writing": 4, "charm": 4 },
-    "penalty": { "stress": 2 }
   }
 }

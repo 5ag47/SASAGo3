@@ -1,0 +1,30 @@
+.task-detail[data-focused='true'] {
+  outline: 2px solid #8a9eaa;
+  outline-offset: 3px;
+}
+.task-stages {
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+.task-stages li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 12px;
+  border-bottom: 1px solid #e3dfd5;
+  color: #8a8e8a;
+}
+.task-stages .active {
+  color: #536f83;
+  font-weight: 600;
+}
+.task-stages .completed {
+  color: #7d947a;
+}
+.task-stages b {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

@@ -24,3 +24,16 @@ export function scheduleChanges(before, after) {
       : [];
   });
 }
+export function taskCommandSummary(state, command) {
+  const task = command.type === 'task_game' ? state.tasks[command.task] : null;
+  return task
+    ? {
+        id: task.id,
+        module: task.module?.id,
+        progress: task.progress,
+        phase: task.moduleData?.phase ?? 'unstarted',
+        quality: task.moduleData?.quality ?? null,
+        status: task.status,
+      }
+    : null;
+}

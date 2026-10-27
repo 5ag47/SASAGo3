@@ -2,20 +2,11 @@ import { activeTasks, courses, events, MAJORS, REQUIRED, TUTORIAL_TASKS } from '
 import { addTask, academyTasks } from './tasks.js';
 import { applyEffects } from './random.js';
 import { resolveAdmission } from './grades.js';
-import { PROJECT_WEEKS, CLEANING_WEEKS } from './school-calendar.js';
+import { CLEANING_WEEKS } from './school-calendar.js';
 import { enrollCourses } from './course-progress.js';
 import { courseSet, addUrbanProject } from './enrollment.js';
-
-export function notice(state, title, text, kind = 'info') {
-  state.notices.unshift({
-    id: `${state.week}-${state.notices.length}-${title}`,
-    week: state.week,
-    title,
-    text,
-    kind,
-  });
-  state.notices = state.notices.slice(0, 120);
-}
+import { notice } from './notifications.js';
+export { notice } from './notifications.js';
 export function beginWeek(state) {
   if (state.week === 25) {
     state.major = state.nextMajor ?? state.major;
@@ -57,21 +48,6 @@ export function beginWeek(state) {
   }
   academyTasks(state);
   addUrbanProject(state);
-  if (PROJECT_WEEKS.includes(state.week)) {
-    for (const courseId of state.courses) {
-      if (courseId === 'urban_planning') continue;
-      const course = courses[courseId];
-      addTask(state, `project-${state.week}-${courseId}`, {
-        name: course.assignment,
-        description: `${course.name} 수행평가 · 성적 20%에 합산`,
-        course: courseId,
-        target: 2,
-        deadline: state.week + 2,
-        reward: { [course.ability]: 2, reputation: 1 },
-        penalty: { reputation: -1, stress: 2 },
-      });
-    }
-  }
   if (CLEANING_WEEKS.includes(state.week)) {
     addTask(state, `clean-${state.week}`, {
       name: '월말 호실·냉장고 점검',

@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import { courses, events, period } from '../../domain/catalog.js';
+import { courseSet } from '../../domain/enrollment.js';
 import { assessmentsAt, CLEANING_WEEKS } from '../../domain/school-calendar.js';
 
 export function CalendarPanel({ state, onMonth }) {
   const [month, setMonth] = useState(period(state.week).month);
-  const entries = Object.entries(events).filter(([, e]) => period(e.week).month === month);
+  const entries = Object.entries(events).filter(([, e]) => {
+    const enrollment =
+      e.week >= 25 && state.week < 25
+        ? courseSet(state.nextMajor ?? state.major, state.nextElectives ?? state.electives)
+        : e.week < 25 && state.week >= 25
+          ? Object.keys(state.courseMastery)
+          : state.courses;
+    return period(e.week).month === month && (!e.course || enrollment.includes(e.course));
+  });
   return (
     <>
       <p className="dialog-lead">

@@ -17,6 +17,10 @@ import { effectivePlan, lockedSlots, resolveWeek } from './week.js';
 import { enrollCourses } from './course-progress.js';
 import { courseSet, electiveWindow, changeElective } from './enrollment.js';
 import { copyDayPlan, copyDayPreview } from './schedule.js';
+import { taskEstimate } from './task-modules/registry.js';
+import { taskGameAction, taskIsComplete } from './task-processing.js';
+import { finishTask } from './tasks.js';
+import { TaskActionError } from './task-modules/action-error.js';
 
 export class GameError extends Error {
   constructor(code, message) {
@@ -92,7 +96,7 @@ export function planPreset(state, preset) {
     }));
   const queue = activeTasks(state)
     .sort((a, b) => a.deadline - b.deadline)
-    .flatMap((task) => Array.from({ length: Math.ceil(task.target - task.progress) }, () => task));
+    .flatMap((task) => Array.from({ length: taskEstimate(state, task) }, () => task));
   return Array.from({ length: 21 }, (_, i) => {
     if (lockedSlots(state)[i]) return state.plan[i];
     if (i % 3 === 2) return { activity: 'sleep', target: null };
@@ -212,6 +216,22 @@ export function transition(source, command) {
       );
       state.plan[command.index] = { activity: command.activity, target };
       markScheduleEdit(state, [state.plan[command.index]]);
+    } else if (command.type === 'task_game') {
+      requireRule(
+        typeof command.task === 'string' &&
+          Object.hasOwn(state.tasks, command.task) &&
+          state.tasks[command.task].status === 'active',
+        'TASK_INVALID',
+        '진행 중인 과제를 선택해 주세요.',
+      );
+      try {
+        taskGameAction(state, state.tasks[command.task], command.action);
+        if (taskIsComplete(state, state.tasks[command.task]))
+          finishTask(state, state.tasks[command.task], []);
+      } catch (error) {
+        if (error instanceof TaskActionError) throw new GameError(error.code, error.message);
+        throw error;
+      }
     } else if (command.type === 'copy_day') {
       requireRule(
         Number.isInteger(command.sourceDay) &&

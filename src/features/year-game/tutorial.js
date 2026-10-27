@@ -1,4 +1,5 @@
 import { courses } from '../../domain/catalog.js';
+import { taskGameReady } from '../../domain/task-modules/registry.js';
 
 export function tutorialCompletion(state, visited = []) {
   const seen = (id) => visited.includes(id);
@@ -13,6 +14,8 @@ export function tutorialCompletion(state, visited = []) {
         )),
     tasks:
       Boolean(state.flags.tutorialTask) &&
+      taskGameReady(state.tasks['practice-report']) &&
+      taskGameReady(state.tasks['first-study']) &&
       (state.tasks['practice-report']?.status === 'completed' ||
         state.plan.filter((slot) => slot.activity === 'task' && slot.target === 'practice-report')
           .length >= 2),
@@ -55,8 +58,9 @@ export const TUTORIAL_LESSONS = [
     target: 'tasks',
     action: '과제 배정하기',
     description:
-      '과제를 눌러 시간을 배정합니다. 한 주가 끝날 때 진행도가 오르고, 목표에 도달하면 자동으로 완료됩니다.',
-    practice: '연습 보고서에 두 칸을 배정하고, 과제 창의 배정 칸 수를 확인하세요.',
+      '과제를 열어 미니게임을 풀고 자습시간을 배정합니다. 미니게임과 시간 배정은 원하는 순서로 할 수 있습니다. 한 주가 끝날 때 진행도가 오르면 자동으로 완료됩니다.',
+    practice:
+      '연습 보고서의 미니게임을 풀고 두 칸을 배정하세요. 수학 공부 1회의 미니게임도 과제 창에서 풀 수 있습니다.',
   },
   {
     id: 'recovery',

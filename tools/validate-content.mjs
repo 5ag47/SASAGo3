@@ -14,7 +14,24 @@ import {
   lifeEvents,
   resources,
   ELECTIVES,
+  assignments,
+  assignmentEvents,
 } from '../src/domain/catalog.js';
+import { assignmentIssues } from '../src/domain/assignments.js';
+import { TASK_MODULES } from '../src/domain/task-modules/registry.js';
+import { TASK_GAME_VIEW_IDS } from '../src/features/year-game/task-games/catalog.js';
+for (const module of Object.values(TASK_MODULES))
+  if (module.game)
+    assert.ok(
+      TASK_GAME_VIEW_IDS.includes(module.game.view),
+      `Missing task game view: ${module.game.view}`,
+    );
+assert.deepEqual(
+  assignmentIssues(assignments, { courses, stats: STATS }),
+  [],
+  'Assignment definitions are invalid',
+);
+assert.ok(Object.keys(assignmentEvents).length <= 400, 'Too many expanded assignments');
 const kinds = [
   'task',
   'choice',
@@ -43,7 +60,9 @@ for (const resource of Object.values(resources)) {
 }
 assert.equal(
   Object.keys(events).length,
-  Object.keys(storyEvents).length + Object.keys(lifeEvents).length,
+  Object.keys(storyEvents).length +
+    Object.keys(lifeEvents).length +
+    Object.keys(assignmentEvents).length,
   'Duplicate story/life event ID',
 );
 for (const [id, quiz] of Object.entries(quizzes)) {

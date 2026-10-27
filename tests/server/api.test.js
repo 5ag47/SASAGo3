@@ -10,6 +10,42 @@ import { beginWeek } from '../../src/domain/events.js';
 const origin = 'https://game.example';
 const secret = 'test-only-secret-do-not-use-in-production-1234567890';
 const profile = { name: '서버 테스트', character: 'boy', role: 'steady', major: 'math' };
+test('task mini-games persist per action, hide a recalled pattern and accept a duplicate only once', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const created = await f.post(await f.get(), { type: 'create', profile });
+  const task = 'practice-report';
+  const start = { type: 'task_game', task, action: { type: 'start' } };
+  const key = randomUUID();
+  const started = await f.post(created, start, { key });
+  assert.equal(started.response.status, 200);
+  const goal = [...started.state.tasks[task].moduleData.goal];
+  const duplicate = await f.post(created, start, { key });
+  assert.equal(duplicate.state.revision, started.state.revision);
+  assert.deepEqual(duplicate.state.tasks[task].moduleData.goal, goal);
+  let session = await f.post(started, { type: 'task_game', task, action: { type: 'ready' } });
+  assert.equal(session.state.tasks[task].moduleData.goal, null);
+  assert.equal((await f.get()).state.tasks[task].moduleData.phase, 'input');
+  const forged = await f.post(session, {
+    type: 'task_game',
+    task,
+    action: { type: 'check', passed: true, quality: 100 },
+  });
+  assert.equal(forged.response.status, 400);
+  const injected = await f.post(session, {
+    type: 'task_game',
+    task,
+    action: { type: 'start' },
+    moduleData: { passed: true },
+  });
+  assert.equal(injected.code, 'COMMAND_SHAPE');
+  for (const cell of goal)
+    session = await f.post(session, { type: 'task_game', task, action: { type: 'toggle', cell } });
+  session = await f.post(session, { type: 'task_game', task, action: { type: 'check' } });
+  assert.equal(session.state.tasks[task].moduleData.passed, true);
+  assert.equal(session.state.tasks[task].progress, 0);
+  assert.equal(session.state.tasks['first-study'].moduleData, undefined);
+});
 test('day copy is one atomic server command and duplicate deliveries do not apply it twice', async (t) => {
   const f = fixture();
   t.after(() => f.store.close());

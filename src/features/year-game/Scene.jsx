@@ -39,7 +39,7 @@ export default function Scene({ state, night, onOpen, onTask }) {
                     </i>
                   </small>
                   <Progress value={task.progress} max={task.target} label={task.name} />
-                  <span className="assign-hint">시간 배정 →</span>
+                  <span className="assign-hint">과제 열기 →</span>
                 </span>
               </button>
             ))}

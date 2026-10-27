@@ -1,22 +1,23 @@
-/* Shared tokens only. Feature layout lives below; game rules never depend on CSS. */
+@import '../../styles/sasa-theme.css';
+/* Layout stays local; the shared prototype palette is used by tools and modules. */
 :root {
-  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-family: var(--sasa-font);
   color: #46576a;
   background: #f6f5f0;
   font-synthesis: none;
   font-size: 14px;
   font-weight: 400;
-  --ink: #40536a;
-  --navy: #50677f;
-  --muted: #8b959b;
-  --sage: #8fa89c;
-  --line: #e2e5df;
-  --paper: #fffdf7;
-  --blue: #e9eff7;
-  --purple: #efebf4;
-  --sand: #f4eee1;
-  --rose: #f7e9e6;
-  --green: #eaf0e7;
+  --ink: var(--sasa-ink);
+  --navy: var(--sasa-navy);
+  --muted: var(--sasa-muted);
+  --sage: var(--sasa-sage);
+  --line: var(--sasa-line);
+  --paper: var(--sasa-paper);
+  --blue: var(--sasa-blue);
+  --purple: var(--sasa-purple);
+  --sand: var(--sasa-sand);
+  --rose: var(--sasa-rose);
+  --green: var(--sasa-green);
 }
 * {
   box-sizing: border-box;

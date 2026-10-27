@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, transition } from '../../src/domain/engine.js';
 import { tutorialCompletion } from '../../src/features/year-game/tutorial.js';
+import { solveActiveTaskGames } from '../helpers/task-games.js';
 import {
   readTutorialVisits,
   tutorialStorageKey,
@@ -12,7 +13,7 @@ test('actively choosing a preset counts real allocations without requiring a man
   const initial = createGame(profile);
   assert.equal(tutorialCompletion(initial).schedule, false);
   const planned = transition(initial, { type: 'preset', preset: 'tasks' });
-  const completed = tutorialCompletion(planned);
+  const completed = tutorialCompletion(solveActiveTaskGames(planned));
   assert.equal(completed.schedule, true);
   assert.equal(completed.tasks, true);
   assert.equal(completed.recovery, true);
@@ -44,8 +45,10 @@ test('tutorial task progress requires two real allocations or a completed report
     activity: 'task',
     target: 'practice-report',
   });
+  assert.equal(tutorialCompletion(state).tasks, false);
+  state = solveActiveTaskGames(state);
   assert.equal(tutorialCompletion(state).tasks, true);
-  state = transition(state, { type: 'advance' });
+  state = transition(solveActiveTaskGames(state), { type: 'advance' });
   assert.equal(tutorialCompletion(state).tasks, true);
   assert.equal(tutorialCompletion(state).results, false);
   assert.equal(tutorialCompletion(state, ['result-read']).results, true);

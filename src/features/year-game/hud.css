@@ -36,7 +36,7 @@
   right: 2px;
 }
 .game-hud .planner-panel {
-  background: #fffdf4;
+  background: var(--sasa-paper-warm);
   backdrop-filter: none;
   box-shadow: 0 5px 20px #2c424b25;
 }

@@ -7,10 +7,13 @@ import { choiceOptions, INTERVIEW_QUESTIONS } from '../../src/domain/choices.js'
 import { beginWeek } from '../../src/domain/events.js';
 import { courseGrades, gpa, assess } from '../../src/domain/grades.js';
 import { effectivePlan, resolveWeek } from '../../src/domain/week.js';
+import { solveActiveTaskGames } from '../helpers/task-games.js';
 const profile = { name: '테스트', character: 'boy', role: 'steady', major: 'math' };
 const fresh = (seed = 123) => createGame(profile, seed);
 function ready(state = fresh()) {
-  return transition(state, { type: 'choose', event: 'winter_study', option: 'friends' });
+  return solveActiveTaskGames(
+    transition(state, { type: 'choose', event: 'winter_study', option: 'friends' }),
+  );
 }
 function fill(state, activity, target = null) {
   return { ...state, plan: Array.from({ length: 21 }, () => ({ activity, target })) };
@@ -161,7 +164,7 @@ test('task progress rewards once, and a finished target becomes rest', () => {
   state.pending = [];
   beginWeek(state);
   state.pending = [];
-  const after = resolveWeek(fill(state, 'research'));
+  const after = resolveWeek(fill(solveActiveTaskGames(state), 'research'));
   assert.equal(after.tasks.thesis.progress, 12);
   assert.equal(after.tasks.thesis.status, 'completed');
   assert.equal(
@@ -191,7 +194,7 @@ test('completing room cleaning prevents inspection penalties', () => {
   state.week = 4;
   beginWeek(state);
   state.pending = [];
-  const clean = fill(state, 'sleep');
+  const clean = fill(solveActiveTaskGames(state), 'sleep');
   clean.plan[0] = { activity: 'clean', target: null };
   assert.equal(resolveWeek(clean).discipline, 0);
   assert.equal(resolveWeek(fill(state, 'sleep')).discipline, 1);
@@ -257,7 +260,7 @@ test('reputation speeds up essay progress, not all ordinary assignments', () => 
   state.stats.reputation = 70;
   beginWeek(state);
   state.pending = [];
-  const plan = fill(state, 'sleep');
+  const plan = fill(solveActiveTaskGames(state), 'sleep');
   plan.plan[0] = { activity: 'essay', target: null };
   assert.equal(resolveWeek(plan).tasks.essay.progress, 1.5);
 });
@@ -274,6 +277,7 @@ test('all five majors can complete the full year with valid, bounded states', ()
     let state = createGame({ ...profile, major }, 721);
     while (state.week <= 40) {
       state = decide(state);
+      state = solveActiveTaskGames(state);
       state = transition(state, {
         type: 'preset',
         preset: state.week % 3 === 0 ? 'balanced' : 'tasks',

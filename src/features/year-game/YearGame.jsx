@@ -32,6 +32,8 @@ import Setup from './Setup.jsx';
 import Scene from './Scene.jsx';
 import Planner from './Planner.jsx';
 import DayCopy from './DayCopy.jsx';
+import YearReportPanel from './YearReportPanel.jsx';
+import TaskGamePanel from './TaskGamePanel.jsx';
 import ActivityPicker from './ActivityPicker.jsx';
 import TaskBoard from './TaskBoard.jsx';
 import EventDialog from './EventDialog.jsx';
@@ -58,6 +60,8 @@ const TITLES = {
   group: '스터디',
   admissions: '진학실',
   records: '기록',
+  yearReport: '한 해 결산',
+  taskGame: '과제 미니게임',
   notices: '알림',
   shop: '매점',
   settings: '설정',
@@ -241,7 +245,13 @@ export default function YearGame() {
                 aria-label="알림"
               >
                 <Bell size={19} />
-                {state.pending.length > 0 && <i className="notification-dot" />}
+                {(state.pending.length > 0 ||
+                  state.notices.some(
+                    (notice) =>
+                      notice.kind === 'task' &&
+                      notice.week === state.week &&
+                      state.tasks[notice.task]?.status === 'active',
+                  )) && <i className="notification-dot" />}
               </button>
               <button onClick={() => open('help')} aria-label="도움말">
                 <CircleHelp size={18} />
@@ -255,7 +265,12 @@ export default function YearGame() {
             </div>
           </div>
           <div className="game-content">
-            <Scene state={state} night={night} onOpen={open} onTask={assign} />
+            <Scene
+              state={state}
+              night={night}
+              onOpen={open}
+              onTask={(taskId) => setModal({ type: 'tasks', taskId })}
+            />
             <Planner
               state={state}
               busy={busy}
@@ -311,7 +326,10 @@ export default function YearGame() {
             <h2>{ENDINGS[state.ending.id].title}</h2>
             <p>{ENDINGS[state.ending.id].description}</p>
             <div>
-              <button className="primary" onClick={() => open('records')}>
+              <button className="primary" onClick={() => open('yearReport')}>
+                한 해 결산
+              </button>
+              <button className="subtle" onClick={() => open('records')}>
                 기록 보기
               </button>
               <button className="subtle" onClick={() => open('settings')}>
@@ -400,7 +418,25 @@ export default function YearGame() {
               </div>
             </>
           )}
-          {modal.type === 'tasks' && <TaskBoard state={state} onAssign={assign} />}
+          {modal.type === 'tasks' && (
+            <TaskBoard
+              key={modal.taskId ?? 'all'}
+              state={state}
+              onAssign={assign}
+              focusTask={modal.taskId}
+              onPlay={(taskId) => setModal({ type: 'taskGame', taskId })}
+            />
+          )}
+          {modal.type === 'taskGame' && state.tasks[modal.taskId] && (
+            <TaskGamePanel
+              task={state.tasks[modal.taskId]}
+              busy={busy}
+              onAction={(action) => send({ type: 'task_game', task: modal.taskId, action })}
+              onAssign={() => assign(modal.taskId)}
+              onBack={() => setModal({ type: 'tasks', taskId: modal.taskId })}
+            />
+          )}
+          {modal.type === 'yearReport' && <YearReportPanel state={state} />}
           {modal.type === 'events' && (
             <EventDialog
               key={modal.eventId ?? state.pending[0] ?? 'empty'}
@@ -460,7 +496,11 @@ export default function YearGame() {
                   ))}
                 </div>
               )}
-              <NoticesPanel state={state} onReview={openEvent} />
+              <NoticesPanel
+                state={state}
+                onReview={openEvent}
+                onTask={(taskId) => setModal({ type: 'tasks', taskId })}
+              />
             </>
           )}
           {modal.type === 'shop' && (
@@ -497,6 +537,7 @@ export default function YearGame() {
               state={state}
               busy={busy}
               onStart={advance}
+              onTaskGame={(taskId) => setModal({ type: 'taskGame', taskId })}
               onSchedule={() => open('schedule')}
               onTask={assign}
               onNotices={() => open('notices')}

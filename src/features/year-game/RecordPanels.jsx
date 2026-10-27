@@ -142,7 +142,7 @@ export function RecordsPanel({ state, onRead }) {
     </>
   );
 }
-export function NoticesPanel({ state, onReview }) {
+export function NoticesPanel({ state, onReview, onTask }) {
   const notices = state.notices.filter(
     (n) => n.kind !== 'choice' || !state.pending.some((id) => events[id]?.name === n.title),
   );
@@ -157,6 +157,11 @@ export function NoticesPanel({ state, onReview }) {
               </small>
               <h3>{n.title}</h3>
               <p>{n.text}</p>
+              {n.task && state.tasks[n.task] && onTask && (
+                <button className="subtle" onClick={() => onTask(n.task)}>
+                  할 일 보기
+                </button>
+              )}
               {onReview &&
                 n.title === '실전 면접 기록' &&
                 state.minigames.interview?.phase === 'finished' && (

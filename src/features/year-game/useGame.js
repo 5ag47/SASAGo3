@@ -12,7 +12,11 @@ import {
 } from '../../platform/server-client.js';
 import { getFirebaseAuth, loginGoogle, logoutGoogle } from '../../platform/auth.js';
 import { withDeadline } from '../../platform/deadline.js';
-import { minigameSummary, scheduleChanges } from '../../platform/command-log.js';
+import {
+  minigameSummary,
+  scheduleChanges,
+  taskCommandSummary,
+} from '../../platform/command-log.js';
 
 async function withSaveLock(fn) {
   if (navigator.locks) return navigator.locks.request('sasago3-year-save', fn);
@@ -110,6 +114,7 @@ export default function useGame({
           money: source.money,
           seed: source.seed,
           minigames: minigameSummary(source),
+          ...(command.type === 'task_game' ? { task: taskCommandSummary(source, command) } : {}),
         },
         after: {
           stats: next.stats,
@@ -117,6 +122,7 @@ export default function useGame({
           money: next.money,
           seed: next.seed,
           minigames: minigameSummary(next),
+          ...(command.type === 'task_game' ? { task: taskCommandSummary(next, command) } : {}),
         },
       });
       current.current = next;

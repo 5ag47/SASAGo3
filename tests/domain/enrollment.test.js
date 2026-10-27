@@ -5,6 +5,7 @@ import { migrateState, validateState } from '../../src/domain/state.js';
 import { beginWeek } from '../../src/domain/events.js';
 import { resolveWeek } from '../../src/domain/week.js';
 import { choiceOptions, INTERVIEW_QUESTIONS } from '../../src/domain/choices.js';
+import { solveActiveTaskGames } from '../helpers/task-games.js';
 const profile = { name: '선택과목', character: 'girl', role: 'steady', major: 'information' };
 test('an information student with the urban elective can complete every school week', () => {
   let state = createGame({ ...profile, electives: ['urban_planning'] });
@@ -21,6 +22,7 @@ test('an information student with the urban elective can complete every school w
         if (option) state = transition(state, { type: 'choose', event, option: option.id });
       }
     }
+    state = solveActiveTaskGames(state);
     state = transition(state, { type: 'preset', preset: 'tasks' });
     state = transition(state, { type: 'advance' });
     assert.ok(validateState(state));
@@ -60,7 +62,7 @@ test('urban planning creates one recurring project in each school week, not duri
       ? { activity: 'task', target: 'urban-project-2' }
       : { activity: 'sleep', target: null },
   );
-  const after = resolveWeek(state);
+  const after = resolveWeek(solveActiveTaskGames(state));
   assert.equal(after.tasks['urban-project-2'].status, 'completed');
   assert.equal(after.tasks['urban-project-3'].status, 'active');
   assert.equal(after.assessments.filter((mark) => mark.course === 'urban_planning').length, 1);

@@ -13,10 +13,17 @@ import {
   ELECTIVES,
 } from './catalog.js';
 import { emptyMinigames, validMinigames } from './minigames.js';
+import { validTaskStages, TASK_FORMATS } from './assignments.js';
+import {
+  moduleIssues,
+  validModuleData,
+  taskModule,
+  defaultTaskGame,
+} from './task-modules/registry.js';
 
 export const SCHEMA_VERSION = 1;
 export const SAVE_KEY = 'sasago3-year-v1';
-export const CONTENT_VERSION = '2026.10.27-6';
+export const CONTENT_VERSION = '2026.10.27-7';
 export function baseState(seed = 20261013) {
   return {
     version: SCHEMA_VERSION,
@@ -56,7 +63,7 @@ export function baseState(seed = 20261013) {
     group: null,
     rejectedGroups: [],
     teachers: { math: 15, science: 15, homeroom: 20 },
-    flags: { environment: 'home', camp: 'none', target: 'balanced' },
+    flags: { environment: 'home', camp: 'none', target: 'balanced', taskGamesVersion: 1 },
     fatigue: 0,
     discipline: 0,
     awards: 0,
@@ -69,6 +76,22 @@ export function baseState(seed = 20261013) {
 export function migrateState(value) {
   if (value?.version !== SCHEMA_VERSION) return value;
   let next = value;
+  if (value.created && value.tasks && value.flags && !value.flags.taskGamesVersion) {
+    next = {
+      ...next,
+      flags: { ...value.flags, taskGamesVersion: 1 },
+      tasks: Object.fromEntries(
+        Object.entries(value.tasks).map(([id, task]) => [
+          id,
+          task?.status === 'active' &&
+          (!task.module ||
+            ['time_v1', 'mastery_v1', 'contest_v1', 'math_analysis_v1'].includes(task.module.id))
+            ? { ...task, module: defaultTaskGame(task) }
+            : task,
+        ]),
+      ),
+    };
+  }
   if (value.minigames === undefined) next = { ...next, minigames: emptyMinigames() };
   if (value.electives === undefined || value.nextElectives === undefined)
     next = {
@@ -268,6 +291,20 @@ export function validateState(s) {
         Number.isFinite(t.target) &&
         t.target > 0 &&
         t.progress <= t.target &&
+        validTaskStages(t) &&
+        moduleIssues(t.module).length === 0 &&
+        validModuleData(t.moduleData) &&
+        (t.moduleData === undefined ||
+          !taskModule(t).game ||
+          taskModule(t).game.valid(t.moduleData)) &&
+        (t.result === undefined ||
+          (t.result &&
+            typeof t.result.module === 'string' &&
+            (t.result.score === null ||
+              (Number.isFinite(t.result.score) && t.result.score >= 0 && t.result.score <= 100)) &&
+            typeof t.result.note === 'string' &&
+            t.result.note.length <= 300)) &&
+        (t.format === undefined || Object.hasOwn(TASK_FORMATS, t.format)) &&
         Number.isInteger(t.deadline) &&
         t.deadline >= 0 &&
         t.deadline <= LAST_WEEK &&
@@ -419,6 +456,7 @@ export function validateState(s) {
         !Number.isInteger(n.week) ||
         typeof n.title !== 'string' ||
         typeof n.text !== 'string' ||
+        (n.task !== undefined && (typeof n.task !== 'string' || n.task.length > 100)) ||
         typeof n.kind !== 'string',
     )
   )

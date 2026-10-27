@@ -6,9 +6,24 @@ import storyEvents from '../../data/events.json' with { type: 'json' };
 import lifeEvents from '../../data/life-events.json' with { type: 'json' };
 import quizzes from '../../data/quizzes.json' with { type: 'json' };
 import resources from '../../data/resources.json' with { type: 'json' };
-const events = { ...storyEvents, ...lifeEvents };
+import assignments from '../../data/assignments.json' with { type: 'json' };
+import { expandAssignments } from './assignments.js';
+const assignmentEvents = expandAssignments(assignments);
+const events = { ...storyEvents, ...lifeEvents, ...assignmentEvents };
 
-export { courses, roles, activities, items, events, quizzes, storyEvents, lifeEvents, resources };
+export {
+  courses,
+  roles,
+  activities,
+  items,
+  events,
+  quizzes,
+  storyEvents,
+  lifeEvents,
+  resources,
+  assignments,
+  assignmentEvents,
+};
 export const MAJORS = {
   math: {
     name: '수학',

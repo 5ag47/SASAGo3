@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { solveActiveTaskGames } from '../helpers/task-games.js';
 import assert from 'node:assert/strict';
 import { createGame, transition, planPreset, ENDINGS } from '../../src/domain/engine.js';
 import { baseState, migrateState, validateState } from '../../src/domain/state.js';
@@ -76,7 +77,7 @@ test('math practice requires math study, and automatic task planning really stud
   assert.equal(nonMath.flags.tutorialStudy, undefined);
   state.plan = planPreset(state, 'tasks');
   assert.equal(courses[state.plan[0].target].ability, 'math');
-  const after = resolveWeek(state);
+  const after = resolveWeek(solveActiveTaskGames(state));
   assert.equal(after.tasks['first-study'].status, 'completed');
   assert.equal(after.tasks['practice-report'].status, 'completed');
 });

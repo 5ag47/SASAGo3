@@ -15,3 +15,5 @@ dist/
 *.db
 coverage/
 test-results/
+data/.assignments.lock
+data/.assignments-*.tmp

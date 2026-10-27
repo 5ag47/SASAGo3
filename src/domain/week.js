@@ -16,6 +16,7 @@ import { expireTasks, workTask } from './tasks.js';
 import { assessmentsAt } from './school-calendar.js';
 import { enrollCourses, learnCourse } from './course-progress.js';
 import { effectivePlan } from './schedule.js';
+import { taskGameReady } from './task-modules/registry.js';
 export { effectivePlan, lockedSlots } from './schedule.js';
 
 export function learningEfficiency(state) {
@@ -108,7 +109,7 @@ export function resolveWeek(source) {
     }
     if (id === 'task') {
       workTask(state, slot.target, messages);
-      note = state.tasks[slot.target].name;
+      note = `${state.tasks[slot.target].name}${taskGameReady(state.tasks[slot.target]) ? '' : ' · 미니게임 미완료, 진척 없음'}`;
     }
     if (id === 'research') {
       workTask(state, 'thesis', messages);

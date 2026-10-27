@@ -1,15 +1,4 @@
 {
-  "math_problem_analysis": {
-    "week": 13,
-    "kind": "task",
-    "course": "math_seminar",
-    "name": "수학세미나 수리문항분석",
-    "description": "문항의 조건·풀이·변형 문제를 분석합니다.",
-    "target": 3,
-    "deadline": 16,
-    "reward": { "math": 3, "writing": 2 },
-    "penalty": { "reputation": -2 }
-  },
   "kaist_postech": {
     "week": 35,
     "kind": "admission",
@@ -37,7 +26,10 @@
         "label": "호실로 배달받기",
         "detail": "3,000원 · 스트레스 -8 · 벌점 +1",
         "cost": 3000,
-        "effect": { "stress": -8, "hp": 3 },
+        "effect": {
+          "stress": -8,
+          "hp": 3
+        },
         "discipline": 1
       },
       {
@@ -45,9 +37,18 @@
         "label": "허용 시간에 휴게실에서 먹기",
         "detail": "1,000원 · 스트레스 -4",
         "cost": 1000,
-        "effect": { "stress": -4 }
+        "effect": {
+          "stress": -4
+        }
       },
-      { "id": "sleep", "label": "오늘은 먼저 자기", "detail": "체력 +4", "effect": { "hp": 4 } }
+      {
+        "id": "sleep",
+        "label": "오늘은 먼저 자기",
+        "detail": "체력 +4",
+        "effect": {
+          "hp": 4
+        }
+      }
     ]
   },
   "common_knowledge": {
@@ -67,14 +68,22 @@
         "id": "join",
         "label": "풀이 발표에 참여",
         "detail": "자습 1칸 · 구술력 +3 · 평판 +2",
-        "effect": { "speech": 3, "reputation": 2 },
-        "reserve": { "count": 1, "activity": "interview" }
+        "effect": {
+          "speech": 3,
+          "reputation": 2
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "interview"
+        }
       },
       {
         "id": "pass",
         "label": "이번에는 개인 일정 유지",
         "detail": "집중력 +1",
-        "effect": { "focus": 1 }
+        "effect": {
+          "focus": 1
+        }
       }
     ]
   },
@@ -88,21 +97,33 @@
         "id": "both",
         "label": "설명회와 선배 강연 모두 참석",
         "detail": "자습 2칸 · 스트레스 -5",
-        "effect": { "stress": -5 },
-        "reserve": { "count": 2, "activity": "lecture" }
+        "effect": {
+          "stress": -5
+        },
+        "reserve": {
+          "count": 2,
+          "activity": "lecture"
+        }
       },
       {
         "id": "one",
         "label": "필요한 강연 하나만 참석",
         "detail": "자습 1칸 · 스트레스 -2",
-        "effect": { "stress": -2 },
-        "reserve": { "count": 1, "activity": "lecture" }
+        "effect": {
+          "stress": -2
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "lecture"
+        }
       },
       {
         "id": "none",
         "label": "강연 대신 자습",
         "detail": "자습 유지 · 스트레스 +3",
-        "effect": { "stress": 3 }
+        "effect": {
+          "stress": 3
+        }
       }
     ]
   },
@@ -116,19 +137,42 @@
         "id": "build",
         "label": "건축 부문 참가",
         "detail": "자습 1칸 · 과학 +2 · 스트레스 -5",
-        "effect": { "science": 2, "stress": -5 },
-        "reserve": { "count": 1, "activity": "club" },
-        "flags": { "schoolContest": "build" }
+        "effect": {
+          "science": 2,
+          "stress": -5
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "club"
+        },
+        "flags": {
+          "schoolContest": "build"
+        }
       },
       {
         "id": "video",
         "label": "영상 부문 참가",
         "detail": "자습 1칸 · 매력 +3 · 스트레스 -5",
-        "effect": { "charm": 3, "stress": -5 },
-        "reserve": { "count": 1, "activity": "club" },
-        "flags": { "schoolContest": "video" }
+        "effect": {
+          "charm": 3,
+          "stress": -5
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "club"
+        },
+        "flags": {
+          "schoolContest": "video"
+        }
       },
-      { "id": "watch", "label": "구경만 하기", "detail": "스트레스 -3", "effect": { "stress": -3 } }
+      {
+        "id": "watch",
+        "label": "구경만 하기",
+        "detail": "스트레스 -3",
+        "effect": {
+          "stress": -3
+        }
+      }
     ]
   },
   "summer_counseling": {
@@ -141,14 +185,20 @@
         "id": "review",
         "label": "성적과 지원 준비도 점검",
         "detail": "담임 친밀도 +5 · 집중력 +3",
-        "effect": { "focus": 3 },
-        "flags": { "counseled": true }
+        "effect": {
+          "focus": 3
+        },
+        "flags": {
+          "counseled": true
+        }
       },
       {
         "id": "self",
         "label": "성적표를 보고 혼자 계획",
         "detail": "스트레스 -2",
-        "effect": { "stress": -2 }
+        "effect": {
+          "stress": -2
+        }
       }
     ]
   },
@@ -162,13 +212,17 @@
         "id": "join",
         "label": "과학 특강 신청",
         "detail": "방학 매주 2칸 고정 · 주 6,000원",
-        "flags": { "scienceCamp": true }
+        "flags": {
+          "scienceCamp": true
+        }
       },
       {
         "id": "self",
         "label": "과학도 자습으로 준비",
         "detail": "자습 유지",
-        "flags": { "scienceCamp": false }
+        "flags": {
+          "scienceCamp": false
+        }
       }
     ]
   },
@@ -196,16 +250,28 @@
         "id": "visit",
         "label": "점호 뒤 타방에 간다",
         "detail": "스트레스 -7 · 평판 +2 · 벌점 +1",
-        "effect": { "stress": -7, "reputation": 2 },
+        "effect": {
+          "stress": -7,
+          "reputation": 2
+        },
         "discipline": 1
       },
       {
         "id": "tomorrow",
         "label": "내일 휴게실에서 만나기로",
         "detail": "스트레스 -3",
-        "effect": { "stress": -3 }
+        "effect": {
+          "stress": -3
+        }
       },
-      { "id": "rest", "label": "호실에서 쉰다", "detail": "체력 +3", "effect": { "hp": 3 } }
+      {
+        "id": "rest",
+        "label": "호실에서 쉰다",
+        "detail": "체력 +3",
+        "effect": {
+          "hp": 3
+        }
+      }
     ]
   },
   "dorm_cards": {
@@ -218,10 +284,22 @@
         "id": "play",
         "label": "친구들과 한 판",
         "detail": "자습 1칸 · 같은 달 패 모으기 · 고·스톱 선택",
-        "reserve": { "count": 1, "activity": "game" },
-        "flags": { "cardGame": true }
+        "reserve": {
+          "count": 1,
+          "activity": "game"
+        },
+        "flags": {
+          "cardGame": true
+        }
       },
-      { "id": "watch", "label": "옆에서 구경", "detail": "스트레스 -3", "effect": { "stress": -3 } }
+      {
+        "id": "watch",
+        "label": "옆에서 구경",
+        "detail": "스트레스 -3",
+        "effect": {
+          "stress": -3
+        }
+      }
     ]
   }
 }

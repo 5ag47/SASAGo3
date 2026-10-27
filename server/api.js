@@ -1,5 +1,6 @@
 import { baseState, CONTENT_VERSION } from '../src/domain/state.js';
 import { transition, GameError } from '../src/domain/engine.js';
+import { publicTasks } from '../src/domain/task-processing.js';
 import {
   ApiError,
   csrfToken,
@@ -36,6 +37,7 @@ export function createApi({
     return {
       ...state,
       seed: 0,
+      tasks: publicTasks(state.tasks),
       history: state.history.map(({ seedBefore, seedAfter, ...entry }) => entry),
     };
   }

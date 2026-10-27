@@ -21,6 +21,10 @@ const { default: EventDialog } = await vite.ssrLoadModule(
 );
 const { default: DayCopy } = await vite.ssrLoadModule('/src/features/year-game/DayCopy.jsx');
 const { default: YearGame } = await vite.ssrLoadModule('/src/features/year-game/YearGame.jsx');
+const { default: TaskGamePanel } = await vite.ssrLoadModule(
+  '/src/features/year-game/TaskGamePanel.jsx',
+);
+const { default: TaskEditor } = await vite.ssrLoadModule('/tools/task-editor/TaskEditor.jsx');
 test.after(() => vite.close());
 function fresh() {
   return createGame({ name: '화면 테스트', character: 'boy', role: 'steady', major: 'math' });
@@ -54,6 +58,100 @@ async function mount(t) {
     act(async () => root.render(component ? React.createElement(component, props) : null));
 }
 const click = async (button) => act(async () => button.click());
+test('pattern task UI hides the preview, resumes choices and offers scheduling after server-confirmed completion', async (t) => {
+  const render = await mount(t);
+  let state = fresh(),
+    assigned = false;
+  const props = () => ({
+    task: state.tasks['practice-report'],
+    onBack() {},
+    onAssign() {
+      assigned = true;
+    },
+    onAction(action) {
+      state = transition(state, { type: 'task_game', task: 'practice-report', action });
+    },
+  });
+  await render(TaskGamePanel, props());
+  await click(document.querySelector('.primary'));
+  await render(TaskGamePanel, props());
+  const goal = [...state.tasks['practice-report'].moduleData.goal];
+  assert.equal(document.querySelectorAll('.task-pattern-grid .lit').length, 4);
+  await click(document.querySelector('.primary'));
+  await render(TaskGamePanel, props());
+  assert.equal(document.querySelectorAll('.task-pattern-grid .lit').length, 0);
+  for (const cell of goal) {
+    await click(document.querySelectorAll('.task-pattern-grid button')[cell]);
+    await render(TaskGamePanel, props());
+  }
+  await render(null);
+  state = JSON.parse(JSON.stringify(state));
+  await render(TaskGamePanel, props());
+  assert.equal(document.querySelectorAll('.task-pattern-grid .lit').length, 4);
+  await click(document.querySelector('.primary'));
+  await render(TaskGamePanel, props());
+  assert.match(document.body.textContent, /미니게임 완료/);
+  await click(document.querySelector('.primary'));
+  assert.equal(assigned, true);
+});
+test('the authoring editor exposes task group membership and the two playable example modules', async (t) => {
+  const render = await mount(t);
+  const sample = {
+    test_task: {
+      kind: 'task',
+      name: '검증 과제',
+      description: '',
+      week: 1,
+      deadline: 2,
+      target: 1,
+    },
+    test_group: {
+      kind: 'group',
+      name: '검증 그룹',
+      members: ['test_task'],
+      module: { id: 'order_v1', params: {} },
+    },
+  };
+  await render(TaskEditor, { initial: sample });
+  const groupButton = [...document.querySelectorAll('nav button')].find((button) =>
+    button.textContent.includes('검증 그룹'),
+  );
+  await click(groupButton);
+  assert.match(document.body.textContent, /1개 과제에 모듈 적용/);
+  assert.equal(document.querySelectorAll('.group-members input:checked').length, 1);
+  assert.ok(
+    [...document.querySelectorAll('option')].some((option) => option.value === 'pattern_v1'),
+  );
+  assert.ok([...document.querySelectorAll('option')].some((option) => option.value === 'order_v1'));
+});
+test('the full game connects task opening, mini-game completion, scheduling and automatic weekly completion', async (t) => {
+  const render = await mount(t);
+  localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
+  await render(YearGame);
+  await click(document.querySelector('.paper-task'));
+  await click(document.querySelector('#task-first-study .task-game-action'));
+  await click(document.querySelector('.task-game-panel .primary'));
+  const cards = [...document.querySelectorAll('.task-order-cards button')]
+    .map((button) => Number(button.textContent))
+    .sort((a, b) => a - b);
+  for (const card of cards)
+    await click(
+      [...document.querySelectorAll('.task-order-cards button')].find(
+        (button) => Number(button.textContent) === card,
+      ),
+    );
+  assert.match(document.querySelector('dialog').textContent, /미니게임 완료/);
+  await click(document.querySelector('.task-game-passed .primary'));
+  await click(document.querySelector('.session-card'));
+  const planned = JSON.parse(localStorage.getItem(SAVE_KEY));
+  assert.equal(planned.plan[0].activity, 'study');
+  assert.equal(planned.tasks['first-study'].progress, 0);
+  await click(document.querySelector('.start-week'));
+  await click(document.querySelector('.week-review > .primary'));
+  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+  assert.equal(saved.tasks['first-study'].status, 'completed');
+  assert.equal(saved.week, 1);
+});
 
 test('interview UI resumes the next unanswered question after remount and displays the completed review', async (t) => {
   const render = await mount(t);
