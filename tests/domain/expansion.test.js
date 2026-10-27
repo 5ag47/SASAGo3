@@ -89,7 +89,7 @@ test('task coverage counts actual locked schedule and recognizes subject study',
   assert.equal(taskAllocation(state, state.tasks['first-study']).slots, 0);
   assert.equal(reviewPlan(state).due.length, 2);
 });
-test('event attendance reserves real time, and a task preset leaves enough usable work slots', () => {
+test('event attendance consumes the shared work budget and keeps its fixed slots', () => {
   const state = fresh();
   state.week = 11;
   state.tasks = {};
@@ -113,7 +113,7 @@ test('event attendance reserves real time, and a task preset leaves enough usabl
   assert.equal(
     effectivePlan(next).filter((slot) => slot.activity === 'task' && slot.target === 'custom')
       .length,
-    8,
+    7,
   );
   assert.throws(
     () => transition(next, { type: 'plan', index: 0, activity: 'sleep' }),
@@ -196,7 +196,10 @@ test('all six endings are reachable with their stated conditions', () => {
         week: 35,
         reason: '테스트',
       });
-    if (ending === 'prison') state.discipline = 5;
+    if (ending === 'prison') {
+      state.discipline = 5;
+      state.choices.temptation = 'cheat';
+    }
     const after = transition(state, { type: 'ending', ending });
     assert.equal(after.ending.id, ending);
     assert.ok(validateState(after));

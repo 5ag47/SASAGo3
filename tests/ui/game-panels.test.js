@@ -25,6 +25,8 @@ const { default: TaskGamePanel } = await vite.ssrLoadModule(
   '/src/features/year-game/TaskGamePanel.jsx',
 );
 const { default: TaskEditor } = await vite.ssrLoadModule('/tools/task-editor/TaskEditor.jsx');
+const { default: StoryPanel } = await vite.ssrLoadModule('/src/features/year-game/StoryPanel.jsx');
+const { availableChapters } = await vite.ssrLoadModule('/src/domain/story.js');
 test.after(() => vite.close());
 function fresh() {
   return createGame({ name: '화면 테스트', character: 'boy', role: 'steady', major: 'math' });
@@ -58,6 +60,43 @@ async function mount(t) {
     act(async () => root.render(component ? React.createElement(component, props) : null));
 }
 const click = async (button) => act(async () => button.click());
+test('story UI resumes a saved page, allows skipping and replays without changing game state', async (t) => {
+  const render = await mount(t);
+  let state = fresh(),
+    calls = 0,
+    closed = 0;
+  const chapter = availableChapters(state)[0];
+  const props = () => ({
+    state,
+    chapter,
+    onProgress(action) {
+      calls++;
+      state = transition(state, { type: 'story', chapter: chapter.id, action });
+      return state;
+    },
+    onClose() {
+      closed++;
+    },
+    onNavigate() {},
+  });
+  await render(StoryPanel, { ...props(), busy: true });
+  assert.equal(document.querySelector('.story-actions .primary').disabled, true);
+  await render(StoryPanel, props());
+  await click(document.querySelector('.story-actions .primary'));
+  await render(null);
+  state = JSON.parse(JSON.stringify(state));
+  await render(StoryPanel, props());
+  assert.match(document.querySelector('.story-location').textContent, /2 \/ 4/);
+  await click(document.querySelector('.story-actions .subtle'));
+  assert.equal(closed, 1);
+  assert.equal(state.story[chapter.id].read, true);
+  const priorCalls = calls;
+  await render(null);
+  await render(StoryPanel, props());
+  assert.match(document.querySelector('.story-location').textContent, /1 \/ 4/);
+  await click(document.querySelector('.story-actions .primary'));
+  assert.equal(calls, priorCalls);
+});
 test('pattern task UI hides the preview, resumes choices and offers scheduling after server-confirmed completion', async (t) => {
   const render = await mount(t);
   let state = fresh(),

@@ -51,6 +51,7 @@ const fields = {
   create: ['type', 'profile'],
   plan: ['type', 'index', 'activity', 'target'],
   task_game: ['type', 'task', 'action'],
+  story: ['type', 'chapter', 'action'],
   copy_day: ['type', 'sourceDay', 'days'],
   preset: ['type', 'preset'],
   advance: ['type'],

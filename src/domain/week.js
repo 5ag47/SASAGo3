@@ -17,14 +17,17 @@ import { assessmentsAt } from './school-calendar.js';
 import { enrollCourses, learnCourse } from './course-progress.js';
 import { effectivePlan } from './schedule.js';
 import { taskGameReady } from './task-modules/registry.js';
+import { balance, ACADEMIC_STATS } from './balance.js';
+import { announceChapters } from './story.js';
 export { effectivePlan, lockedSlots } from './schedule.js';
 
 export function learningEfficiency(state) {
+  const config = balance.learning;
   return (
-    (0.9 + state.stats.focus / 250) *
-    (state.stats.stress >= 70 ? 0.75 : 1) *
-    (state.stats.hp < 30 ? 0.75 : 1) *
-    (state.fatigue ? 0.65 : 1)
+    (config.base + state.stats.focus / config.focusScale) *
+    (state.stats.stress >= config.stressThreshold ? config.conditionMultiplier : 1) *
+    (state.stats.hp < config.lowHealth ? config.conditionMultiplier : 1) *
+    (state.fatigue ? config.fatigueMultiplier : 1)
   );
 }
 export function resolveWeek(source) {
@@ -39,8 +42,8 @@ export function resolveWeek(source) {
   const counts = {};
   let environment = 1;
   let workCount = 0;
-  state.money += 10000;
-  messages.push('주간 용돈 +10,000원');
+  state.money += balance.weekly.allowance;
+  messages.push(`주간 용돈 +${balance.weekly.allowance.toLocaleString()}원`);
   if (state.week >= 17 && state.week <= 24) {
     const fee = { home: 0, cafe: 4000, managed: 9000 }[state.flags.environment];
     if (state.money >= fee) {
@@ -89,20 +92,25 @@ export function resolveWeek(source) {
     ].includes(id);
     if (study) workCount++;
     counts[id] = (counts[id] ?? 0) + 1;
-    const repetition = study ? Math.max(0.55, 1 - Math.max(0, counts[id] - 5) * 0.07) : 1;
+    const config = balance.learning;
+    const repetition = study
+      ? Math.max(
+          config.repetitionFloor,
+          1 - Math.max(0, counts[id] - config.repetitionStart) * config.repetitionLoss,
+        )
+      : 1;
     const efficiency = learningEfficiency(state) * environment * repetition;
     for (const [key, value] of Object.entries(definition.effect)) {
-      const mastery =
-        value > 0 && ['math', 'science', 'writing', 'speech'].includes(key)
-          ? 0.25 + (1 - state.stats[key] / 100) * 0.75
-          : 1;
-      applyEffects(state, { [key]: value }, mastery !== 1 ? efficiency * mastery : 1);
+      applyEffects(
+        state,
+        { [key]: value },
+        value > 0 && ACADEMIC_STATS.includes(key) ? efficiency : 1,
+      );
     }
     if (id === 'study') {
       const courseId = state.courses.includes(slot.target) ? slot.target : state.courses[0];
       const ability = courses[courseId].ability;
-      const mastery = 0.25 + (1 - state.stats[ability] / 100) * 0.75;
-      applyEffects(state, { [ability]: definition.gain * efficiency * mastery });
+      applyEffects(state, { [ability]: definition.gain * efficiency });
       learnCourse(state, courseId, efficiency);
       if (ability === 'math') workTask(state, 'first-study', messages);
       note = courses[courseId].name;
@@ -133,7 +141,14 @@ export function resolveWeek(source) {
       const teacher = ['math', 'science', 'homeroom'].includes(slot.target)
         ? slot.target
         : 'homeroom';
-      state.teachers[teacher] = clamp(state.teachers[teacher] + 7);
+      state.teachers[teacher] =
+        Math.round(
+          clamp(
+            state.teachers[teacher] +
+              balance.relationships.visitGain *
+                (1 - state.teachers[teacher] / balance.relationships.softScale),
+          ) * 10,
+        ) / 10;
     }
     if (id === 'club' && state.flags.club)
       applyEffects(state, state.flags.club === 'lab' ? { science: 2 } : { writing: 1.5, charm: 1 });
@@ -155,10 +170,13 @@ export function resolveWeek(source) {
       ),
     });
   }
-  const stress = 6 + Math.round(workCount * 0.35);
-  applyEffects(state, { stress, hp: -8, focus: -3 });
-  messages.push('정규수업·일상 피로 · 체력 -8 · 집중력 -3');
-  messages.push(`주간 생활 부담 · 스트레스 +${stress} (기본 6 + 학습량 ${stress - 6})`);
+  const weekly = balance.weekly;
+  const stress = weekly.baseStress + Math.round(workCount * weekly.workStress);
+  applyEffects(state, { stress, hp: -weekly.healthCost, focus: -weekly.focusCost });
+  messages.push(`정규수업·일상 피로 · 체력 -${weekly.healthCost} · 집중력 -${weekly.focusCost}`);
+  messages.push(
+    `주간 생활 부담 · 스트레스 +${stress} (기본 ${weekly.baseStress} + 학습량 ${stress - weekly.baseStress})`,
+  );
   if (state.group === 'friends') applyEffects(state, { stress: -2 });
   if (state.group && !plan.some((s) => s.activity === 'study_group')) {
     const fine = Math.min(state.money, 500);
@@ -182,10 +200,13 @@ export function resolveWeek(source) {
       good ? '생활 이벤트 · 스트레스 -3 · 평판 +1' : '생활 이벤트 · 스트레스 +3 · 체력 -2',
     );
   }
-  state.fatigue = state.stats.hp < 25 || state.stats.stress >= 80 ? 1 : 0;
+  state.fatigue =
+    state.stats.hp < balance.fatigue.lowHealth || state.stats.stress >= balance.fatigue.highStress
+      ? 1
+      : 0;
   if (state.fatigue)
     messages.push(
-      '만성피로 · 다음 주 학습 효율 ×0.65. 체력 25 이상·스트레스 80 미만으로 회복하세요.',
+      `만성피로 · 다음 주 학습 효율 ×${balance.learning.fatigueMultiplier}. 체력 ${balance.fatigue.lowHealth} 이상·스트레스 ${balance.fatigue.highStress} 미만으로 회복하세요.`,
     );
   for (const id of [...state.pending])
     if (choiceDeadline(id) <= state.week) {
@@ -219,12 +240,14 @@ export function resolveWeek(source) {
   state.history.push(entry);
   state.week++;
   if (state.week <= 40) beginWeek(state);
-  else
+  else {
     notice(
       state,
       '한 해의 마지막 페이지',
       '진학실에서 결과를 보고 나의 다음 길을 선택하세요.',
       'event',
     );
+    announceChapters(state);
+  }
   return state;
 }

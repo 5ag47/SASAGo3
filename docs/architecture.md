@@ -9,6 +9,8 @@ src/domain/                  React·DOM·네트워크에 의존하지 않는 순
   state.js                   저장 형식과 상태 검증
   engine.js                  명령 처리의 단일 진입점 transition(state, command)
   week.js                    21칸 순차 실행, 생활 부담·피로·시험
+  balance.js / auto-plan.js   성장 곡선·설정 / 마감과 회복을 고려한 예시 편성
+  story.js                   장면 조건·읽기 진행·기록 연결
   tasks.js                   과제 진행·완료·마감
   events.js / choices.js     이벤트 발생·선택
   card-game.js / interview.js 카드 진행 규칙·면접 문항
@@ -26,7 +28,7 @@ tests/server/                접근 격리·JWT·변조·동시성·중복 요�
 
 과제 미니게임은 `task_game` 명령으로 과제 ID와 행동만 받습니다. 도메인 모듈이 행동·완료·결과를 결정하고 공통 처리기가 저장합니다. 정의·그룹 우선순위·스냅샷·모듈/화면 등록 계약은 [과제 모듈 작성 안내](task-authoring.md), 선택 근거는 [ADR-0002](adr/0002-task-game-modules.md)에 있습니다. `assignments.js`는 정의 검사·반복·그룹 해석을, `task-processing.js`는 실행 문맥과 결과 검증을 담당합니다. UI별로 완료·채점 공식을 복제하지 않습니다.
 
-`create`, `plan`, `copy_day`, `preset`, `elective`, `choose`, `advance`, `buy`, `ending`을 지원합니다. 명령은 클라이언트가 원하는 **행동**이고, 결과 상태는 엔진이 결정합니다. 엔진은 원본을 바꾸지 않으며 새 revision을 반환합니다. 검증 실패 시 전체 변경을 적용하지 않습니다.
+`create`, `plan`, `copy_day`, `preset`, `elective`, `choose`, `advance`, `buy`, `ending`, `story`을 지원합니다. 명령은 클라이언트가 원하는 **행동**이고, 결과 상태는 엔진이 결정합니다. 엔진은 원본을 바꾸지 않으며 새 revision을 반환합니다. 검증 실패 시 전체 변경을 적용하지 않습니다.
 
 서버 API는 `{command, expectedRevision, idempotencyKey}`만 받습니다. uid·점수·능력치·전체 저장을 제출하는 필드는 거부합니다. Firebase 서명 검증으로 얻은 uid만 플레이어를 구분하는 데 사용합니다. 튜토리얼 순서로 조작을 잠그지 않으며, 선택 이벤트는 마감까지 응답할 수 있습니다. 미응답은 마감 시 미참여로 기록합니다.
 
@@ -72,3 +74,11 @@ tests/server/                접근 격리·JWT·변조·동시성·중복 요�
 `api-transport.js`는 응답 유실·일시 오류에서 같은 명령 본문과 중복 방지 키로 한 번 재시도합니다. 결과를 계속 확인하지 못하면 새 명령을 막고 최신 저장을 읽도록 합니다. 읽기와 초기화·로그아웃도 동시에 실행되지 않도록 조정합니다.
 
 튜토리얼의 화면 확인 기록은 계정과 게임 시작 revision의 해시로 구분합니다. 단원 버튼을 눌렀다는 이유만으로 실습 완료를 주지 않습니다. 방문 기록은 UI 안내에만 사용하며 서버 보상에 영향을 주지 않습니다.
+
+## 밸런스·서사·운영 도구
+
+`data/balance.json`의 설정을 성장·평가·편성이 함께 사용하고 범위·가중치를 정적 검사합니다. `activity-preview.js`는 실제 성장 함수를 사용한 현재 상태의 한 칸 예상값만 제공합니다. 미래 난수나 확정된 서버 결과를 브라우저에서 대체하지 않습니다. 41주 전략 비교는 `tools/simulation/`에서 실행합니다. [기준과 결과](balance.md)를 참고합니다.
+
+장면은 `data/chapters.json`, 분기·읽기 계약은 `story.js`, 화면은 `StoryPanel.jsx`에 둡니다. 저장 `story` 필드는 구버전에 빈 객체로 추가하며 과거 능력치·성적을 재계산하지 않습니다. [작성 안내](story-authoring.md)를 참고합니다.
+
+`tools/backup/`은 운영 게임 코드가 아닌 오프라인 관리 도구입니다. 암호화·메모리 복구 검증을 분리하고 원격 운영 복구 명령을 제공하지 않습니다. 비밀값·SQL·실제 플레이 내용을 정적 빌드나 로그에 넣지 않습니다.

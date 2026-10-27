@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { GraduationCap } from 'lucide-react';
 import { courses, MAJORS, period, STATS, ELECTIVES } from '../../domain/catalog.js';
-import { courseGrades, gpa } from '../../domain/grades.js';
+import { courseGrades, gpa, examBaseScore } from '../../domain/grades.js';
 import { courseMastery } from '../../domain/course-progress.js';
 import { electiveWindow, courseSet } from '../../domain/enrollment.js';
 import './enrollment.css';
@@ -98,8 +98,10 @@ export function CoursesPanel({ state, busy, onElective }) {
         ))}
       </section>
       <div className="info-box">
-        시험 실력은 연결 능력치 65%와 과목 이해도 35%로 계산합니다. 실력 80 → 기본 100점, 65 → 90점,
-        50 → 80점. 출제 난이도·체력·스트레스가 점수를 조정합니다.
+        시험 실력은 연결 능력치 65%와 과목 이해도 35%로 계산합니다. 이번 주 기준 실력 80 → 기본{' '}
+        {Math.round(examBaseScore(80, state.week))}점, 60 →{' '}
+        {Math.round(examBaseScore(60, state.week))}점. 학기가 진행될수록 평가 수준이 올라가며, 출제
+        난이도·체력·스트레스가 점수를 조정합니다.
       </div>
       <details className="course-mark-details">
         <summary>평가별 점수 보기</summary>

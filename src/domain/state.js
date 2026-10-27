@@ -1,6 +1,5 @@
 import {
   activities,
-  activeTasks,
   courses,
   events,
   GROUPS,
@@ -13,6 +12,8 @@ import {
   ELECTIVES,
 } from './catalog.js';
 import { emptyMinigames, validMinigames } from './minigames.js';
+import { buildPreset } from './auto-plan.js';
+import { validStory, chapters } from './story.js';
 import { validTaskStages, TASK_FORMATS } from './assignments.js';
 import {
   moduleIssues,
@@ -23,7 +24,7 @@ import {
 
 export const SCHEMA_VERSION = 1;
 export const SAVE_KEY = 'sasago3-year-v1';
-export const CONTENT_VERSION = '2026.10.27-7';
+export const CONTENT_VERSION = '2026.10.27-8';
 export function baseState(seed = 20261013) {
   return {
     version: SCHEMA_VERSION,
@@ -60,6 +61,7 @@ export function baseState(seed = 20261013) {
     pending: [],
     choices: {},
     minigames: emptyMinigames(),
+    story: {},
     group: null,
     rejectedGroups: [],
     teachers: { math: 15, science: 15, homeroom: 20 },
@@ -93,6 +95,7 @@ export function migrateState(value) {
     };
   }
   if (value.minigames === undefined) next = { ...next, minigames: emptyMinigames() };
+  if (value.story === undefined) next = { ...next, story: {} };
   if (value.electives === undefined || value.nextElectives === undefined)
     next = {
       ...next,
@@ -152,46 +155,7 @@ export function migrateState(value) {
   return next;
 }
 export function balancedPlan(state) {
-  const course = state.courses[0] ?? 'linear_algebra';
-  return [
-    'study',
-    'study',
-    'exercise',
-    'sleep',
-    'study_group',
-    'research',
-    'study',
-    'study',
-    'sleep',
-    'exercise',
-    'teacher',
-    'study',
-    'study',
-    'task',
-    'game',
-    'sleep',
-    'clean',
-    'task',
-    'exercise',
-    'study',
-    'sleep',
-  ].map((activity) => {
-    if (activity === 'research' && state.tasks.thesis?.status !== 'active') activity = 'study';
-    if (activity === 'study_group' && !state.group) activity = 'sleep';
-    const task = activeTasks(state).find((t) => t.special !== 'tutorial');
-    if (activity === 'task' && !task) activity = 'sleep';
-    return {
-      activity,
-      target:
-        activity === 'study'
-          ? course
-          : activity === 'task'
-            ? task.id
-            : activity === 'teacher'
-              ? 'homeroom'
-              : null,
-    };
-  });
+  return buildPreset(state, 'balanced');
 }
 export function validateState(s) {
   if (
@@ -202,6 +166,7 @@ export function validateState(s) {
   )
     return false;
   if (!validMinigames(s.minigames)) return false;
+  if (!validStory(s.story)) return false;
   if (
     !Number.isInteger(s.week) ||
     s.week < 0 ||
@@ -457,6 +422,7 @@ export function validateState(s) {
         typeof n.title !== 'string' ||
         typeof n.text !== 'string' ||
         (n.task !== undefined && (typeof n.task !== 'string' || n.task.length > 100)) ||
+        (n.chapter !== undefined && !Object.hasOwn(chapters, n.chapter)) ||
         typeof n.kind !== 'string',
     )
   )

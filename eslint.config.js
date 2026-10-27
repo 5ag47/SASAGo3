@@ -9,6 +9,7 @@ export default [
       'src/features/year-game/**/*.{js,jsx}',
       'server/**/*.{js,mjs}',
       'tools/**/*.mjs',
+      'tools/**/*.js',
       'tools/task-editor/**/*.jsx',
       'tests/**/*.js',
     ],

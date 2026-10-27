@@ -516,7 +516,8 @@
     "name": "서울대 종합 평가",
     "track": "종합",
     "externalAwards": false,
-    "description": "학점·능력치·연구·서류·추천서·면접을 종합해 평가해요."
+    "description": "학점·능력치·연구·서류·추천서·면접을 종합해 평가해요.",
+    "profile": "top_interview"
   },
   "final_letter": {
     "week": 37,

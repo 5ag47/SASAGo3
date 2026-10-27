@@ -1,6 +1,7 @@
 import { courses } from './catalog.js';
 import { clamp, random } from './random.js';
 import { courseAbility } from './course-progress.js';
+import { balance } from './balance.js';
 
 export const letterGrade = (score) =>
   score >= 97
@@ -44,14 +45,36 @@ export function gpa(state, term = 1) {
     ? Math.round((grades.reduce((sum, c) => sum + c.point * c.credits, 0) / credits) * 100) / 100
     : 0;
 }
+export function examBaseScore(ability, week = balance.exams.reliefEnds) {
+  const config = balance.exams;
+  const earlyCourse = config.introRelief * Math.max(0, 1 - week / config.reliefEnds);
+  return config.base + earlyCourse + ability * config.abilityWeight;
+}
+export function admissionThreshold(event) {
+  const config = balance.admissions;
+  return event.track === '종합'
+    ? (config.thresholds[event.profile] ?? config.comprehensiveDefault)
+    : event.track === '논술'
+      ? config.essayThreshold
+      : config.csatThreshold;
+}
+export function admissionTargetBonus(target, profile) {
+  return balance.admissions.targetBonuses[target]?.[profile] ?? 0;
+}
 export function assess(state, kind) {
   const term = state.week <= 16 ? 1 : 2;
   return state.courses.map((id) => {
     const ability = courseAbility(state, id);
     const roll = random(state);
-    const difficulty = roll < 0.1 ? -12 : roll > 0.9 ? 6 : (roll - 0.5) * 8;
+    const config = balance.exams;
+    const difficulty =
+      roll < config.hardChance
+        ? config.hardPenalty
+        : roll > 1 - config.hardChance
+          ? config.easyBonus
+          : (roll - 0.5) * config.normalSpread;
     const condition = (state.stats.hp - 50) * 0.04 - Math.max(0, state.stats.stress - 60) * 0.12;
-    const score = Math.round(clamp(46.667 + (ability * 2) / 3 + difficulty + condition));
+    const score = Math.round(clamp(examBaseScore(ability, state.week) + difficulty + condition));
     const mark = {
       id: `${term}-${id}-${kind}-${state.week}`,
       course: id,
@@ -109,20 +132,18 @@ export function resolveAdmission(state, event) {
           roll +
           (event.externalAwards === false ? 0 : Math.min(state.awards, 2) * 2);
   if (event.track !== '종합') score += condition;
-  const threshold =
-    event.track === '종합'
-      ? { dream: 78, balanced: 62, safe: 48 }[state.flags.target]
-      : event.track === '논술'
-        ? 75
-        : 70;
+  const bonus =
+    event.track === '종합' ? admissionTargetBonus(state.flags.target, event.profile) : 0;
+  score = Math.round(clamp(score + bonus));
+  const threshold = admissionThreshold(event);
   const eligible = event.track !== '종합' || state.tasks.application_form?.status === 'completed';
   const accepted = eligible && score >= threshold;
   state.admissions.push({
     name: event.name,
-    score: Math.round(clamp(score)),
+    score,
     accepted,
     week: state.week,
-    reason: `${eligible ? `기준 ${threshold}점` : '원서 미제출'} · ${event.track === '종합' ? (event.externalAwards === false ? '외부 수상 미반영(게임 규칙)' : '종합 평가 + 외부대회 가산점(게임 규칙)') : '실력·컨디션·난이도 반영'}`,
+    reason: `${eligible ? `기준 ${threshold}점` : '원서 미제출'}${bonus ? ` · 지원 전략 ${bonus > 0 ? '+' : ''}${bonus}점` : ''} · ${event.track === '종합' ? (event.externalAwards === false ? '외부 수상 미반영(게임 규칙)' : '종합 평가 + 외부대회 가산점(게임 규칙)') : '실력·컨디션·난이도 반영'}`,
   });
   return accepted;
 }

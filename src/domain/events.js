@@ -6,8 +6,10 @@ import { CLEANING_WEEKS } from './school-calendar.js';
 import { enrollCourses } from './course-progress.js';
 import { courseSet, addUrbanProject } from './enrollment.js';
 import { notice } from './notifications.js';
+import { announceChapters } from './story.js';
 export { notice } from './notifications.js';
 export function beginWeek(state) {
+  announceChapters(state);
   if (state.week === 25) {
     state.major = state.nextMajor ?? state.major;
     state.electives = state.nextElectives ?? state.electives;

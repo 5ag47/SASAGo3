@@ -8,7 +8,7 @@ import {
   effectText,
   TEACHERS,
 } from '../../domain/catalog.js';
-import { learningEfficiency } from '../../domain/week.js';
+import { activityPreview } from '../../domain/activity-preview.js';
 import { courseMastery } from '../../domain/course-progress.js';
 import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
 
@@ -18,6 +18,7 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
   const [category, setCategory] = useState('전체');
   const tasks = activeTasks(state).filter((task) => task.special !== 'tutorial');
   const definition = activities[activity];
+  const preview = activityPreview(state, activity, target);
   function select(id) {
     setActivity(id);
     setTarget(
@@ -129,13 +130,12 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
       <details className="activity-detail">
         <summary>효과·비용 보기</summary>
         <p>
-          {effectText(definition.effect)}
-          {definition.gain && activity === 'study'
-            ? ` · ${courses[target]?.name ?? '선택 과목'} 능력 약 +${(definition.gain * learningEfficiency(state) * (0.25 + (1 - (state.stats[courses[target]?.ability] ?? 0) / 100) * 0.75)).toFixed(1)}`
-            : ''}
+          {effectText(preview.effects)}
+          {preview.courseGain !== null ? ` · 과목 이해도 +${preview.courseGain}` : ''}
           {definition.cost ? ` · ${definition.cost.toLocaleString()}원` : ''}
           {definition.income ? ` · 용돈 +${definition.income.toLocaleString()}원` : ''}
         </p>
+        <small>현재 상태 기준 예상값 · 주중 상태·반복·학습 환경에 따라 달라집니다.</small>
       </details>
       <button
         className="primary full"

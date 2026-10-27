@@ -11,7 +11,7 @@
 5. 공개 화면에서 새로고침하고 로그인·일정 수정·새로고침 복구를 확인합니다. 오래된 탭은 갱신 안내를 받을 수 있습니다.
 6. `npm run smoke:d1`은 고유한 임시 레코드만 사용해 원격 저장·오래된 버전 거절·중복 키 제약을 확인한 뒤 해당 레코드만 삭제합니다.
 
-`npm run cloud:secret`은 원격 비밀값이 없을 때만 최초 등록하며 기존 키는 교체하지 않습니다. 비밀값과 DB의 백업·복구는 별도 운영 절차가 필요합니다. [Cloudflare D1 복구 문서](https://developers.cloudflare.com/d1/reference/time-travel/)
+`npm run cloud:secret`은 원격 비밀값이 없을 때만 최초 등록하며 기존 키는 교체하지 않습니다. `npm run cloud:backup`은 암호화 백업과 메모리 DB 복구 검증을 수행합니다. 실제 운영 덮어쓰기는 하지 않습니다. [백업·복구 절차](backup-recovery.md)를 따릅니다. [Cloudflare D1 복구 문서](https://developers.cloudflare.com/d1/reference/time-travel/)
 
 2026-10-27 확인한 무료 Workers 한도에는 요청당 CPU 10ms 제한이 있습니다. 무료 D1의 일일 한도를 넘으면 쿼리가 중단됩니다. 공개 환경의 긴 플레이·동시 이용·장애 복구 검증은 계속 필요하며 유료 업그레이드는 자동으로 하지 않습니다. [Workers 요금·제한](https://developers.cloudflare.com/workers/platform/pricing/), [D1 요금·제한](https://developers.cloudflare.com/d1/platform/pricing/)
 

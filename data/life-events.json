@@ -5,7 +5,8 @@
     "name": "카이스트·포스텍 종합 평가",
     "track": "종합",
     "externalAwards": true,
-    "description": "교과·면접·활동에 외부 수상 실적도 반영하는 게임 속 전형이다."
+    "description": "교과·면접·활동에 외부 수상 실적도 반영하는 게임 속 전형이다.",
+    "profile": "kaist_postech"
   },
   "korea_university": {
     "week": 35,
@@ -13,7 +14,8 @@
     "name": "고대 종합 평가",
     "track": "종합",
     "externalAwards": true,
-    "description": "서류 제출과 종합 준비도를 확인한다."
+    "description": "서류 제출과 종합 준비도를 확인한다.",
+    "profile": "korea_university"
   },
   "dorm_delivery": {
     "week": 3,

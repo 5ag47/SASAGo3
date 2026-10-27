@@ -6,10 +6,28 @@ import { SqliteStore } from '../../server/sqlite-store.js';
 import { ApiError } from '../../server/security.js';
 import { CONTENT_VERSION } from '../../src/domain/state.js';
 import { beginWeek } from '../../src/domain/events.js';
+import { availableChapters } from '../../src/domain/story.js';
 
 const origin = 'https://game.example';
 const secret = 'test-only-secret-do-not-use-in-production-1234567890';
 const profile = { name: '서버 테스트', character: 'boy', role: 'steady', major: 'math' };
+test('story reading uses atomic server saves and rejects client progress injection', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const created = await f.post(await f.get(), { type: 'create', profile });
+  const chapter = availableChapters(created.state)[0].id,
+    key = randomUUID();
+  const command = { type: 'story', chapter, action: 'next' };
+  const first = await f.post(created, command, { key });
+  assert.equal(first.response.status, 200);
+  assert.equal(first.state.story[chapter].page, 1);
+  const duplicate = await f.post(created, command, { key });
+  assert.equal(duplicate.state.revision, first.state.revision);
+  assert.equal((await f.get()).state.story[chapter].page, 1);
+  assert.deepEqual(first.state.stats, created.state.stats);
+  assert.deepEqual(first.state.plan, created.state.plan);
+  assert.equal((await f.post(first, { ...command, read: true, page: 9 })).code, 'COMMAND_SHAPE');
+});
 test('task mini-games persist per action, hide a recalled pattern and accept a duplicate only once', async (t) => {
   const f = fixture();
   t.after(() => f.store.close());

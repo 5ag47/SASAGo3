@@ -3,7 +3,7 @@ import { addTask, academyTasks } from './tasks.js';
 import { notice } from './events.js';
 import { applyEffects, clamp, random } from './random.js';
 import { reserveActivities } from './schedule.js';
-import { gpa, admissionScore } from './grades.js';
+import { gpa, admissionScore, admissionTargetBonus, admissionThreshold } from './grades.js';
 import { createCardGame, playCardGame, cardOptions, cardScore } from './card-game.js';
 import { INTERVIEW_QUESTIONS } from './interview.js';
 export { INTERVIEW_QUESTIONS } from './interview.js';
@@ -37,6 +37,17 @@ export function choiceOptions(state, id) {
       id: key,
       label: name,
       detail: `현재 친밀도 ${state.teachers[key]} / 100`,
+    }));
+  if (id === 'applications')
+    return event.options.map((option) => ({
+      ...option,
+      detail: Object.values(events)
+        .filter((event) => event.profile)
+        .map((event) => {
+          const bonus = admissionTargetBonus(option.id, event.profile);
+          return `${event.name.replace(' 종합 평가', '')} ${bonus > 0 ? '+' : ''}${bonus}점`;
+        })
+        .join(' · '),
     }));
   return event.options ?? [];
 }
@@ -127,7 +138,15 @@ export function applyChoice(state, id, selected, answers) {
       notice(
         state,
         '진학 상담 기록',
-        `1학기 학점 ${gpa(state).toFixed(2)} / 4.30 · 현재 종합 준비도 ${admissionScore(state)}점. 게임 속 종합 기준은 상향 78점·균형 62점·안정 48점이며 서류 제출이 필요합니다.`,
+        `1학기 학점 ${gpa(state).toFixed(2)} / 4.30 · 현재 종합 준비도 ${admissionScore(state)}점. ${Object.values(
+          events,
+        )
+          .filter((event) => event.profile)
+          .map(
+            (event) =>
+              `${event.name.replace(' 종합 평가', '')} 기준 ${admissionThreshold(event)}점`,
+          )
+          .join(' · ')}. 종합 전형에는 원서 제출이 필요합니다.`,
         'event',
       );
     }

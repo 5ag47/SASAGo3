@@ -1,5 +1,6 @@
 import time from './time-v1.js';
 import contest from './contest-v1.js';
+import { balance } from '../balance.js';
 export function puzzleModule({ id, name, game }) {
   return {
     ...time,
@@ -16,6 +17,15 @@ export function puzzleModule({ id, name, game }) {
       const result = (context.task.special === 'contest' ? contest : time).complete(context);
       return {
         ...result,
+        score:
+          result.score === null
+            ? null
+            : Math.round(
+                result.score *
+                  (balance.projects.qualityBase +
+                    (balance.projects.qualityWeight * (context.task.moduleData?.quality ?? 60)) /
+                      100),
+              ),
         note: [`미니게임 ${context.task.moduleData?.quality ?? 0}점`, result.note]
           .filter(Boolean)
           .join(' · '),

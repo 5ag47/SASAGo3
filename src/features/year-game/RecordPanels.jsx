@@ -3,6 +3,7 @@ import { ArrowRight, Check, ChevronDown, Clock, Sparkles } from 'lucide-react';
 import { courses, DAYS, events, period, STATS } from '../../domain/catalog.js';
 import { Delta, Empty, activityName, SESSIONS } from './ui.jsx';
 import './academic.css';
+import { StoryLibrary } from './StoryPanel.jsx';
 
 export function WeekResult({ entry, onContinue, onRead, children }) {
   useEffect(() => {
@@ -95,9 +96,15 @@ export function WeekResult({ entry, onContinue, onRead, children }) {
     </>
   );
 }
-export function RecordsPanel({ state, onRead }) {
+export function RecordsPanel({ state, onRead, onStory }) {
   const [selected, setSelected] = useState(null);
-  if (!state.history.length) return <Empty>아직 진행 기록이 없습니다.</Empty>;
+  if (!state.history.length)
+    return (
+      <>
+        <StoryLibrary state={state} onOpen={onStory} />
+        <Empty>아직 진행 기록이 없습니다.</Empty>
+      </>
+    );
   const entry = state.history.find((h) => h.week === selected);
   return (
     <>
@@ -114,6 +121,7 @@ export function RecordsPanel({ state, onRead }) {
         </>
       ) : (
         <>
+          <StoryLibrary state={state} onOpen={onStory} />
           <p className="dialog-lead">
             내가 보낸 {state.history.length}주의 기록. 한 주를 눌러 활동별 결과와 이유를 확인하세요.
           </p>
@@ -142,7 +150,7 @@ export function RecordsPanel({ state, onRead }) {
     </>
   );
 }
-export function NoticesPanel({ state, onReview, onTask }) {
+export function NoticesPanel({ state, onReview, onTask, onStory }) {
   const notices = state.notices.filter(
     (n) => n.kind !== 'choice' || !state.pending.some((id) => events[id]?.name === n.title),
   );
@@ -157,6 +165,11 @@ export function NoticesPanel({ state, onReview, onTask }) {
               </small>
               <h3>{n.title}</h3>
               <p>{n.text}</p>
+              {n.chapter && onStory && (
+                <button className="subtle" onClick={() => onStory(n.chapter)}>
+                  이야기 읽기
+                </button>
+              )}
               {n.task && state.tasks[n.task] && onTask && (
                 <button className="subtle" onClick={() => onTask(n.task)}>
                   할 일 보기

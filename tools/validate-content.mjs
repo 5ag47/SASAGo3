@@ -20,6 +20,11 @@ import {
 import { assignmentIssues } from '../src/domain/assignments.js';
 import { TASK_MODULES } from '../src/domain/task-modules/registry.js';
 import { TASK_GAME_VIEW_IDS } from '../src/features/year-game/task-games/catalog.js';
+import { balance } from '../src/domain/balance.js';
+import { balanceIssues } from '../src/domain/balance-validation.js';
+import { chapters, chapterIssues } from '../src/domain/story.js';
+assert.deepEqual(chapterIssues(chapters), [], 'Invalid story chapters');
+assert.deepEqual(balanceIssues(balance), [], 'Invalid balance configuration');
 for (const module of Object.values(TASK_MODULES))
   if (module.game)
     assert.ok(
@@ -93,6 +98,13 @@ for (const [id, event] of Object.entries(events)) {
   assert.ok(Number.isInteger(event.week) && event.week >= 0 && event.week <= 40);
   if (event.course) assert.ok(Object.hasOwn(courses, event.course));
   if (event.kind === 'quiz') assert.ok(Object.hasOwn(quizzes, event.quiz));
+  if (event.profile)
+    assert.ok(
+      event.kind === 'admission' &&
+        event.track === '종합' &&
+        Object.hasOwn(balance.admissions.thresholds, event.profile),
+      `${id}: invalid admission profile`,
+    );
   if (event.kind === 'task') {
     assert.ok(event.target > 0);
     assert.ok(event.deadline >= event.week && event.deadline <= 40);

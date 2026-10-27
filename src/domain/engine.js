@@ -1,14 +1,5 @@
-import {
-  activities,
-  activeTasks,
-  courses,
-  ELECTIVES,
-  items,
-  LAST_WEEK,
-  MAJORS,
-  REQUIRED,
-  roles,
-} from './catalog.js';
+import { buildPreset } from './auto-plan.js';
+import { activities, courses, ELECTIVES, items, LAST_WEEK, MAJORS, roles } from './catalog.js';
 import { baseState, balancedPlan, CONTENT_VERSION, validateState } from './state.js';
 import { applyEffects } from './random.js';
 import { beginWeek } from './events.js';
@@ -17,10 +8,10 @@ import { effectivePlan, lockedSlots, resolveWeek } from './week.js';
 import { enrollCourses } from './course-progress.js';
 import { courseSet, electiveWindow, changeElective } from './enrollment.js';
 import { copyDayPlan, copyDayPreview } from './schedule.js';
-import { taskEstimate } from './task-modules/registry.js';
 import { taskGameAction, taskIsComplete } from './task-processing.js';
 import { finishTask } from './tasks.js';
 import { TaskActionError } from './task-modules/action-error.js';
+import { progressChapter } from './story.js';
 
 export class GameError extends Error {
   constructor(code, message) {
@@ -76,39 +67,14 @@ export function createGame(profile, seed = 20261013) {
     electives: [...electives],
     courses: courseSet(profile.major, electives),
   });
-  applyEffects(state, roles[profile.role].stats);
+  applyEffects(state, roles[profile.role].stats, 1, { growth: false });
   enrollCourses(state);
   beginWeek(state);
   state.plan = balancedPlan(state);
   return state;
 }
 export function planPreset(state, preset) {
-  if (preset === 'balanced')
-    return balancedPlan(state).map((slot, i) =>
-      slot.activity === 'study'
-        ? { ...slot, target: state.courses[Math.floor(i / 3) % state.courses.length] }
-        : slot,
-    );
-  if (preset === 'rest')
-    return Array.from({ length: 21 }, (_, i) => ({
-      activity: i % 3 === 0 ? 'exercise' : i % 3 === 1 ? 'sleep' : 'game',
-      target: null,
-    }));
-  const queue = activeTasks(state)
-    .sort((a, b) => a.deadline - b.deadline)
-    .flatMap((task) => Array.from({ length: taskEstimate(state, task) }, () => task));
-  return Array.from({ length: 21 }, (_, i) => {
-    if (lockedSlots(state)[i]) return state.plan[i];
-    if (i % 3 === 2) return { activity: 'sleep', target: null };
-    const task = queue.shift();
-    if (!task) return { activity: 'study', target: state.courses[i % state.courses.length] };
-    if (task.special === 'tutorial')
-      return {
-        activity: 'study',
-        target: state.courses.find((id) => courses[id].ability === 'math'),
-      };
-    return { activity: task.special === 'clean' ? 'clean' : 'task', target: task.id };
-  });
+  return buildPreset(state, preset);
 }
 export const ENDINGS = {
   university: {
@@ -145,7 +111,7 @@ export const ENDINGS = {
 export function endingAvailable(state, id) {
   if (id === 'leave') return true;
   if (state.week <= LAST_WEEK) return false;
-  if (state.discipline >= 5) return id === 'prison';
+  if (state.discipline >= 5 && state.choices.temptation === 'cheat') return id === 'prison';
   if (id === 'prison') return false;
   if (id === 'university') return state.admissions.some((a) => a.accepted);
   if (id === 'startup') return state.stats.science >= 55 && state.stats.reputation >= 40;
@@ -170,13 +136,20 @@ export function transition(source, command) {
     state.flags.runRevision = source.revision + 1;
   } else {
     requireRule(
-      state.created && !state.ending,
+      state.created && (!state.ending || command.type === 'story'),
       'GAME_CLOSED',
       '진행 중인 게임에서만 할 수 있어요.',
     );
     if (['plan', 'preset', 'copy_day'].includes(command.type))
       requireRule(state.week <= LAST_WEEK, 'YEAR_FINISHED', '한 해의 일정이 끝났어요.');
-    if (command.type === 'plan') {
+    if (command.type === 'story') {
+      requireRule(
+        typeof command.chapter === 'string' &&
+          progressChapter(state, command.chapter, command.action),
+        'STORY_INVALID',
+        '지금 읽을 수 없는 장면입니다.',
+      );
+    } else if (command.type === 'plan') {
       requireRule(
         Number.isInteger(command.index) &&
           command.index >= 0 &&

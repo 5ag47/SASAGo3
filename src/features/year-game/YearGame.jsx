@@ -21,6 +21,7 @@ import Modal from '../../components/Modal.jsx';
 import { dayRoom, nightRoom } from '../../assets.js';
 import { activities, choiceDeadline, courses, DAYS, events, period } from '../../domain/catalog.js';
 import { ENDINGS } from '../../domain/engine.js';
+import { availableChapters, chapterProgress } from '../../domain/story.js';
 import { effectivePlan, lockedSlots } from '../../domain/week.js';
 import useGame from './useGame.js';
 import useAudio from './useAudio.js';
@@ -34,6 +35,7 @@ import Planner from './Planner.jsx';
 import DayCopy from './DayCopy.jsx';
 import YearReportPanel from './YearReportPanel.jsx';
 import TaskGamePanel from './TaskGamePanel.jsx';
+import StoryPanel from './StoryPanel.jsx';
 import ActivityPicker from './ActivityPicker.jsx';
 import TaskBoard from './TaskBoard.jsx';
 import EventDialog from './EventDialog.jsx';
@@ -62,6 +64,7 @@ const TITLES = {
   records: '기록',
   yearReport: '한 해 결산',
   taskGame: '과제 미니게임',
+  story: '학교 이야기',
   notices: '알림',
   shop: '매점',
   settings: '설정',
@@ -99,9 +102,10 @@ export default function YearGame() {
   };
   const p = period(state.week);
   async function create(profile) {
-    if (await send({ type: 'create', profile })) {
+    const next = await send({ type: 'create', profile });
+    if (next) {
       tutorial.reset();
-      open('tutorial');
+      setModal({ type: 'story', chapterId: availableChapters(next)[0].id });
     }
   }
   function lesson(lesson) {
@@ -135,6 +139,13 @@ export default function YearGame() {
       setAssignment(null);
       open('result');
     }
+  }
+  function continueWeek() {
+    const chapter = availableChapters(state).find(
+      (chapter) => chapter.week === state.week && !chapterProgress(state, chapter.id).read,
+    );
+    if (chapter) setModal({ type: 'story', chapterId: chapter.id });
+    else close();
   }
   async function choose(command) {
     const next = await send({ type: 'choose', ...command });
@@ -476,7 +487,25 @@ export default function YearGame() {
               }}
             />
           )}
-          {modal.type === 'records' && <RecordsPanel state={state} onRead={tutorial.readResult} />}
+          {modal.type === 'records' && (
+            <RecordsPanel
+              state={state}
+              onRead={tutorial.readResult}
+              onStory={(chapterId) => setModal({ type: 'story', chapterId })}
+            />
+          )}
+          {modal.type === 'story' &&
+            availableChapters(state).some((chapter) => chapter.id === modal.chapterId) && (
+              <StoryPanel
+                key={modal.chapterId}
+                state={state}
+                chapter={availableChapters(state).find((chapter) => chapter.id === modal.chapterId)}
+                busy={busy}
+                onProgress={(action) => send({ type: 'story', chapter: modal.chapterId, action })}
+                onNavigate={open}
+                onClose={close}
+              />
+            )}
           {modal.type === 'notices' && (
             <>
               {state.pending.length > 0 && (
@@ -498,6 +527,7 @@ export default function YearGame() {
               )}
               <NoticesPanel
                 state={state}
+                onStory={(chapterId) => setModal({ type: 'story', chapterId })}
                 onReview={openEvent}
                 onTask={(taskId) => setModal({ type: 'tasks', taskId })}
               />
@@ -546,7 +576,7 @@ export default function YearGame() {
           {modal.type === 'result' && state.history.at(-1) && (
             <WeekResult
               entry={state.history.at(-1)}
-              onContinue={close}
+              onContinue={continueWeek}
               onRead={tutorial.readResult}
             >
               {state.history.at(-1).week === 0 && (

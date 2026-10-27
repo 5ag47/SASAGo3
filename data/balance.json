@@ -1,0 +1,85 @@
+{
+  "growth": {
+    "academicRate": 0.3,
+    "academicPower": 1.8,
+    "academicFloor": 0.1,
+    "socialRate": 0.6,
+    "socialScale": 120,
+    "socialFloor": 0.15,
+    "courseRate": 0.65,
+    "coursePower": 1.5,
+    "courseFloor": 0.05
+  },
+  "presets": {
+    "workSlots": 9,
+    "recoveryWorkSlots": 5,
+    "balancedTaskSlots": 4
+  },
+  "exams": {
+    "base": 52,
+    "abilityWeight": 0.5,
+    "hardChance": 0.1,
+    "hardPenalty": -12,
+    "easyBonus": 6,
+    "normalSpread": 8,
+    "introRelief": 8,
+    "reliefEnds": 25
+  },
+  "projects": {
+    "qualityBase": 0.8,
+    "qualityWeight": 0.2
+  },
+  "relationships": {
+    "visitGain": 4,
+    "softScale": 120
+  },
+  "admissions": {
+    "essayThreshold": 75,
+    "csatThreshold": 70,
+    "comprehensiveDefault": 74,
+    "thresholds": {
+      "top_interview": 86,
+      "kaist_postech": 80,
+      "korea_university": 74
+    },
+    "targetBonuses": {
+      "dream": {
+        "top_interview": 4,
+        "kaist_postech": 2,
+        "korea_university": -8
+      },
+      "balanced": {
+        "top_interview": 0,
+        "kaist_postech": 0,
+        "korea_university": 0
+      },
+      "safe": {
+        "top_interview": -6,
+        "kaist_postech": -2,
+        "korea_university": 6
+      }
+    }
+  },
+  "weekly": {
+    "allowance": 10000,
+    "healthCost": 8,
+    "focusCost": 3,
+    "baseStress": 6,
+    "workStress": 0.35
+  },
+  "learning": {
+    "base": 0.9,
+    "focusScale": 250,
+    "stressThreshold": 70,
+    "lowHealth": 30,
+    "conditionMultiplier": 0.75,
+    "fatigueMultiplier": 0.65,
+    "repetitionStart": 5,
+    "repetitionLoss": 0.07,
+    "repetitionFloor": 0.55
+  },
+  "fatigue": {
+    "lowHealth": 25,
+    "highStress": 80
+  }
+}

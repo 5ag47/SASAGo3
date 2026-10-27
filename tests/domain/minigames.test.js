@@ -44,7 +44,8 @@ test('each interview answer persists through reload and is not overwritten by a 
   assert.deepEqual(final.minigames.interview.answers, [1, 2, 0]);
   assert.equal(final.minigames.interview.phase, 'finished');
   assert.equal(final.minigames.interview.score, Math.round(70 + source.stats.speech * 0.3));
-  assert.equal(final.stats.speech, source.stats.speech + 6);
+  assert.ok(final.stats.speech > source.stats.speech);
+  assert.ok(final.stats.speech < source.stats.speech + 6);
   assert.equal(final.notices.filter((n) => n.title === '실전 면접 기록').length, 1);
   assert.ok(!final.pending.includes('interview_day'));
   assert.throws(() => choose(final, 'interview_day', 'answer:0'), { code: 'EVENT_INVALID' });
