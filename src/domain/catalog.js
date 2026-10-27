@@ -7,12 +7,14 @@ import lifeEvents from '../../data/life-events.json' with { type: 'json' };
 import quizzes from '../../data/quizzes.json' with { type: 'json' };
 import resources from '../../data/resources.json' with { type: 'json' };
 import assignments from '../../data/assignments.json' with { type: 'json' };
+import CHARACTERS from '../../data/characters.json' with { type: 'json' };
 import { expandAssignments } from './assignments.js';
 import { calendarTiming } from './calendar-date.js';
 const assignmentEvents = expandAssignments(assignments);
 const events = { ...storyEvents, ...lifeEvents, ...assignmentEvents };
 
 export {
+  CHARACTERS,
   courses,
   roles,
   activities,

@@ -1,5 +1,14 @@
 import { buildPreset } from './auto-plan.js';
-import { activities, courses, ELECTIVES, items, LAST_WEEK, MAJORS, roles } from './catalog.js';
+import {
+  activities,
+  CHARACTERS,
+  courses,
+  ELECTIVES,
+  items,
+  LAST_WEEK,
+  MAJORS,
+  roles,
+} from './catalog.js';
 import { baseState, balancedPlan, CONTENT_VERSION, validateState } from './state.js';
 import { applyEffects } from './random.js';
 import { beginWeek } from './events.js';
@@ -44,7 +53,7 @@ export function createGame(profile, seed = 20261013) {
     '이름은 1~12자로 입력해 주세요.',
   );
   requireRule(
-    ['boy', 'girl'].includes(profile.character) &&
+    Object.hasOwn(CHARACTERS, profile.character) &&
       Object.hasOwn(roles, profile.role) &&
       Object.hasOwn(MAJORS, profile.major),
     'PROFILE_OPTION',

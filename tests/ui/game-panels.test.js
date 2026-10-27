@@ -26,6 +26,10 @@ const { default: TaskGamePanel } = await vite.ssrLoadModule(
 );
 const { default: TaskEditor } = await vite.ssrLoadModule('/tools/task-editor/TaskEditor.jsx');
 const { default: StoryPanel } = await vite.ssrLoadModule('/src/features/year-game/StoryPanel.jsx');
+const { default: Setup } = await vite.ssrLoadModule('/src/features/year-game/Setup.jsx');
+const { default: SettingsPanel } = await vite.ssrLoadModule(
+  '/src/features/year-game/SettingsPanel.jsx',
+);
 const { availableChapters } = await vite.ssrLoadModule('/src/domain/story.js');
 test.after(() => vite.close());
 function fresh() {
@@ -60,6 +64,34 @@ async function mount(t) {
     act(async () => root.render(component ? React.createElement(component, props) : null));
 }
 const click = async (button) => act(async () => button.click());
+test('both original characters appear at new-game setup and a failed second image can reload without changing selection', async (t) => {
+  const render = await mount(t);
+  await render(Setup, { onCreate() {}, busy: false, mode: 'local', loginRequired: false });
+  const first = document.querySelector('button[aria-label="캐릭터 1 선택"]');
+  const second = document.querySelector('button[aria-label="캐릭터 2 선택"]');
+  assert.ok(first && second);
+  assert.notEqual(first.querySelector('img').src, second.querySelector('img').src);
+  assert.match(second.querySelector('img').src, /character-02\.png/);
+  await act(async () => second.querySelector('img').dispatchEvent(new window.Event('error')));
+  assert.ok(document.querySelector('[role="alert"]'));
+  await click(document.querySelector('button[aria-label="캐릭터 2 이미지 다시 불러오기"]'));
+  assert.equal(first.getAttribute('aria-pressed'), 'true');
+  assert.match(second.querySelector('img').src, /reload=1/);
+  await act(async () => second.querySelector('img').dispatchEvent(new window.Event('load')));
+  await click(second);
+  assert.equal(second.getAttribute('aria-pressed'), 'true');
+  assert.match(document.querySelector('.setup-illustration img').src, /character-02\.png/);
+  assert.doesNotMatch(document.body.textContent, /남학생|여학생/);
+});
+test('settings expose no character selector after a game has started', async (t) => {
+  const render = await mount(t);
+  await render(SettingsPanel, {
+    game: { state: fresh(), busy: false, mode: 'local' },
+    audio: { playing: false, volume: 30 },
+  });
+  assert.equal(document.querySelector('[aria-label="캐릭터 선택"]'), null);
+  assert.equal(document.querySelectorAll('.avatar-options').length, 0);
+});
 test('story UI resumes a saved page, allows skipping and replays without changing game state', async (t) => {
   const render = await mount(t);
   let state = fresh(),

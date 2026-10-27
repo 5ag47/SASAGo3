@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, LockKeyhole } from 'lucide-react';
-import { boy, girl, dayRoom } from '../../assets.js';
+import { ArrowLeft, ArrowRight, LockKeyhole } from 'lucide-react';
+import { characterImage, dayRoom } from '../../assets.js';
+import CharacterPicker from './CharacterPicker.jsx';
 import { MAJORS, REQUIRED, courses, roles, ELECTIVES } from '../../domain/catalog.js';
 import { ChoiceButton } from './ui.jsx';
 import './enrollment.css';
@@ -38,11 +39,7 @@ export default function Setup({ onCreate, busy, mode, onLogin, loginRequired }) 
             틈틈이 놀면서 12월까지 버텨 보자.
           </p>
           <div className="setup-illustration" style={{ backgroundImage: `url("${dayRoom}")` }}>
-            <img
-              src={profile.character === 'boy' ? boy : girl}
-              alt="기숙사 캐릭터"
-              draggable={false}
-            />
+            <img src={characterImage(profile.character)} alt="기숙사 캐릭터" draggable={false} />
           </div>
         </section>
         <section className="setup-card">
@@ -78,25 +75,11 @@ export default function Setup({ onCreate, busy, mode, onLogin, loginRequired }) 
               </p>
               {step === 0 ? (
                 <>
-                  <div className="avatar-options">
-                    {[
-                      ['boy', boy, '캐릭터 1'],
-                      ['girl', girl, '캐릭터 2'],
-                    ].map(([id, image, name]) => (
-                      <button
-                        key={id}
-                        className={profile.character === id ? 'selected' : ''}
-                        onClick={() => change('character', id)}
-                        aria-label={`${name} 선택`}
-                        aria-pressed={profile.character === id}
-                      >
-                        <img src={image} alt={name} draggable={false} />
-                        <span className="avatar-selected">
-                          {profile.character === id && <Check size={14} />}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  <CharacterPicker
+                    value={profile.character}
+                    disabled={busy}
+                    onChange={(id) => change('character', id)}
+                  />
                   <label htmlFor="nickname" className="input-label">
                     닉네임<small>최대 12자</small>
                   </label>

@@ -448,3 +448,22 @@ test('unknown API routes and malformed idempotency keys are rejected', async (t)
   const s = await f.get();
   assert.equal((await f.post(s, { type: 'create', profile }, { key: 'bad' })).response.status, 400);
 });
+test('a saved character can only be chosen at creation and cannot be changed through a later command', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const initial = await f.post(await f.get(), {
+    type: 'create',
+    profile: { ...profile, character: 'girl' },
+  });
+  const changed = await f.post(initial, { type: 'character', character: 'boy' });
+  assert.equal(changed.response.status, 400);
+  assert.equal(changed.code, 'COMMAND_SHAPE');
+  const recreate = await f.post(initial, {
+    type: 'create',
+    profile: { ...profile, character: 'boy' },
+  });
+  assert.equal(recreate.code, 'ALREADY_CREATED');
+  const saved = await f.get();
+  assert.equal(saved.state.character, 'girl');
+  assert.equal(saved.state.revision, initial.state.revision);
+});

@@ -1,5 +1,6 @@
 import {
   activities,
+  CHARACTERS,
   courses,
   events,
   GROUPS,
@@ -28,7 +29,7 @@ import {
 
 export const SCHEMA_VERSION = 1;
 export const SAVE_KEY = 'sasago3-year-v1';
-export const CONTENT_VERSION = '2026.10.28-1';
+export const CONTENT_VERSION = '2026.10.28-2';
 export function baseState(seed = 20261013) {
   return {
     version: SCHEMA_VERSION,
@@ -222,7 +223,7 @@ export function validateState(s) {
     typeof s.name !== 'string' ||
     !s.name.trim() ||
     s.name.length > 12 ||
-    !['boy', 'girl'].includes(s.character) ||
+    !Object.hasOwn(CHARACTERS, s.character) ||
     !Object.hasOwn(roles, s.role) ||
     !Object.hasOwn(MAJORS, s.major)
   )
