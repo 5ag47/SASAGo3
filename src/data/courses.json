@@ -1,0 +1,202 @@
+{
+  "required": [
+    "science_english",
+    "visual_communication",
+    "math_seminar",
+    "foreign_language"
+  ],
+  "majors": {
+    "물리": [
+      "linear_algebra",
+      "general_physics",
+      "physics_seminar"
+    ],
+    "화학": [
+      "linear_algebra",
+      "general_chemistry",
+      "chemistry_seminar"
+    ],
+    "생명과학": [
+      "general_biology",
+      "biology_seminar",
+      "biodiversity"
+    ],
+    "정보과학": [
+      "linear_algebra",
+      "informatics_project",
+      "advanced_algorithms",
+      "physics_seminar"
+    ]
+  },
+  "provisional": "학점 수, 평가 비율, 수치 효과는 게임용 임시값",
+  "courses": [
+    {
+      "id": "linear_algebra",
+      "name": "선형대수",
+      "credits": 3,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "general_physics",
+      "name": "일반물리학",
+      "credits": 3,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "physics_seminar",
+      "name": "물리세미나",
+      "credits": 2,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "general_chemistry",
+      "name": "일반화학",
+      "credits": 3,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "chemistry_seminar",
+      "name": "화학세미나",
+      "credits": 2,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "general_biology",
+      "name": "일반생물",
+      "credits": 3,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "biology_seminar",
+      "name": "생물세미나",
+      "credits": 2,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "biodiversity",
+      "name": "생물다양성의이해",
+      "credits": 2,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "informatics_project",
+      "name": "정보과학프로젝트",
+      "credits": 3,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "advanced_algorithms",
+      "name": "고급알고리즘",
+      "credits": 3,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "math_seminar",
+      "name": "수학세미나",
+      "credits": 2,
+      "ability": true,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "science_english",
+      "name": "과학기술시사영어",
+      "credits": 2,
+      "ability": false,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "visual_communication",
+      "name": "비주얼커뮤니케이션",
+      "credits": 2,
+      "ability": false,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    },
+    {
+      "id": "foreign_language",
+      "name": "외국어",
+      "credits": 2,
+      "ability": false,
+      "assessmentWeights": {
+        "quiz": 0.2,
+        "task": 0.3,
+        "midterm": 0.2,
+        "final": 0.3
+      }
+    }
+  ]
+}
