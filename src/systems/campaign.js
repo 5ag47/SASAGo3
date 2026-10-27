@@ -13,12 +13,46 @@ export function term(week) {
   return { name, month, part, label:`${month}월 ${part}주 · ${name}` };
 }
 export const enrolled = game => courses.filter(c => !c.majors.length || c.majors.includes(game.major));
-export const defaultPlan = () => ['math','rest','science','rest','math','play','science','rest','interview','rest','clean','rest','math','exercise'];
+export const PERIODS = ['아침 자습','1자','2자','연장 자습'];
+export const expandPlan = plan => plan.flatMap((v,i) => i % 2 === 0 ? ['skip',v] : [v,'sleep']);
+export const defaultPlan = () => expandPlan(['math','rest','science','rest','math','play','science','rest','interview','rest','clean','rest','math','exercise']);
+export const courseStats = g => enrolled(g).filter(c => c.majors.length || c.id === 'math_seminar');
+export const isLearning = id => id.startsWith('course:') || id.startsWith('quest:') || ['math','science','interview','csat','academy','clean'].includes(id);
+export function validSlot(id,i) {
+  const study = isLearning(id) && id !== 'clean' && !id.startsWith('quest:clean-');
+  if (i % 4 === 0) return id === 'skip' || study;
+  if (i % 4 === 3) return id === 'sleep' || study;
+  return !['skip','sleep'].includes(id) && (id !== 'work' || i >= 20);
+}
+export const isTrip = g => g.week === 12 && enrolled(g).some(c => c.id === 'biodiversity');
+export const slotLocked = (g,i) => (isTrip(g) && i >= 16) || (i % 4 === 1 && Math.floor(i / 4) < g.lockedSlots);
+export function syncTasks(source) {
+  const g = copy(source);
+  for (const e of EVENTS.filter(e => e.task && e.week <= g.week && e.task.due >= g.week)) quest(g,e.task);
+  return g;
+}
+export function migrateCampaign(source) {
+  if (!source || ![1,2].includes(source.version)) return source;
+  const g = copy(source);
+  if (g.version === 1) {
+    g.plan = expandPlan(g.plan);
+    g.version = 2;
+    g.overnightStudy = false;
+    g.volume = .3;
+    for (const c of enrolled(g)) {
+      g.mastery[c.id] ??= 25;
+      g.grades[c.id] ??= {quiz:[],midterm:null,final:null,assignment:[]};
+    }
+  }
+  g.stats.focus = clamp(g.stats.hp - g.stats.stress);
+  return syncTasks(g);
+}
 function apply(game, effects = {}, efficiency = 1) {
   for (const [key, amount] of Object.entries(effects)) {
     if (!(key in game.stats)) continue;
     game.stats[key] = clamp(game.stats[key] + amount * (['math','science','writing','speech','csat'].includes(key) && amount > 0 ? efficiency : 1));
   }
+  game.stats.focus = clamp(game.stats.hp - game.stats.stress);
 }
 function random(game) {
   game.seed = (Math.imul(game.seed, 1664525) + 1013904223) >>> 0;
@@ -26,7 +60,7 @@ function random(game) {
 }
 export function newCampaign({name='사사',character='boy',major='physics',trait='steady',difficulty='normal',seed=Date.now()} = {}) {
   const game = {
-    version:1,name:name.trim().slice(0,12) || '사사',character,major,trait,difficulty,seed:seed >>> 0,
+    version:2,overnightStudy:false,volume:.3,name:name.trim().slice(0,12) || '사사',character,major,trait,difficulty,seed:seed >>> 0,
     week:0,night:false,money:30000,stats:{hp:65,focus:50,reputation:40,stress:25,math:28,science:28,writing:25,speech:20,csat:0},
     plan:defaultPlan(),study:null,failedStudies:[],seen:[],quests:[],grades:{},mastery:{},history:[],lastResult:null,
     penalties:0,fatigue:false,csatUnlocked:false,teacher:0,setting:'home',lockedSlots:0,awards:0,recommendation:0,
@@ -53,14 +87,24 @@ function beginWeek(game) {
     const monthIndex = Math.floor((w - 1) / 4);
     // 모든 수강 과목에 학기 중 적어도 한 번 수행평가가 배정된다.
     selected.filter((_,i) => i % 4 === monthIndex).forEach(c => quest(game,{id:`course-${c.id}`,name:c.task,course:c.id,target:3,due,reward:{[c.ability]:3,reputation:2}}));
+    if (w === 1) selected.filter(c => ['project','algorithm','math_seminar','physics'].includes(c.id)).forEach(c => quest(game,{id:`course-${c.id}`,name:c.id === 'algorithm' ? '고급알고리즘 발표' : c.task,course:c.id,target:3,due,reward:{[c.ability]:3,reputation:2}}));
   }
-  if (game.study === 'serious') quest(game,{id:`study-${w}`,name:'아침스터디 문제 풀이',target:1,due:w,reward:{math:4},penalty:{reputation:-1,stress:6},fine:2000});
-  return game;
+  if (w > 0 && (game.study === 'serious' || (game.study === 'friends' && w % 4 === 2))) quest(game,{id:`study-${w}`,name:'스터디활동',target:1,due:w,reward:{math:4},penalty:{reputation:-1,stress:6},fine:2000});
+  if (w >= 1 && w <= 16) {
+    const c = enrolled(game)[(w - 1) % enrolled(game).length];
+    quest(game,{id:`weekly-${w}`,name:`${c.name} 주간 과제`,course:c.id,target:1,due:w,reward:{[c.ability]:2},penalty:{[c.ability]:-2,reputation:-2,stress:4}});
+  }
+  if (w > 0 && term(w).name !== '여름방학') quest(game,{id:`clean-${w}`,name:'방 청소',target:1,due:w,reward:{},penalty:{reputation:-2,stress:3}});
+  return syncTasks(game);
 }
 export function notices(game) {
   if (game.ending) return [];
-  return EVENTS.filter(e => e.week <= game.week && !game.seen.includes(e.id));
+  const extra = [];
+  if (game.week === 1) extra.push({id:'academy-info',week:1,title:'해냄 숙제를 매달 완료해야 합니다',text:'해냄 숙제는 매달 자동 추가됩니다. 마감 전에 완료하면 수학과 평판이 올라갑니다.'});
+  if (game.week > 0 && ((game.study === 'friends' && game.week % 4 === 0) || (game.study === 'play' && game.week % 2 === 0))) extra.push({id:`party-${game.week}`,week:game.week,title:'스터디 회식',text:'잠깐 모여서 이야기할까? 수학 능력에는 영향이 없어요.',choices:[{label:'회식 참여',effects:{stress:-12}},{label:'이번에는 쉬기',effects:{}}]});
+  return [...EVENTS,...extra].filter(e => (e.choices || e.kind === 'interview' ? e.week <= game.week : e.week === game.week) && (e.id !== 'jeju' || isTrip(game)) && !game.seen.includes(e.id));
 }
+export const requiredNotices = g => notices(g).filter(e => e.choices || e.kind === 'interview');
 export function chooseEvent(source, id, index = 0) {
   const event = notices(source).find(e => e.id === id);
   if (!event || event.kind === 'interview') return source;
@@ -153,7 +197,7 @@ export function activityOptions(g) {
   ];
 }
 export function resolveCampaign(source) {
-  if (source.ending || notices(source).length || source.plan.length !== 14) return source;
+  if (source.ending || requiredNotices(source).length || source.plan.length !== 28) return source;
   const g = copy(source);
   const before = {...g.stats};
   const notes = [];
@@ -161,11 +205,25 @@ export function resolveCampaign(source) {
   const summer = term(g.week).name === '여름방학';
   const tired = g.fatigue;
   const allowed = new Set(activityOptions(source).map(a => a.id));
-  if (source.plan.some(id => !allowed.has(id))) return source;
+  if (source.plan.some((id,i) => !allowed.has(id) || !validSlot(id,i))) return source;
   for (const [slot,id] of g.plan.entries()) {
-    if (slot < g.lockedSlots) { notes.push(`${slot + 1}번째 자습은 행사 참여로 사용`); continue; }
-    if (id === 'work' && slot < 10) { notes.push('알바는 토·일에만 가능해 휴식으로 대체'); apply(g,ACTIONS.rest.effects); rested++; continue; }
-    const learning = id.startsWith('course:') || ['math','science','interview','csat','academy'].includes(id);
+    const period = slot % 4;
+    const day = Math.floor(slot / 4);
+    if (slotLocked(g,slot)) { if (period === 3) g.overnightStudy = false; notes.push(`${['월','화','수','목','금','토','일'][day]} ${PERIODS[period]}: ${isTrip(g) && day >= 4 ? '제주도 자연 탐사' : '행사 참여'}`); continue; }
+    if (period === 0) {
+      const overslept = g.overnightStudy && random(g) < .5;
+      g.overnightStudy = false;
+      if (overslept && id !== 'skip') {
+        notes.push(`${['월','화','수','목','금','토','일'][day]}요일 연장자습 후 늦잠 · 아침자습 실패`);
+        apply(g,{stress:4,reputation:-1});
+        if (g.study === 'serious') g.money = Math.max(0,g.money - 2000);
+        continue;
+      }
+    }
+    if (period === 3) g.overnightStudy = isLearning(id);
+    if (id === 'skip' || id === 'sleep') continue;
+    if (id === 'work' && day < 5) { notes.push('알바는 토·일에만 가능해 휴식으로 대체'); apply(g,ACTIONS.rest.effects); rested++; continue; }
+    const learning = isLearning(id);
     let efficiency = (1 + (g.stats.focus - 50) / 250) * (tired ? .65 : 1);
     if (g.stats.hp < 25 || g.stats.stress >= 80) efficiency *= .7;
     const venueCost = summer && learning ? (g.setting === 'managed' ? 1500 : g.setting === 'cafe' ? 700 : 0) : 0;
@@ -186,31 +244,33 @@ export function resolveCampaign(source) {
       q.progress = Math.min(q.target,q.progress + (q.id === 'essay' && g.stats.reputation >= 60 ? 2 : 1));
       apply(g,{hp:-2,stress:2});
       if (q.progress >= q.target) {
-        q.status = 'complete'; apply(g,q.reward); notes.push(`완료: ${q.name}`); g.teacher++;
-        if (q.course) g.grades[q.course].assignment.push(Math.round(clamp(70 + g.mastery[q.course] * .3)));
+        q.status = 'complete'; q.completedWeek = g.week; apply(g,q.reward); notes.push(`완료: ${q.name}`); g.teacher++;
+        if (q.course) { g.mastery[q.course] = clamp(g.mastery[q.course] + 5); g.grades[q.course].assignment.push(Math.round(clamp(70 + g.mastery[q.course] * .3))); }
+        if (q.id.startsWith('clean-')) cleaned = true;
       }
     } else {
       const a = ACTIONS[id];
       apply(g,a.effects,efficiency); g.money += a.income || 0;
       if (id === 'rest') rested++;
-      if (id === 'clean') cleaned = true;
+      if (id === 'clean') { cleaned = true; const q = g.quests.find(q => q.id === `clean-${g.week}`); if (q) {q.progress = q.target;q.status = 'complete';q.completedWeek = g.week;} }
     }
   }
   for (const q of g.quests.filter(q => q.status === 'active' && q.due <= g.week)) {
-    q.status = 'expired'; apply(g,q.penalty || {reputation:-4,stress:5});
+    q.status = 'expired'; apply(g,{reputation:-4,stress:5,...q.penalty});
     if (q.fine) g.money = Math.max(0,g.money - q.fine);
-    if (q.course) g.grades[q.course].assignment.push(0);
+    if (q.course) {g.grades[q.course].assignment.push(0);g.mastery[q.course] = clamp(g.mastery[q.course] - 3);}
     notes.push(`기한 초과: ${q.name}${q.fine ? ' · 벌금 2,000원' : ''}`);
   }
-  if (g.study === 'friends' && g.week % 2 === 0) { apply(g,{stress:-8}); notes.push('찐친 스터디: 스트레스 −8 (수학 보너스 없음)'); }
-  if (g.study === 'play') apply(g,{stress:-5,focus:-1});
   if (g.study === 'serious' && rested < 2) { g.money = Math.max(0,g.money - 2000); apply(g,{stress:5}); notes.push('수면 부족으로 아침스터디 지각 · 벌금 2,000원'); }
-  if (g.week >= 1 && !summer && !cleaned) { g.penalties += 2; apply(g,{reputation:-2}); notes.push('방 청소 미완료 · 호실 점검 벌점 +2'); }
+  if (g.week >= 1 && !summer && !cleaned) { g.penalties += 2; notes.push('방 청소 미완료 · 호실 점검 벌점 +2'); }
   else if (g.week > 0 && !summer && random(g) < .15) { g.penalties++; apply(g,{reputation:-1}); notes.push('냉장고 호실 점검에 걸렸다… 벌점 +1'); }
   if ([4,12].includes(g.week)) examine(g,'quiz',notes);
   if (g.week === 8) examine(g,'midterm',notes);
   if (g.week === 16) examine(g,'final',notes);
   if (g.week === 36 && g.csatUnlocked) notes.push(`수능 시험: ${Math.round(g.stats.csat)}점 · 모의면접 보너스 미반영`);
+  apply(g,{stress:4});
+  notes.push('주간 기본 스트레스 +4');
+  if (isTrip(g)) {apply(g,{hp:-25,stress:-15,science:4}); notes.push('제주도 자연 탐사 · 건강 −25 · 스트레스 −15');}
   g.fatigue = g.stats.hp < 25 || g.stats.stress >= 80;
   if (tired) notes.push('이번 주 만성피로: 학습 효율 35% 감소');
   if (g.fatigue) notes.push('다음 주 만성피로 주의! 휴식과 운동을 배정하세요.');
@@ -220,7 +280,7 @@ export function resolveCampaign(source) {
   g.history.push(g.lastResult);
   if (g.week === END_WEEK) { g.ending = evaluateEnding(g); return g; }
   g.week++;
-  g.plan = g.plan.map(id => id.startsWith('quest:') ? 'rest' : id);
+  g.plan = g.plan.map((id,i) => id.startsWith('quest:') ? (i % 4 === 0 ? 'skip' : i % 4 === 3 ? 'sleep' : 'rest') : id);
   return beginWeek(g);
 }
 export function admissionScore(g,university) {
@@ -249,7 +309,8 @@ export function validCampaign(g) {
   try { return validateCampaignData(g); } catch { return false; }
 }
 function validateCampaignData(g) {
-  if (!g || g.version !== 1 || !MAJORS[g.major] || !TRAITS[g.trait] || !['normal','easy'].includes(g.difficulty)) return false;
+  if (!g || g.version !== 2 || !MAJORS[g.major] || !TRAITS[g.trait] || !['normal','easy'].includes(g.difficulty)) return false;
+  if (typeof g.overnightStudy !== 'boolean' || !Number.isFinite(g.volume) || g.volume < 0 || g.volume > 1) return false;
   if (typeof g.name !== 'string' || !g.name.trim() || g.name.length > 12 || !['boy','girl'].includes(g.character)) return false;
   if (!Number.isInteger(g.week) || g.week < 0 || g.week > END_WEEK || !Number.isInteger(g.seed) || g.seed < 0 || g.seed > 4294967295) return false;
   if (!Number.isFinite(g.money) || g.money < 0 || !Object.keys(LABELS).every(k => Number.isFinite(g.stats?.[k]) && g.stats[k] >= 0 && g.stats[k] <= 100)) return false;
@@ -267,6 +328,6 @@ function validateCampaignData(g) {
   const allowed = new Set(activityOptions(g).map(a => a.id));
   // 완료된 과제는 다음 주에 휴식으로 바꾸며, 엔딩에서는 마지막 계획을 보존한다.
   g.quests.forEach(q => allowed.add(`quest:${q.id}`));
-  return Array.isArray(g.plan) && g.plan.length === 14 && g.plan.every(id => allowed.has(id));
+  return Array.isArray(g.plan) && g.plan.length === 28 && g.plan.every((id,i) => allowed.has(id) && validSlot(id,i));
 }
 

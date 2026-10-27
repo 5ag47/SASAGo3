@@ -1,7 +1,7 @@
-﻿import test from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import { INTERVIEW, MAJORS } from '../data/campaign.js';
-import { activityOptions, admissionScore, answerInterview, buyItem, chooseEvent, enrolled, evaluateEnding, newCampaign, notices, resolveCampaign, submitApplication, term, validCampaign } from './campaign.js';
+import { expandPlan, migrateCampaign, requiredNotices, courseStats, slotLocked, activityOptions, admissionScore, answerInterview, buyItem, chooseEvent, enrolled, evaluateEnding, newCampaign, notices, resolveCampaign, submitApplication, term, validCampaign } from './campaign.js';
 
 function acknowledge(g, strategy = {}) {
   while (notices(g).length) {
@@ -18,7 +18,7 @@ test('전공별 프리셋과 교양필수, 자동 능력치 설정', () => {
     const g = newCampaign({major,seed:42});
     assert.equal(enrolled(g).filter(c => c.majors.length === 0).length,4);
     assert.ok(enrolled(g).every(c => !c.majors.length || c.majors.includes(major)));
-    assert.equal(g.plan.length,14);
+    assert.equal(g.plan.length,28);
     assert.equal(validCampaign(g),true);
   }
   assert.equal(newCampaign({trait:'strong'}).stats.hp,85);
@@ -44,14 +44,14 @@ test('스터디 거절은 해당 팀을 제외하고 다른 선택을 허용한�
 test('할 일은 배정한 시간만큼 진행되고 마감 때 완료 또는 만료된다', () => {
   let g = acknowledge(next(newCampaign({seed:2})));
   const q = g.quests.find(q => q.id === 'course-linear');
-  g.plan = Array(14).fill('rest');
-  g.plan[0] = `quest:${q.id}`;
+  g.plan = expandPlan(Array(14).fill('rest'));
+  g.plan[1] = `quest:${q.id}`;
   g = resolveCampaign(g);
   assert.equal(g.quests.find(x => x.id === q.id).progress,1);
-  g.plan[0] = `quest:${q.id}`;g.plan[1] = `quest:${q.id}`;
+  g.plan[1] = `quest:${q.id}`;g.plan[2] = `quest:${q.id}`;
   g = next(g);
   assert.equal(g.quests.find(x => x.id === q.id).status,'complete');
-  assert.equal(g.grades.linear.assignment.length,1);
+  assert.ok(g.grades.linear.assignment.length >= 1);
   while (g.week <= 4) g = next(g);
   assert.equal(g.quests.find(q => q.id === 'academy-1').status,'expired');
   assert.equal(g.grades.linear.quiz.length,1);
@@ -59,7 +59,7 @@ test('할 일은 배정한 시간만큼 진행되고 마감 때 완료 또는 �
 
 test('14칸 모두 실행, 잔고 부족은 휴식으로 대체하고 스탯 범위를 지킨다', () => {
   let g = acknowledge(newCampaign({seed:10}));
-  g.money = 0;g.plan = Array(14).fill('academy');
+  g.money = 0;g.plan = expandPlan(Array(14).fill('academy'));
   const r = resolveCampaign(g);
   assert.equal(r.money,10000);
   assert.equal(r.lastResult.notes.filter(n => n.includes('비용 부족')).length,14);
@@ -69,11 +69,11 @@ test('14칸 모두 실행, 잔고 부족은 휴식으로 대체하고 스탯 범
 
 test('휴식이 피로를 회복하며 기숙사 청소와 스터디 수면을 판정한다', () => {
   let g = acknowledge(next(newCampaign({seed:2})));
-  g.fatigue = true;g.stats.hp = 10;g.stats.stress = 95;g.plan = Array(14).fill('rest');
+  g.fatigue = true;g.stats.hp = 10;g.stats.stress = 95;g.plan = expandPlan(Array(14).fill('rest'));
   const rested = resolveCampaign(g);
   assert.equal(rested.fatigue,false);
   assert.equal(rested.penalties,2);
-  g.plan[0] = 'clean';
+  g.plan[1] = 'clean';
   assert.ok(resolveCampaign(g).penalties < 2);
 });
 
@@ -127,7 +127,7 @@ test('38주 전체 진행과 모든 전공의 저장/복원이 엔딩까지 정�
     assert.equal(g.history.length,38);
     assert.equal(resolveCampaign(g),g);
     assert.equal(g.interviewScore,30);
-    assert.ok(enrolled(g).every(c => g.grades[c.id].assignment.length === 1));
+    assert.ok(enrolled(g).every(c => g.grades[c.id].assignment.length >= 1));
     assert.equal(term(g.week).month,12);
   }
 });
@@ -155,11 +155,88 @@ test('상담 후 실제 일정만으로 수능 합격 루트를 끝까지 플레
   let g = newCampaign({seed:99});
   while (!g.ending) {
     g = acknowledge(g);
-    if (g.csatUnlocked) g.plan = ['csat','rest','csat','rest','csat','rest','csat','rest','csat','rest','clean','rest','csat','rest'];
+    if (g.csatUnlocked) g.plan = expandPlan(['csat','rest','csat','rest','csat','rest','csat','rest','csat','rest','clean','rest','csat','rest']);
     if (g.week === 25) g = submitApplication(g,'csat','자연과학');
     g = resolveCampaign(g);
   }
   assert.match(g.ending.title,/합격/);
   assert.equal(g.ending.score,100);
+});
+
+test('과제는 알림 확인 없이 자동 추가되고 읽지 않은 안내는 다음 주를 막지 않는다', () => {
+  let g = next(newCampaign({seed:9}));
+  assert.ok(g.quests.some(q => q.id === 'thesis'));
+  assert.ok(g.quests.some(q => q.id === 'clean-1'));
+  assert.ok(g.quests.some(q => q.id === 'weekly-1'));
+  assert.equal(requiredNotices(g).length,0);
+  assert.equal(notices(g).filter(e => e.id === 'academy-info').length,1);
+  const nextWeek = resolveCampaign(g);
+  assert.equal(nextWeek.week,2);
+  assert.equal(notices(nextWeek).some(e => e.id === 'academy-info'),false);
+});
+
+test('아침/연장 선택 제한과 연장 공부 후 다음 날 50% 늦잠을 적용한다', () => {
+  let g = acknowledge(newCampaign({seed:1}));
+  g.plan = expandPlan(Array(14).fill('rest'));
+  g.plan[3] = 'math'; g.plan[4] = 'math';
+  const r = resolveCampaign(g);
+  assert.ok(r.lastResult.notes.some(n => n.includes('화요일 연장자습 후 늦잠')));
+  g.plan[0] = 'play';
+  assert.equal(resolveCampaign(g),g,'아침 게임은 실행 불가');
+  g.plan[0] = 'skip';g.plan[3] = 'exercise';
+  assert.equal(resolveCampaign(g),g,'연장 운동은 실행 불가');
+  g.plan[3] = 'sleep';
+  assert.ok(!resolveCampaign(g).lastResult.notes.some(n => n.includes('늦잠')));
+});
+
+test('일요일 연장 공부는 다음 주 월요일 아침까지 이어진다', () => {
+  let g = acknowledge(newCampaign({seed:1}));
+  g.plan[27] = 'math';
+  g = resolveCampaign(g);
+  assert.equal(g.overnightStudy,true);
+  g.plan[0] = 'math';
+  g = resolveCampaign(g);
+  assert.ok(g.lastResult.notes.some(n => n.includes('월요일 연장자습 후 늦잠')));
+});
+
+test('전공 스탯과 제주도 탐사는 생다이 수강 여부를 따른다', () => {
+  const cs = newCampaign({major:'cs'});
+  assert.ok(courseStats(cs).some(c => c.id === 'physics_seminar'));
+  assert.ok(!courseStats(cs).some(c => c.id === 'english'));
+  assert.ok(courseStats(cs).some(c => c.id === 'math_seminar'));
+  let bio = newCampaign({major:'biology',seed:2});
+  while (bio.week < 12) bio = next(bio);
+  assert.ok(slotLocked(bio,16));
+  assert.ok(slotLocked(bio,27));
+  assert.ok(!slotLocked(bio,15));
+  assert.ok(notices(bio).some(e => e.id === 'jeju'));
+  const other = {...cs,week:12};
+  assert.ok(!slotLocked(other,16));
+  assert.ok(!notices(other).some(e => e.id === 'jeju'));
+});
+
+test('찐친 월 1회 과제/회식과 노는 팀 격주 회식이 서로 다르다', () => {
+  let g = next(newCampaign({seed:3}));
+  g = next(g);
+  assert.ok(g.quests.some(q => q.id === 'study-2'));
+  assert.ok(!notices(g).some(e => e.id.startsWith('party-')));
+  g = next(next(g));
+  assert.ok(notices(g).some(e => e.id === 'party-4'));
+  const before = g.stats.math;
+  assert.equal(chooseEvent(g,'party-4',0).stats.math,before);
+  const play = {...g,study:'play',week:2};
+  assert.ok(notices(play).some(e => e.id === 'party-2'));
+});
+
+test('구버전의 14칸 저장을 28칸으로 옮기고 새 과목과 자동 과제를 복원한다', () => {
+  const old = newCampaign({major:'cs'});
+  old.version = 1; old.week = 1;
+  old.plan = ['math','rest','science','rest','math','play','science','rest','interview','rest','clean','rest','math','exercise'];
+  delete old.mastery.physics_seminar;delete old.grades.physics_seminar;
+  const g = migrateCampaign(old);
+  assert.equal(validCampaign(g),true);
+  assert.equal(g.plan[0],'skip');assert.equal(g.plan[1],'math');assert.equal(g.plan[3],'sleep');
+  assert.ok(g.quests.some(q => q.id === 'thesis'));
+  assert.equal(g.stats.focus,Math.max(0,g.stats.hp - g.stats.stress));
 });
 
