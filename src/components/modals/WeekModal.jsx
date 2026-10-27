@@ -7,7 +7,7 @@ export function WeekPlanModal({
   game,
   onStart
 }) {
-  return <><div className="week-review">{DAYS.map((day, index) => <div key={day}><span>{day}</span><b>{game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</b><p>{ACTIVITIES[game.plan[index]].place}</p></div>)}</div>
+  return <><div className="week-review">{DAYS.map((day, index) => <div key={day}><span>{day}</span><b>{game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</b><p>{ACTIVITIES[game.plan[index]].place}</p><small>수면 {game.sleepPlan[index]}시간</small></div>)}</div>
     <button className="primary full-width" onClick={onStart}>시작 <Play size={16} /></button></>;
 }
 export function StoryModal({

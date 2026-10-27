@@ -17,7 +17,7 @@ export default function Calendar({
   const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   return <>
       <h3 className="calendar-section-label">{game.ended ? '마지막 주 계획' : '이번 주 · 월요일부터 일요일까지'}</h3>
-      <div className="week-calendar">{DAYS.map((day, index) => <div key={day}><span>{day}</span><b>{new Date(start.getTime() + index * DAY_MS).getUTCDate()}</b><small>{game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</small></div>)}</div>
+      <div className="week-calendar">{DAYS.map((day, index) => <div key={day}><span>{day}</span><b>{new Date(start.getTime() + index * DAY_MS).getUTCDate()}</b><small>{game.plan[index] === 'science' ? game.major : ACTIVITIES[game.plan[index]].label}</small><small>수면 {game.sleepPlan[index]}시간</small></div>)}</div>
 
       <div className="calendar-nav">
         <button className="icon-button" aria-label="이전 달" onClick={() => setOffset(v => v - 1)}><ChevronLeft size={20} /></button>

@@ -2,6 +2,7 @@ import { ACTIVITIES, DAYS } from '../data/activities.js';
 import { SKILL_KEYS, STATS, formatEffect } from '../data/stats.js';
 import { MAX_HISTORY } from '../game.js';
 import { storyForWeek, SEMESTER_WEEKS } from '../data/story.js';
+import { sleepEffect } from '../data/sleep.js';
 export const STRESS_LIMIT = 70;
 export const HP_LIMIT = 30;
 export const HP_WARNING = 20;
@@ -32,9 +33,13 @@ export function resolveWeek(game) {
   let stressedDays = 0,
     tiredDays = 0;
   for (const [index, id] of game.plan.entries()) {
-    const {
-      effect
-    } = ACTIVITIES[id];
+    const { effect } = ACTIVITIES[id];
+    const sleepHours = game.sleepPlan[index];
+    const dayBefore = { ...stats };
+    // Apply fatigue before today's learning calculation.
+    for (const [key, amount] of Object.entries(sleepEffect(sleepHours))) {
+      stats[key] = clamp(stats[key] + amount);
+    }
     const {
       value,
       stressed,
@@ -51,11 +56,15 @@ export function resolveWeek(game) {
       changes[key] = Math.round(stats[key]) - Math.round(before);
       studied ||= gained;
     }
+    for (const { key } of STATS) {
+      changes[key] = Math.round(stats[key]) - Math.round(dayBefore[key]);
+    }
     counts[id] = done + 1;
     if (studied && stressed) stressedDays++;
     if (studied && tired) tiredDays++;
     daily.push({
       day: DAYS[index],
+      sleepHours,
       label: id === 'science' ? game.major : ACTIVITIES[id].label,
       summary: formatEffect(changes),
       delta: changes,
@@ -80,6 +89,7 @@ export function resolveWeek(game) {
   return {
     week: game.week,
     plan: [...game.plan],
+    sleepPlan: [...game.sleepPlan],
     major: game.major,
     after,
     delta,

@@ -24,6 +24,6 @@ export function DailyLog({
   daily = []
 }) {
   return <div className="daily-log">{daily.map(day => <article key={day.day}>
-    <span className="log-day">{day.day}</span><div><b>{day.label}</b><div className="log-chips">{changesFor(day).filter(([, value]) => value !== 0).map(([key, value]) => <DeltaChip key={key} statKey={key} value={value} withLabel />)}</div></div>
+    <span className="log-day">{day.day}</span><div><b>{day.label}</b>{day.sleepHours !== undefined && <span className="sleep-log-label"> · 수면 {day.sleepHours}시간</span>}<div className="log-chips">{changesFor(day).filter(([, value]) => value !== 0).map(([key, value]) => <DeltaChip key={key} statKey={key} value={value} withLabel />)}</div></div>
   </article>)}</div>;
 }

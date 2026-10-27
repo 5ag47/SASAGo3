@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { CheckCheck, HelpCircle, Settings, BookOpen } from 'lucide-react';
 import { dayRoom, nightRoom } from './assets.js';
 import { dateLabel } from './game.js';
+import { enrollCourse } from './systems/enrollment.js';
 import { advanceWeek } from './systems/week.js';
 import { buyItem, useItem } from './systems/inventory.js';
 import { restoreSession, SESSION_KEY } from './systems/accounts.js';
@@ -73,6 +74,7 @@ function GameApp({
   const last = game.history.at(-1);
   const close = () => setModal(null);
   function open(value) {
+    if (value === 'courses' && game.enrolled) return;
     if (value === 'notice') setGame(old => ({
       ...old,
       noticeReadWeek: old.week
@@ -124,7 +126,7 @@ function GameApp({
         <div className="date-display"><strong>{game.ended ? '학기 종료' : dateLabel(game.week)}</strong></div>
         <div className="toolbar-actions">
           <span className={`save-state ${saveStatus === '저장 실패' ? 'save-failed' : ''}`} role="status"><CheckCheck size={15} />{saveStatus === '저장됨' ? '자동 저장됨' : saveStatus}</span>
-          <button aria-label="수강신청" onClick={() => open('courses')}><BookOpen size={20} /></button>
+          {!game.enrolled && <button aria-label="수강신청" onClick={() => open('courses')}><BookOpen size={20} /></button>}
           <button aria-label="도움말" onClick={() => open('help')}><HelpCircle size={20} /></button>
           <button aria-label="설정" onClick={() => open('settings')}><Settings size={20} /></button>
         </div>
@@ -152,13 +154,8 @@ function GameApp({
         close();
         notify('저장을 불러왔어요.');
       }} onLogout={logout} />}
-      {modal === 'courses' && <CourseModal game={game} onEnroll={major => {
-        setGame(old => ({
-          ...old,
-          major: old.week === 0 ? major : old.major,
-          enrolled: true,
-          tutorialStep: old.tutorialStep < 2 ? 2 : old.tutorialStep
-        }));
+      {modal === 'courses' && !game.enrolled && <CourseModal game={game} onEnroll={major => {
+        setGame(old => enrollCourse(old, major));
         close();
         notify('수강신청을 확인했어요.');
       }} />}

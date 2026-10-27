@@ -41,7 +41,7 @@ test('6일짜리 기존 저장은 일요일만 추가하고 과거 기록과 잔
   }];
   const snapshot = structuredClone(old);
   const next = migrateSave(old);
-  assert.equal(next.version, 4);
+  assert.equal(next.version, 5);
   assert.equal(next.plan.length, 7);
   assert.equal(next.plan[6], 'rest');
   assert.deepEqual(next.plan.slice(0, 6), old.plan);
