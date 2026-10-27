@@ -6,4 +6,4 @@ import nightRoom from '../배경밤.png';
 export { boy, girl, dayRoom, nightRoom };
 
 export const characterImage = character => (character === 'boy' ? boy : girl);
-export const characterLabel = character => (character === 'boy' ? '남학생' : '여학생');
+export const characterLabel = character => (character === 'boy' ? '캐릭터 1' : '캐릭터 2');
