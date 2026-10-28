@@ -5,6 +5,7 @@ import { notice } from './notifications.js';
 import { taskModuleSpec, taskModule, defaultTaskGame } from './task-modules/registry.js';
 import { processTaskWork, resolveTaskOutcome, taskIsComplete } from './task-processing.js';
 import { calendarTiming } from './calendar-date.js';
+import { refreshDocuments } from './admission-documents.js';
 
 export function addTask(state, id, definition) {
   if (state.tasks[id]) return;
@@ -28,7 +29,7 @@ export function addTask(state, id, definition) {
     notice(
       state,
       definition.name,
-      `${definition.target}${taskModule(state.tasks[id]).unit} · ${definition.deadline === state.week ? '이번 주 마감' : `${definition.deadline - state.week}주 뒤 마감`}`,
+      `${definition.target}${taskModule(state.tasks[id]).unit} · ${deadline.week === state.week ? '이번 주 마감' : `${deadline.week - state.week}주 뒤 마감`}`,
       'task',
       { task: id },
     );
@@ -51,6 +52,7 @@ export function finishTask(state, task, messages) {
   const result = resolveTaskOutcome(state, task, true);
   task.progress = task.target;
   task.status = 'completed';
+  task.completedWeek = state.week;
   task.result = {
     module: task.module?.id ?? taskModuleSpec(task).id,
     score: result.score,
@@ -73,6 +75,7 @@ export function finishTask(state, task, messages) {
     });
   }
   if (result.note) messages.push(result.note);
+  refreshDocuments(state);
   messages.push(`완료 · ${task.name}`);
 }
 export function workTask(state, id, messages, progress = 1) {

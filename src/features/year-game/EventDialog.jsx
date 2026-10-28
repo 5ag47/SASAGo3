@@ -46,9 +46,9 @@ export default function EventDialog({ state, busy, onChoose, onDone, eventId }) 
           <ChoiceButton
             key={option.id}
             title={option.label}
-            description={option.detail}
+            description={option.locked ? option.requirement : option.detail}
             onClick={() => onChoose({ event: id, option: option.id })}
-            disabled={busy || state.money < (option.cost ?? 0)}
+            disabled={busy || option.locked || state.money < (option.cost ?? 0)}
           />
         ))}
       </div>

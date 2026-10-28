@@ -49,10 +49,14 @@
     "week": 25,
     "kind": "task",
     "name": "자기소개서 완성",
-    "description": "평판 60 이상이면 자소서 한 칸당 진척도가 1.5배예요.",
+    "description": "학교 활동을 바탕으로 자기소개서를 씁니다. 평판과 선생님과의 관계가 작업에 영향을 줍니다.",
     "target": 8,
     "deadline": 28,
     "special": "essay",
+    "module": {
+      "id": "pattern_v2",
+      "params": { "support": "essay" }
+    },
     "reward": {
       "writing": 6,
       "reputation": 3
@@ -65,8 +69,8 @@
   "application_form": {
     "week": 25,
     "kind": "task",
-    "name": "원서 서류 점검·제출",
-    "description": "지원 정보는 평판이 높을수록 정확해져요. 서류 누락이 없도록 3칸을 투자하세요.",
+    "name": "원서 서류 점검",
+    "description": "서류 점검과 자기소개서를 모두 마치고 지원 방향을 정하면 원서가 제출됩니다.",
     "target": 3,
     "deadline": 28,
     "special": "application",

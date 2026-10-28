@@ -34,6 +34,23 @@ export function taskCommandSummary(state, command) {
         phase: task.moduleData?.phase ?? 'unstarted',
         quality: task.moduleData?.quality ?? null,
         status: task.status,
+        attempt: task.attempts?.total ?? 0,
+        sequence: task.attempts?.sequence ?? 0,
       }
     : null;
+}
+export function progressSummary(state) {
+  return {
+    direction: state.flags.target,
+    dayCursor: state.weekRun?.cursor ?? null,
+    recommendation: state.recommendation
+      ? {
+          teacher: state.recommendation.teacher,
+          status: state.recommendation.status,
+          progress: state.recommendation.progress,
+          target: state.recommendation.target,
+        }
+      : null,
+    submittedWeek: state.documents?.week ?? null,
+  };
 }

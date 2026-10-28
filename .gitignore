@@ -17,3 +17,5 @@ coverage/
 test-results/
 data/.assignments.lock
 data/.assignments-*.tmp
+data/.calendar.lock
+data/.calendar-*.tmp

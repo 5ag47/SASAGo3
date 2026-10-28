@@ -42,23 +42,6 @@
       "top_interview": 86,
       "kaist_postech": 80,
       "korea_university": 74
-    },
-    "targetBonuses": {
-      "dream": {
-        "top_interview": 4,
-        "kaist_postech": 2,
-        "korea_university": -8
-      },
-      "balanced": {
-        "top_interview": 0,
-        "kaist_postech": 0,
-        "korea_university": 0
-      },
-      "safe": {
-        "top_interview": -6,
-        "kaist_postech": -2,
-        "korea_university": 6
-      }
     }
   },
   "weekly": {

@@ -1,4 +1,5 @@
 import { moduleIssues, moduleSignature, defaultTaskGame } from './task-modules/registry.js';
+import { conditionIssues } from './conditions.js';
 export const TASK_FORMATS = {
   custom: '일반',
   report: '보고서',
@@ -55,6 +56,8 @@ export function assignmentIssues(definitions, { courses, stats }) {
     'repeat',
     'enabled',
     'module',
+    'when',
+    'chance',
   ];
   for (const [id, task] of Object.entries(definitions)) {
     const error = (field, message) => issues.push(`${id}.${field}: ${message}`);
@@ -64,6 +67,14 @@ export function assignmentIssues(definitions, { courses, stats }) {
       error('정의', '객체여야 합니다.');
       continue;
     }
+    issues.push(
+      ...conditionIssues(task.when, { courses, stats }).map((issue) => `${id}.when: ${issue}`),
+    );
+    if (
+      task.chance !== undefined &&
+      (!Number.isFinite(task.chance) || task.chance < 0 || task.chance > 1)
+    )
+      error('chance', '확률은 0~1입니다.');
     if (task.kind === 'group') {
       if (
         Object.keys(task).some(

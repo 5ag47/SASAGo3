@@ -190,6 +190,8 @@ export function createApi({
           code,
           status,
           durationMs: now() - started,
+          ...(error.commandType ? { command: error.commandType, phase: error.phase } : {}),
+          ...(error.migrationId ? { migration: error.migrationId } : {}),
           ...(status === 500
             ? {
                 errorType: error.name,

@@ -24,7 +24,7 @@ test('balance content rejects nonfinite values, misspelled fields and inconsiste
     (c) => (c.growth.academciRate = 1),
     (c) => (c.presets.recoveryWorkSlots = 21),
     (c) => (c.projects.qualityBase = 1),
-    (c) => delete c.admissions.targetBonuses.safe,
+    (c) => (c.admissions.csatThreshold = NaN),
   ]) {
     const config = structuredClone(balance);
     edit(config);
@@ -124,17 +124,21 @@ test('admission rounding and the displayed mark use the same pass boundary', () 
   assert.equal(state.admissions[0].score, 75);
   assert.equal(state.admissions[0].accepted, true);
 });
-test('application focus trades preparation between tracks instead of lowering every threshold', () => {
+test('application direction selects a bounded portfolio without granting free score bonuses', () => {
   function score(target, event) {
     const s = fresh();
     s.flags.target = target;
     resolveAdmission(s, event);
-    return s.admissions[0].score;
+    return s.admissions[0];
   }
-  assert.ok(score('dream', events.top_interview) > score('balanced', events.top_interview));
-  assert.ok(score('dream', events.korea_university) < score('balanced', events.korea_university));
-  assert.ok(score('safe', events.korea_university) > score('balanced', events.korea_university));
-  assert.ok(score('safe', events.top_interview) < score('balanced', events.top_interview));
+  assert.equal(score('dream', events.top_interview).applied, true);
+  assert.equal(score('balanced', events.top_interview).applied, false);
+  assert.equal(score('safe', events.korea_university).applied, true);
+  assert.equal(score('safe', events.top_interview).applied, false);
+  assert.equal(
+    score('dream', events.top_interview).score,
+    score('balanced', events.top_interview).score,
+  );
 });
 test('missed housekeeping alone does not force the crime ending', () => {
   const s = fresh();
@@ -183,8 +187,12 @@ test('full-year strategies retain distinct benefits and costs within standard ra
   assert.ok(portfolio.stats.speech > tasks.stats.speech + 10);
   assert.ok(portfolio.stats.hp < tasks.stats.hp - 15);
   assert.ok(
-    portfolio.admissionDetails.find((a) => a.name === events.top_interview.name).score >
-      tasks.admissionDetails.find((a) => a.name === events.top_interview.name).score,
+    portfolio.admissionDetails
+      .find((a) => a.name === events.top_interview.name)
+      .evaluation.find((part) => part.id === 'interview').value >
+      tasks.admissionDetails
+        .find((a) => a.name === events.top_interview.name)
+        .evaluation.find((part) => part.id === 'interview').value,
   );
   assert.ok(academy.money < tasks.money - 100000);
   assert.ok(academy.stats.math > tasks.stats.math + 8);
@@ -195,4 +203,11 @@ test('full-year strategies retain distinct benefits and costs within standard ra
   assert.ok(rest.stats.hp > 80);
   assert.ok(overwork.fatigueWeeks >= 30);
   assert.ok(Object.values(runs).every((run) => run.minimumMoney >= 0));
+});
+test('a focused healthy full-year play can reach the top route without lowering its threshold', () => {
+  const { result } = simulateYear({ strategy: 'portfolio', seed: 4 });
+  const top = result.admissionDetails.find((entry) => entry.profile === 'top_interview');
+  assert.ok(top.applied && top.accepted);
+  assert.ok(result.fatigueWeeks <= 4);
+  assert.ok(top.score >= 86);
 });

@@ -38,6 +38,8 @@ Cloudflare D1은 Time Travel 복구를 제공하며 현재 무료 플랜의 범�
 
 ## 2026-10-27 실제 확인
 
+2026.10.28-3 배포 직전 추가 사본: 플레이어1명·영수증58개, integrity:ok·revisionCheck:true·restoredToProduction:false. 암호화 사본은 `.local/cloud-backups/2026-10-28T00-36-43-651Z-e53fab53-62c4-4b00-94f2-b098d271968c.json`이며 Git에서 제외합니다. 실제 운영 DB는 덮어쓰지 않았습니다.
+
 2026-10-28 추가 확인: 현재 운영 DB의 플레이어1개·영수증40개를 새 암호화 사본으로 보관했습니다. 최초 인증 오류 후 기존 OAuth 연결 상태를 확인하고 재시도해 성공했습니다. 무결성ok·revisionCheck:true·restoredToProduction:false이며 새 게임 흐름으로 저장 변환도 메모리 DB에서 검증했습니다.
 
 운영 DB의 저장 1개·명령 영수증 3개를 암호화로 내보내고, 메모리 DB 복원·무결성·구버전 저장 변환·revision 일치·오래된 revision 갱신 거절을 통과했습니다. 저장한 암호화 파일을 다시 여는 독립 검증도 통과했습니다. 복구 드릴의 갱신은 메모리 DB에서 롤백했으며 `restoredToProduction: false`입니다. 이는 운영 DB 덮어쓰기 복구나 장기 장애 대응을 완료했다는 뜻은 아닙니다.

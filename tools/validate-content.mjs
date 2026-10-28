@@ -25,6 +25,20 @@ import { balanceIssues } from '../src/domain/balance-validation.js';
 import { chapters, chapterIssues } from '../src/domain/story.js';
 import { calendar, calendarIssues, calendarTiming } from '../src/domain/calendar-date.js';
 import { CALENDAR_SOURCE_IDS } from '../src/domain/calendar-entries.js';
+import { conditionIssues } from '../src/domain/conditions.js';
+import { validateCalendar } from '../src/domain/calendar-edits.js';
+import { admissionDefinitions } from '../src/domain/school-record.js';
+import { admissionIssues } from '../src/domain/admission-validation.js';
+assert.deepEqual(validateCalendar(calendar), [], 'Calendar timing definitions are invalid');
+assert.deepEqual(
+  admissionIssues(admissionDefinitions, {
+    events,
+    stats: STATS,
+    thresholds: balance.admissions.thresholds,
+  }),
+  [],
+  'Admission model is invalid',
+);
 assert.deepEqual(
   calendarIssues(calendar, {
     eventIds: Object.keys(events),
@@ -104,6 +118,16 @@ for (const [id, course] of Object.entries(courses)) {
   );
 }
 for (const [id, event] of Object.entries(events)) {
+  assert.deepEqual(
+    conditionIssues(event.when, { stats: STATS, courses, majors: MAJORS }),
+    [],
+    `${id}: invalid conditions`,
+  );
+  if (event.chance !== undefined)
+    assert.ok(
+      Number.isFinite(event.chance) && event.chance >= 0 && event.chance <= 1,
+      `${id}: invalid chance`,
+    );
   assert.ok(kinds.includes(event.kind), `${id}: unknown event kind`);
   assert.ok(event.name && event.description);
   assert.ok(Number.isInteger(event.week) && event.week >= 0 && event.week <= 40);
@@ -136,6 +160,11 @@ for (const [id, event] of Object.entries(events)) {
   effects(event.effect);
   const ids = new Set();
   for (const option of event.options ?? []) {
+    assert.deepEqual(
+      conditionIssues(option.when, { stats: STATS, courses, majors: MAJORS }),
+      [],
+      `${id}: invalid choice conditions`,
+    );
     assert.ok(option.id && !ids.has(option.id));
     ids.add(option.id);
     assert.ok(option.label && option.detail);

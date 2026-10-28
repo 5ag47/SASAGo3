@@ -1,32 +1,47 @@
 import { GraduationCap } from 'lucide-react';
-import { gpa, admissionScore } from '../../domain/grades.js';
+import { gpa } from '../../domain/grades.js';
+import { admissionProjection, admissionThreshold } from '../../domain/admissions.js';
+import {
+  admissionDefinitions,
+  ADMISSION_DIRECTIONS,
+  schoolRecord,
+} from '../../domain/school-record.js';
 import { endingAvailable, ENDINGS } from '../../domain/engine.js';
 import { ChoiceButton, Empty, Progress } from './ui.jsx';
-import { resources } from '../../domain/catalog.js';
+import { resources, events, period } from '../../domain/catalog.js';
+import SchoolRecordPanel from './SchoolRecordPanel.jsx';
+import RecommendationPanel from './RecommendationPanel.jsx';
+import './admissions.css';
 
-export function AdmissionsPanel({ state, busy, onEnding }) {
+export function AdmissionsPanel({ state, busy, onEnding, onDirection, onSchedule }) {
   const finished = state.week > 40;
   return (
     <>
       <div className="grade-summary">
         <span>
           <GraduationCap size={26} />
-          입시 준비도
+          1학기 학점
         </span>
         <b>
-          {admissionScore(state)}
-          <small> / 100 준비도</small>
+          {gpa(state).toFixed(2)}
+          <small> / 4.30</small>
         </b>
       </div>
-      <p className="dialog-lead">
-        게임 속 가상 전형이에요. 종합 준비도: 학점 30% · 실력 30% · 연구 10% · 자소서 10% · 추천서
-        8% · 면접 12%.
-      </p>
+      <div className="record-summary">
+        <b>
+          학교생활기록 · 교과 활동{' '}
+          {state.documents?.recordCounts?.coursework ?? schoolRecord(state).completed}건
+        </b>
+        <span>
+          {state.documents ? `${period(state.documents.week).label} 제출` : '현재까지의 활동'}
+        </span>
+      </div>
+      <SchoolRecordPanel state={state} />
+      <RecommendationPanel state={state} onSchedule={onSchedule} />
       <div className="admission-milestones">
         {[
-          ['졸업논문', state.tasks.thesis],
           ['자기소개서', state.tasks.essay],
-          ['원서 제출', state.tasks.application_form],
+          ['서류 점검', state.tasks.application_form],
         ].map(([label, task]) => (
           <div key={label}>
             <span>{label}</span>
@@ -34,6 +49,67 @@ export function AdmissionsPanel({ state, busy, onEnding }) {
             <Progress value={task?.progress ?? 0} max={task?.target ?? 1} label={label} />
           </div>
         ))}
+      </div>
+      <p className="submission-state">
+        {state.documents
+          ? '원서 제출 완료'
+          : '자소서·서류 점검·지원 방향을 모두 준비하면 제출됩니다.'}
+      </p>
+      {!state.documents && state.recommendation && state.recommendation.status !== 'ready' && (
+        <p className="submission-state">추천서 준비 중</p>
+      )}
+      <h3 className="section-label">지원 방향</h3>
+      <div className="admission-directions">
+        {Object.entries(ADMISSION_DIRECTIONS).map(([id, direction]) => (
+          <button
+            key={id}
+            aria-pressed={(state.documents?.direction ?? state.flags.target) === id}
+            disabled={
+              busy || !onDirection || state.week < 25 || state.week > 28 || Boolean(state.documents)
+            }
+            onClick={() => onDirection(id)}
+          >
+            {direction.name}
+          </button>
+        ))}
+      </div>
+      {!state.documents && state.week >= 25 && state.week <= 28 && (
+        <small>제출 전 변경 가능 · 다시 정하면 스트레스 +2</small>
+      )}
+      <div className="route-comparison">
+        {Object.entries(admissionDefinitions)
+          .filter(([, item]) => item.kind === 'route')
+          .map(([id]) => {
+            const event = Object.values(events).find((event) => event.profile === id),
+              projection = admissionProjection(state, id);
+            return (
+              <article key={id}>
+                <h3>{event.name}</h3>
+                <p>
+                  준비 {projection.score} · 기준 {admissionThreshold(event)}
+                </p>
+                <span>
+                  {projection.applied ? '현재 지원 방향에 포함' : '현재 지원 방향에 미포함'}
+                </span>
+                <details>
+                  <summary>평가 항목</summary>
+                  <table>
+                    <tbody>
+                      {projection.contributions.map((part) => (
+                        <tr key={part.id}>
+                          <th>{part.name}</th>
+                          <td>{Math.round(part.weight * 100)}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <small>
+                    게임용 평가 · 실전 변동 ±6점 · 서류는 제출 시점의 기록으로 평가합니다.
+                  </small>
+                </details>
+              </article>
+            );
+          })}
       </div>
       <h3 className="section-label">전형 결과</h3>
       {Object.entries(resources)
@@ -53,14 +129,18 @@ export function AdmissionsPanel({ state, busy, onEnding }) {
         <div className="admission-results">
           {state.admissions.map((a) => (
             <article key={`${a.name}-${a.week}`}>
-              <span className={a.accepted ? 'accepted' : 'rejected'}>
-                {a.accepted ? '합격' : '불합격'}
+              <span
+                className={
+                  a.applied === false ? 'not-applied' : a.accepted ? 'accepted' : 'rejected'
+                }
+              >
+                {a.applied === false ? '미지원' : a.accepted ? '합격' : '불합격'}
               </span>
               <div>
                 <h3>{a.name}</h3>
                 <p>{a.reason}</p>
               </div>
-              <b>{a.score}점</b>
+              <b>{a.applied === false ? '—' : `${a.score}점`}</b>
             </article>
           ))}
         </div>

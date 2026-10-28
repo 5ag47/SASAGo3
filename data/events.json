@@ -407,6 +407,18 @@
           "speech": 5,
           "math": 2,
           "hp": -3
+        },
+        "when": {
+          "any": [
+            {
+              "task": "thesis",
+              "status": "completed"
+            },
+            {
+              "choice": "may_union_study",
+              "equals": "join"
+            }
+          ]
         }
       },
       {

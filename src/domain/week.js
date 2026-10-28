@@ -22,6 +22,8 @@ import { finishTaskAttempt, beginTaskAttempt, attemptLimitReached } from './task
 import { resolveStudyApplication } from './study-applications.js';
 import { balance, ACADEMIC_STATS } from './balance.js';
 import { announceChapters } from './story.js';
+import { essayWorkAmount } from './school-record.js';
+import { advanceRecommendation, resolveRecommendation } from './recommendation.js';
 export { effectivePlan, lockedSlots } from './schedule.js';
 
 export function learningEfficiency(state) {
@@ -201,7 +203,7 @@ function executeSlot(state) {
   const task = target ? state.tasks[target] : null;
   if (task?.status === 'active') {
     note = task.name;
-    const amount = id === 'essay' && state.stats.reputation >= 60 ? 1.5 : 1;
+    const amount = task.special === 'essay' ? essayWorkAmount(state) : 1;
     if (taskModule(task).game && !task.moduleData?.passed) {
       if (task.moduleData && !task.attempts?.open) beginTaskAttempt(state, task);
       run.slot = {
@@ -236,6 +238,13 @@ function executeSlot(state) {
               (1 - state.teachers[teacher] / balance.relationships.softScale),
         ) * 10,
       ) / 10;
+  }
+  if (id === 'teacher') {
+    const review = advanceRecommendation(
+      state,
+      ['math', 'science', 'homeroom'].includes(slot.target) ? slot.target : 'homeroom',
+    );
+    if (review) note = review;
   }
   if (id === 'club' && state.flags.club)
     applyEffects(state, state.flags.club === 'lab' ? { science: 2 } : { writing: 1.5, charm: 1 });
@@ -305,6 +314,8 @@ export function resolveWeek(source) {
       dispatchDayEvents(state, day);
       const result = resolveStudyApplication(state, dateOrdinal(weekDate(state.week, day)));
       if (result) run.alerts.push(result);
+      const letter = resolveRecommendation(state, dateOrdinal(weekDate(state.week, day)));
+      if (letter) run.alerts.push(letter);
       for (const event of state.pending.filter((id) => !beforePending.has(id)))
         run.alerts.push({
           kind: 'notice',

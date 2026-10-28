@@ -467,3 +467,17 @@ test('a saved character can only be chosen at creation and cannot be changed thr
   assert.equal(saved.state.character, 'girl');
   assert.equal(saved.state.revision, initial.state.revision);
 });
+test('registered admission commands enforce their season and reject score injection through the shared field contract', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const game = await f.post(await f.get(), { type: 'create', profile });
+  const early = await f.post(game, { type: 'admission_direction', direction: 'dream' });
+  assert.equal(early.code, 'APPLICATIONS_CLOSED');
+  const forged = await f.post(game, {
+    type: 'admission_direction',
+    direction: 'dream',
+    score: 100,
+  });
+  assert.equal(forged.code, 'COMMAND_SHAPE');
+  assert.equal((await f.get()).state.revision, game.state.revision);
+});

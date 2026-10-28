@@ -18,6 +18,7 @@ export const SESSION_DEFAULTS = Object.freeze({
   success: {},
   mistake: { stress: 0.5 },
   failure: { stress: 2 },
+  support: 'none',
   overloadAfter: 2,
   overloadHealth: 0.75,
   overloadStress: 1.5,
@@ -34,6 +35,8 @@ function validate(params) {
   if (!params || typeof params !== 'object' || Array.isArray(params))
     return ['params 객체가 필요합니다.'];
   const issues = [];
+  if (params.support !== undefined && !['none', 'essay'].includes(params.support))
+    issues.push('support: none 또는 essay가 필요합니다.');
   if (
     params.weeklyLimit !== undefined &&
     params.weeklyLimit !== null &&
@@ -93,15 +96,16 @@ export function makeSessionModule(base, id) {
         return { data: view, barrier: terminal };
       },
     },
-    attemptEffects({ task, params }) {
+    attemptEffects({ task, params, supportCost }) {
       const config = sessionSettings(params),
         count = task.attempts?.weekCount ?? 0;
       const extra = Math.max(0, count - config.overloadAfter);
-      return {
+      const effects = {
         ...config.cost,
         hp: Math.max(-100, (config.cost.hp ?? 0) - extra * config.overloadHealth),
         stress: Math.min(100, (config.cost.stress ?? 0) + extra * config.overloadStress),
       };
+      return supportCost?.(config.support, effects) ?? effects;
     },
     actionEffects({ params }, before, after) {
       return after.mistakes > before.mistakes ? sessionSettings(params).mistake : {};
@@ -109,12 +113,16 @@ export function makeSessionModule(base, id) {
     failAttempt({ params }) {
       return { effects: sessionSettings(params).failure };
     },
-    finishAttempt({ task, params, stats, roll, week }) {
+    finishAttempt({ task, params, stats, roll, week, support }) {
       const config = sessionSettings(params);
       const randomBonus = config.variance ? Math.round((roll() * 2 - 1) * config.variance) : 0;
       const condition = (stats.hp < 30 ? -10 : 0) + (stats.stress >= 70 ? -10 : 0);
       const quality = Math.round(
-        clamp((task.moduleData?.quality ?? 100) + randomBonus + condition),
+        clamp(
+          (support?.(config.support, clamp((task.moduleData?.quality ?? 100) + randomBonus)) ??
+            task.moduleData?.quality ??
+            100) + condition,
+        ),
       );
       const early =
         config.earlyWeeks > 0 &&

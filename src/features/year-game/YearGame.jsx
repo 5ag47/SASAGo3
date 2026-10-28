@@ -1,91 +1,33 @@
 import { useState } from 'react';
 import {
   Bell,
-  BookOpen,
   CalendarDays,
   ChevronRight,
   CircleHelp,
-  GraduationCap,
-  History,
   LockKeyhole,
   Maximize2,
   MoreHorizontal,
   PencilLine,
   Settings,
   ShieldCheck,
-  ShoppingBag,
-  Users,
   Wallet,
 } from 'lucide-react';
 import Modal from '../../components/Modal.jsx';
 import { dayRoom, nightRoom } from '../../assets.js';
-import { activities, choiceDeadline, courses, DAYS, events, period } from '../../domain/catalog.js';
+import { courses, DAYS, events, period } from '../../domain/catalog.js';
 import { ENDINGS } from '../../domain/engine.js';
 import { availableChapters, chapterProgress } from '../../domain/story.js';
-import { effectivePlan, lockedSlots } from '../../domain/week.js';
 import { weekDate } from '../../domain/calendar-date.js';
 import useGame from './useGame.js';
 import useAudio from './useAudio.js';
 import useWorldClock from './useWorldClock.js';
 import useTutorial from './useTutorial.js';
-import TutorialPanel from './TutorialPanel.jsx';
 import TutorialGuide from './TutorialGuide.jsx';
-import WeekReviewPanel from './WeekReviewPanel.jsx';
 import Setup from './Setup.jsx';
 import Scene from './Scene.jsx';
 import Planner from './Planner.jsx';
-import DayCopy from './DayCopy.jsx';
-import YearReportPanel from './YearReportPanel.jsx';
-import TaskGamePanel from './TaskGamePanel.jsx';
-import StoryPanel from './StoryPanel.jsx';
-import WeekRunPanel from './WeekRunPanel.jsx';
-import ActivityPicker from './ActivityPicker.jsx';
-import TaskBoard from './TaskBoard.jsx';
-import EventDialog from './EventDialog.jsx';
-import {
-  AdmissionsPanel,
-  CalendarPanel,
-  CoursesPanel,
-  GroupPanel,
-  StatsPanel,
-} from './AcademicPanels.jsx';
-import { NoticesPanel, RecordsPanel, WeekResult } from './RecordPanels.jsx';
-import ShopPanel from './ShopPanel.jsx';
 import SettingsPanel from './SettingsPanel.jsx';
-import { ActivityIcon, activityName, ChoiceButton, SESSIONS } from './ui.jsx';
-
-const TITLES = {
-  slot: '자습 신청',
-  schedule: '주간 일정',
-  tasks: '할 일',
-  events: '알림',
-  stats: '능력치',
-  courses: '수강 과목·성적',
-  calendar: '학사 달력',
-  group: '스터디',
-  admissions: '진학실',
-  records: '기록',
-  yearReport: '한 해 결산',
-  taskGame: '과제 미니게임',
-  story: '학교 이야기',
-  running: '주간 일정 진행',
-  notices: '알림',
-  shop: '매점',
-  settings: '설정',
-  help: '도움말',
-  tutorial: '도움말',
-  confirm: '한 주 진행',
-  result: '주간 결과',
-  leave: '휴학',
-  menu: '메뉴',
-};
-const NAV = [
-  ['courses', BookOpen, '수강 과목'],
-  ['group', Users, '스터디'],
-  ['shop', ShoppingBag, '매점'],
-  ['records', History, '기록'],
-  ['admissions', GraduationCap, '진학실'],
-];
+import { GamePanel, panelDefinition, NAV } from './panels/index.jsx';
 export default function YearGame() {
   const game = useGame();
   const { state, busy, send, notify } = game;
@@ -396,277 +338,37 @@ export default function YearGame() {
       />
       {modal && (
         <Modal
-          title={TITLES[modal.type]}
+          title={panelDefinition(modal.type).title}
           onClose={close}
-          wide={[
-            'schedule',
-            'calendar',
-            'courses',
-            'tasks',
-            'admissions',
-            'result',
-            'records',
-            'help',
-            'tutorial',
-          ].includes(modal.type)}
+          wide={panelDefinition(modal.type).wide}
         >
           {state.week === 0 && tutorial.active && !['tutorial', 'help'].includes(modal.type) && (
             <button className="tutorial-return" onClick={() => open('tutorial')}>
               ← 튜토리얼 목록 {tutorial.count}/{tutorial.total}
             </button>
           )}
-          {modal.type === 'slot' && (
-            <ActivityPicker
-              key={modal.index}
-              state={state}
-              index={modal.index}
-              busy={busy}
-              onApply={async (activity, target) => {
-                if (await send({ type: 'plan', index: modal.index, activity, target })) {
-                  close();
-                  notify('신청했습니다.');
-                }
-              }}
-            />
-          )}
-          {modal.type === 'schedule' && (
-            <>
-              <DayCopy state={state} busy={busy} onCopy={copyDay} />
-              <div className="weekly-overview">
-                {DAYS.map((day, d) => (
-                  <div key={day}>
-                    <h3>{day}</h3>
-                    {[0, 1, 2].map((session) => {
-                      const index = d * 3 + session;
-                      const selected = effectivePlan(state)[index];
-                      return (
-                        <button
-                          key={session}
-                          className={activities[selected.activity].color}
-                          onClick={() => slot(index)}
-                          disabled={
-                            busy ||
-                            Boolean(lockedSlots(state)[index]) ||
-                            state.week > 40 ||
-                            Boolean(state.ending)
-                          }
-                        >
-                          <small>{SESSIONS[session]}</small>
-                          <ActivityIcon id={selected.activity} />
-                          <b>{activityName(selected.activity)}</b>
-                          {selected.activity === 'study' && (
-                            <em>{courses[selected.target]?.short}</em>
-                          )}
-                          {selected.activity === 'task' && (
-                            <em>{state.tasks[selected.target]?.name}</em>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-          {modal.type === 'tasks' && (
-            <TaskBoard
-              key={modal.taskId ?? 'all'}
-              state={state}
-              onAssign={assign}
-              focusTask={modal.taskId}
-              onPlay={(taskId) => setModal({ type: 'taskGame', taskId })}
-            />
-          )}
-          {modal.type === 'taskGame' && state.tasks[modal.taskId] && (
-            <TaskGamePanel
-              task={state.tasks[modal.taskId]}
-              state={state}
-              draftKey={`sasa-input:${game.user ?? 'local'}:${state.flags.runRevision ?? 0}:${modal.taskId}:${state.tasks[modal.taskId].attempts?.total ?? 0}`}
-              busy={busy}
-              onAction={(action) => send({ type: 'task_game', task: modal.taskId, action })}
-              onReload={game.reload}
-              onStop={() => setModal({ type: 'running' })}
-              onAssign={() => assign(modal.taskId)}
-              onBack={() => setModal({ type: 'tasks', taskId: modal.taskId })}
-              onContinue={() => advance()}
-            />
-          )}
-          {modal.type === 'running' && (
-            <WeekRunPanel
-              state={state}
-              busy={busy}
-              onContinue={() => advance()}
-              onTask={() =>
-                setModal({
-                  type: state.weekRun.waiting.kind === 'task' ? 'taskGame' : 'tasks',
-                  taskId: state.weekRun.waiting.task,
-                })
-              }
-              onEvent={openEvent}
-              onSkip={() => advance(true)}
-            />
-          )}
-          {modal.type === 'yearReport' && <YearReportPanel state={state} />}
-          {modal.type === 'events' && (
-            <EventDialog
-              key={modal.eventId ?? state.pending[0] ?? 'empty'}
-              state={state}
-              eventId={modal.eventId}
-              busy={busy}
-              onChoose={choose}
-              onDone={close}
-            />
-          )}
-          {modal.type === 'stats' && <StatsPanel state={state} />}
-          {modal.type === 'courses' && (
-            <CoursesPanel
-              state={state}
-              busy={busy}
-              onElective={async (course, term, enabled) => {
-                if (await send({ type: 'elective', course, term, enabled }))
-                  notify('수강신청을 변경했습니다.');
-              }}
-            />
-          )}
-          {modal.type === 'calendar' && (
-            <CalendarPanel
-              state={state}
-              onMonth={(month) => tutorial.observe(`calendar:${month}`)}
-            />
-          )}
-          {modal.type === 'group' && (
-            <GroupPanel state={state} onRecruit={() => openEvent('winter_study')} />
-          )}
-          {modal.type === 'admissions' && (
-            <AdmissionsPanel
-              state={state}
-              busy={busy}
-              onEnding={async (ending) => {
-                if (await send({ type: 'ending', ending })) close();
-              }}
-            />
-          )}
-          {modal.type === 'records' && (
-            <RecordsPanel
-              state={state}
-              onRead={tutorial.readResult}
-              onStory={(chapterId) => setModal({ type: 'story', chapterId })}
-            />
-          )}
-          {modal.type === 'story' &&
-            availableChapters(state).some((chapter) => chapter.id === modal.chapterId) && (
-              <StoryPanel
-                key={modal.chapterId}
-                state={state}
-                chapter={availableChapters(state).find((chapter) => chapter.id === modal.chapterId)}
-                busy={busy}
-                onProgress={(action) => send({ type: 'story', chapter: modal.chapterId, action })}
-                onNavigate={open}
-                onClose={close}
-              />
-            )}
-          {modal.type === 'notices' && (
-            <>
-              {state.pending.length > 0 && (
-                <div className="pending-notices">
-                  {state.pending.map((id) => (
-                    <button key={id} onClick={() => openEvent(id)}>
-                      <span>
-                        <b>{events[id].name}</b>
-                        <small>
-                          {choiceDeadline(id) === state.week
-                            ? '이번 주 마감'
-                            : `${choiceDeadline(id) - state.week}주 남음`}
-                        </small>
-                      </span>
-                      <ChevronRight size={16} />
-                    </button>
-                  ))}
-                </div>
-              )}
-              <NoticesPanel
-                state={state}
-                onStory={(chapterId) => setModal({ type: 'story', chapterId })}
-                onReview={openEvent}
-                onTask={(taskId) => setModal({ type: 'tasks', taskId })}
-              />
-            </>
-          )}
-          {modal.type === 'shop' && (
-            <ShopPanel
-              state={state}
-              busy={busy}
-              onBuy={async (item) => {
-                if (await send({ type: 'buy', item })) notify('사용했습니다.');
-              }}
-            />
-          )}
-          {modal.type === 'settings' && (
-            <SettingsPanel
-              game={game}
-              audio={audio}
-              onClose={close}
-              onLeave={() => open('leave')}
-            />
-          )}
-          {['help', 'tutorial'].includes(modal.type) && (
-            <TutorialPanel tutorial={tutorial} state={state} onLesson={lesson} />
-          )}
-          {modal.type === 'menu' &&
-            NAV.map(([id, Icon, label]) => (
-              <ChoiceButton
-                key={id}
-                anchor={id}
-                title={label}
-                icon={<Icon size={17} />}
-                onClick={() => open(id)}
-              />
-            ))}
-          {modal.type === 'confirm' && (
-            <WeekReviewPanel
-              state={state}
-              busy={busy}
-              onStart={() => advance()}
-              onTaskGame={(taskId) => setModal({ type: 'taskGame', taskId })}
-              onSchedule={() => open('schedule')}
-              onTask={assign}
-              onNotices={() => open('notices')}
-            />
-          )}
-          {modal.type === 'result' && state.history.at(-1) && (
-            <WeekResult
-              entry={state.history.at(-1)}
-              onContinue={continueWeek}
-              onRead={tutorial.readResult}
-            >
-              {state.history.at(-1).week === 0 && (
-                <div className="tutorial-recap">
-                  <b>
-                    겨울방학 실습 {tutorial.count}/{tutorial.total}
-                  </b>
-                  <button className="subtle" onClick={() => open('tutorial')}>
-                    연습 내용 다시 보기
-                  </button>
-                </div>
-              )}
-            </WeekResult>
-          )}
-          {modal.type === 'leave' && (
-            <>
-              <p className="dialog-lead">
-                휴학을 선택하면 이번 게임의 진행을 마칩니다. 기록은 보존됩니다.
-              </p>
-              <ChoiceButton
-                title="휴학하기"
-                onClick={async () => {
-                  if (await send({ type: 'ending', ending: 'leave' })) close();
-                }}
-              />
-              <button className="subtle full" onClick={close}>
-                취소
-              </button>
-            </>
-          )}
+          <GamePanel
+            context={{
+              state,
+              modal,
+              game,
+              audio,
+              tutorial,
+              ui: {
+                copyDay,
+                slot,
+                assign,
+                choose,
+                close,
+                advance,
+                open,
+                openEvent,
+                continueWeek,
+                lesson,
+                setModal,
+              },
+            }}
+          />
         </Modal>
       )}
     </div>

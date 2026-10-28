@@ -89,15 +89,7 @@ export function balanceIssues(value) {
   const config = value.admissions;
   if (!record(config)) return [...issues, 'admissions: object required'];
   for (const key of Object.keys(config))
-    if (
-      ![
-        'essayThreshold',
-        'csatThreshold',
-        'comprehensiveDefault',
-        'thresholds',
-        'targetBonuses',
-      ].includes(key)
-    )
+    if (!['essayThreshold', 'csatThreshold', 'comprehensiveDefault', 'thresholds'].includes(key))
       issues.push(`admissions.${key}: unknown field`);
   for (const key of ['essayThreshold', 'csatThreshold', 'comprehensiveDefault'])
     number(config[key], `admissions.${key}`, [0, 100]);
@@ -108,17 +100,5 @@ export function balanceIssues(value) {
     if (!/^[a-z][a-z0-9_]+$/.test(key)) issues.push(`admissions.thresholds.${key}: invalid ID`);
     number(threshold, `admissions.thresholds.${key}`, [0, 100]);
   }
-  const targets = config.targetBonuses;
-  if (
-    !record(targets) ||
-    Object.keys(targets).some((key) => !['dream', 'balanced', 'safe'].includes(key))
-  )
-    issues.push('admissions.targetBonuses: invalid targets');
-  for (const target of ['dream', 'balanced', 'safe'])
-    shape(
-      targets?.[target],
-      `admissions.targetBonuses.${target}`,
-      Object.fromEntries(profiles.map((id) => [id, [-20, 20]])),
-    );
   return issues;
 }

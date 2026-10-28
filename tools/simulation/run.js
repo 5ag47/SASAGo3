@@ -76,6 +76,7 @@ export function simulateYear({
   role = 'steady',
   electives = [],
   onWeek = () => {},
+  planPolicy = null,
 } = {}) {
   let state = createGame({ name: '전략 검증', character: 'boy', role, major, electives }, seed);
   let minimumMoney = state.money,
@@ -113,6 +114,22 @@ export function simulateYear({
       );
       if (index >= 0)
         state = transition(state, { type: 'plan', index, activity: 'interview', target: null });
+    }
+    // Experimental policies receive a copy and still go through the real command boundary.
+    if (planPolicy) {
+      const plan = planPolicy(structuredClone(state));
+      if (!Array.isArray(plan) || plan.length !== 21) throw new Error('SIMULATION_PLAN');
+      for (const [index, slot] of plan.entries())
+        if (
+          slot.activity !== state.plan[index].activity ||
+          slot.target !== state.plan[index].target
+        )
+          state = transition(state, {
+            type: 'plan',
+            index,
+            activity: slot.activity,
+            target: slot.target,
+          });
     }
     // All strategies keep the same single cleaning slot on inspection weeks.
     if (

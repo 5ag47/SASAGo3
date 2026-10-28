@@ -3,6 +3,7 @@ import { courseAbility } from './course-progress.js';
 import { random, applyEffects } from './random.js';
 import { taskModule, taskModuleSpec, validModuleData } from './task-modules/registry.js';
 import { requireAction } from './task-modules/action-error.js';
+import { supportedEssayQuality, supportedEssayCost } from './school-record.js';
 
 export function taskContext(state, task) {
   const statsAfter = (effects) => {
@@ -19,6 +20,10 @@ export function taskContext(state, task) {
     abilityAfter: (effects) =>
       task.course ? courseAbility({ ...state, stats: statsAfter(effects) }, task.course) : 0,
     statsAfter,
+    support: (model, quality) =>
+      model === 'essay' ? supportedEssayQuality(state, quality) : quality,
+    supportCost: (model, effects) =>
+      model === 'essay' ? supportedEssayCost(state, effects) : effects,
     roll: () => random(state),
   };
 }

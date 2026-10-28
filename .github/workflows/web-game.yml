@@ -16,8 +16,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run check
-      - run: npm test
-      - run: npm run build
-      - run: npm run tasks:editor:build
-      - run: npm audit --audit-level=high
+      - run: npm run verify
+        env:
+          VITE_FIREBASE_API_KEY: ci-public-placeholder
+          VITE_FIREBASE_AUTH_DOMAIN: sasago3-ci.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: sasago3-ci
+          VITE_FIREBASE_APP_ID: 1:0:web:ci-placeholder

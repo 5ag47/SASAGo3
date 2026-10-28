@@ -1,5 +1,6 @@
 import { GameError } from '../domain/engine.js';
 import { CONTENT_VERSION } from '../domain/state.js';
+import { validDocuments } from '../domain/admission-documents.js';
 export function applyServerUpdate(source, body, taskId) {
   if (body.state) return body.state;
   const delta = body.delta;
@@ -13,6 +14,7 @@ export function applyServerUpdate(source, body, taskId) {
     !Object.hasOwn(source.tasks, taskId) ||
     !Array.isArray(delta.assessments) ||
     delta.assessments.length > 1 ||
+    !validDocuments(delta.documents) ||
     !delta.stats ||
     !delta.courseMastery
   )
@@ -34,5 +36,6 @@ export function applyServerUpdate(source, body, taskId) {
     awards: delta.awards,
     assessments: [...source.assessments, ...delta.assessments],
     weekRun: delta.weekRun,
+    documents: delta.documents,
   };
 }

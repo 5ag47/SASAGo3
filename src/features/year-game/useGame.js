@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { baseState, SAVE_KEY } from '../../domain/state.js';
 import { GameError } from '../../domain/engine.js';
+import { progressSummary } from '../../platform/command-log.js';
 import { commitLocal, loadLocal, replaceLocal, resetLocal } from '../../platform/local-save.js';
 import { downloadJson, exportDiagnostics, record } from '../../platform/diagnostics.js';
 import {
@@ -109,6 +110,7 @@ export default function useGame({
           ? { scheduleChanges: scheduleChanges(source, next) }
           : {}),
         before: {
+          progress: progressSummary(source),
           stats: source.stats,
           courseMastery: source.courseMastery,
           money: source.money,
@@ -117,6 +119,7 @@ export default function useGame({
           ...(command.type === 'task_game' ? { task: taskCommandSummary(source, command) } : {}),
         },
         after: {
+          progress: progressSummary(next),
           stats: next.stats,
           courseMastery: next.courseMastery,
           money: next.money,

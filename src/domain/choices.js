@@ -1,9 +1,23 @@
-import { effectText, events, GROUPS, MAJORS, quizzes, REQUIRED, TEACHERS } from './catalog.js';
+import {
+  effectText,
+  events,
+  GROUPS,
+  MAJORS,
+  quizzes,
+  REQUIRED,
+  TEACHERS,
+  STATS,
+  courses,
+} from './catalog.js';
+import { matchesCondition, conditionText } from './conditions.js';
 import { addTask, academyTasks } from './tasks.js';
 import { notice } from './events.js';
 import { applyEffects, clamp, random } from './random.js';
 import { reserveActivities } from './schedule.js';
-import { gpa, admissionScore, admissionTargetBonus, admissionThreshold } from './grades.js';
+import { gpa, admissionScore, admissionThreshold } from './grades.js';
+import { ADMISSION_DIRECTIONS } from './school-record.js';
+import { refreshDocuments } from './admission-documents.js';
+import { startRecommendation } from './recommendation.js';
 import { createCardGame, playCardGame, cardOptions, cardScore } from './card-game.js';
 import { INTERVIEW_QUESTIONS } from './interview.js';
 import { submitStudyApplication } from './study-applications.js';
@@ -42,15 +56,29 @@ export function choiceOptions(state, id) {
   if (id === 'applications')
     return event.options.map((option) => ({
       ...option,
-      detail: Object.values(events)
-        .filter((event) => event.profile)
-        .map((event) => {
-          const bonus = admissionTargetBonus(option.id, event.profile);
-          return `${event.name.replace(' 종합 평가', '')} ${bonus > 0 ? '+' : ''}${bonus}점`;
-        })
+      detail: ADMISSION_DIRECTIONS[option.id].routes
+        .map((profile) =>
+          Object.values(events)
+            .find((event) => event.profile === profile)
+            ?.name.replace(' 종합 평가', ''),
+        )
         .join(' · '),
+      locked: Boolean(state.documents),
+      requirement: state.documents ? '제출한 지원 방향은 바꿀 수 없습니다.' : '',
     }));
-  return event.options ?? [];
+  return (event.options ?? []).map((option) => ({
+    ...option,
+    locked: !matchesCondition(state, option.when),
+    requirement:
+      option.requirement ??
+      conditionText(option.when, {
+        stats: STATS,
+        courses,
+        majors: MAJORS,
+        tasks: state.tasks,
+        events,
+      }),
+  }));
 }
 export function applyChoice(state, id, selected, answers) {
   const event = events[id];
@@ -111,6 +139,7 @@ export function applyChoice(state, id, selected, answers) {
   } else if (event.kind === 'registration') state.nextMajor = selected;
   else if (event.kind === 'recommendation') {
     state.flags.recommender = selected;
+    startRecommendation(state, selected);
     applyEffects(state, { reputation: 2 });
   } else {
     const option = event.options.find((o) => o.id === selected);
@@ -152,4 +181,5 @@ export function applyChoice(state, id, selected, answers) {
   state.choices[id] =
     event.kind === 'interview' ? [...state.minigames.interview.answers] : selected;
   state.pending = state.pending.filter((key) => key !== id);
+  refreshDocuments(state);
 }

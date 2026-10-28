@@ -1,4 +1,4 @@
 import { createRoot } from 'react-dom/client';
-import TaskEditor from './TaskEditor.jsx';
+import AuthoringApp from './AuthoringApp.jsx';
 import './style.css';
-createRoot(document.getElementById('root')).render(<TaskEditor />);
+createRoot(document.getElementById('root')).render(<AuthoringApp />);

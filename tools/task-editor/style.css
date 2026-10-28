@@ -98,6 +98,30 @@ p {
   margin: auto;
   padding: 24px;
 }
+.editor-layout {
+  display: contents;
+}
+.editor-layout > aside > button {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  text-align: left;
+}
+.editor-layout > aside > button.selected {
+  background: var(--sasa-green);
+  border-color: var(--sasa-sage);
+}
+.authoring-tabs {
+  display: flex;
+  max-width: 1230px;
+  padding: 0 24px;
+  margin: 20px auto 0;
+  gap: 10px;
+}
+.authoring-tabs button[aria-pressed='true'] {
+  background: var(--sasa-green);
+  border-color: var(--sasa-sage);
+}
 header,
 footer {
   grid-column: 1/-1;

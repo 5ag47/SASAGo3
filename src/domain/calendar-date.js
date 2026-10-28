@@ -3,19 +3,18 @@ export { calendar };
 export const calendarSettings = calendar.calendar_settings;
 const dayMs = 86400000;
 export const dateOrdinal = (iso) => Date.parse(`${iso}T00:00:00Z`) / dayMs;
-export function weekDate(week, day = 0) {
-  const anchor =
-    calendarSettings.weeks[week] ?? (week === 41 ? addDays(calendarSettings.weeks[40], 7) : null);
+export function weekDate(week, day = 0, settings = calendarSettings) {
+  const anchor = settings.weeks[week] ?? (week === 41 ? addDays(settings.weeks[40], 7) : null);
   if (!anchor) throw new Error('CALENDAR_WEEK_UNKNOWN');
   return addDays(anchor, day);
 }
 export function addDays(iso, days) {
   return new Date((dateOrdinal(iso) + days) * dayMs).toISOString().slice(0, 10);
 }
-export function dateWeek(iso) {
+export function dateWeek(iso, settings = calendarSettings) {
   const ordinal = dateOrdinal(iso);
   for (let week = 0; week <= 41; week++) {
-    const day = ordinal - dateOrdinal(weekDate(week));
+    const day = ordinal - dateOrdinal(weekDate(week, 0, settings));
     if (day >= 0 && day < 7) return { week, day };
   }
   return null;
@@ -41,7 +40,10 @@ export function calendarTiming(source, fallbackWeek, fallbackDay = null, definit
   );
   if (!item) return { week: fallbackWeek, day: fallbackDay };
   return item.date
-    ? (dateWeek(item.date) ?? { week: fallbackWeek, day: fallbackDay })
+    ? (dateWeek(item.date, definitions.calendar_settings) ?? {
+        week: fallbackWeek,
+        day: fallbackDay,
+      })
     : { week: item.week, day: item.day };
 }
 export function calendarIssues(records, { eventIds = [], courseIds = [], sourceIds = [] } = {}) {
@@ -139,7 +141,7 @@ export function calendarIssues(records, { eventIds = [], courseIds = [], sourceI
         (sourceIds.length
           ? !sourceIds.includes(item.source)
           : kind !== 'exam' && !eventIds.includes(sourceId)) ||
-        (exact && !dateWeek(item.date))
+        (exact && !dateWeek(item.date, settings))
       )
         issues.push(`${id}: invalid source binding`);
     }

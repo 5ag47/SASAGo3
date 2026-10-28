@@ -31,6 +31,11 @@ const { default: SettingsPanel } = await vite.ssrLoadModule(
   '/src/features/year-game/SettingsPanel.jsx',
 );
 const { availableChapters } = await vite.ssrLoadModule('/src/domain/story.js');
+const { default: CalendarEditor } = await vite.ssrLoadModule(
+  '/tools/task-editor/CalendarEditor.jsx',
+);
+const { AdmissionsPanel } = await vite.ssrLoadModule('/src/features/year-game/AdmissionsPanel.jsx');
+const { calendar } = await vite.ssrLoadModule('/src/domain/calendar-date.js');
 test.after(() => vite.close());
 function fresh() {
   return createGame({ name: '화면 테스트', character: 'boy', role: 'steady', major: 'math' });
@@ -64,6 +69,49 @@ async function mount(t) {
     act(async () => root.render(component ? React.createElement(component, props) : null));
 }
 const click = async (button) => act(async () => button.click());
+test('calendar authoring exposes actual dates and known source bindings while an incomplete new record cannot export', async (t) => {
+  const render = await mount(t);
+  await render(CalendarEditor, {
+    initial: {
+      ...calendar,
+      example_day: { kind: 'entry', name: '일정 예시', type: 'note', date: '2026-04-14' },
+    },
+  });
+  assert.equal(document.querySelector('input[type="date"]').value, '2026-04-14');
+  assert.ok(
+    [...document.querySelectorAll('option')].some((option) => option.value === 'deadline:thesis'),
+  );
+  await click(
+    [...document.querySelectorAll('button')].find((button) => button.textContent === '일정 추가'),
+  );
+  assert.equal(document.querySelector('header button').disabled, true);
+  assert.match(document.body.textContent, /입력 검사/);
+});
+test('the common admissions screen shows accumulated evidence and neutral preparation status without blaming the player', async (t) => {
+  const render = await mount(t),
+    state = fresh();
+  state.week = 25;
+  state.recommendation = {
+    teacher: 'math',
+    status: 'preparing',
+    progress: 1,
+    quality: null,
+    dueAt: null,
+  };
+  let direction;
+  await render(AdmissionsPanel, {
+    state,
+    busy: false,
+    onDirection: (value) => {
+      direction = value;
+    },
+  });
+  assert.equal(document.querySelectorAll('.route-comparison > article').length, 3);
+  assert.match(document.body.textContent, /자료 확인 중/);
+  assert.doesNotMatch(document.body.textContent, /생기부가 안 좋|추천서를 잘 안|피드백 관계/);
+  await click(document.querySelector('.admission-directions button'));
+  assert.equal(direction, 'dream');
+});
 test('both original characters appear at new-game setup and a failed second image can reload without changing selection', async (t) => {
   const render = await mount(t);
   await render(Setup, { onCreate() {}, busy: false, mode: 'local', loginRequired: false });

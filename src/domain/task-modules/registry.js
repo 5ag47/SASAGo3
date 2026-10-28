@@ -3,6 +3,7 @@ import contest from './contest-v1.js';
 import order from './order-v1.js';
 import pattern from './pattern-v1.js';
 import { orderSession, patternSession } from './session-v2.js';
+import { essayWorkAmount } from '../writing-support.js';
 
 // Only reviewed repository modules can execute. JSON selects an ID and parameters.
 const modules = [time, contest, order, pattern, orderSession, patternSession];
@@ -58,7 +59,7 @@ export function taskModuleSpec(task) {
 }
 export const defaultTaskGame = (task) => ({
   id: task.course || task.special === 'tutorial' ? 'order_v2' : 'pattern_v2',
-  params: {},
+  params: task.special === 'essay' ? { support: 'essay' } : {},
 });
 export const taskGameReady = (task) =>
   Boolean(task) && (!taskModule(task).game || taskGameStatus(task) === 'success');
@@ -81,6 +82,7 @@ export function taskEstimate(state, task) {
     task,
     stats: state.stats,
     params: taskModuleSpec(task).params,
+    workAmount: task.special === 'essay' ? essayWorkAmount(state) : 1,
   });
   if (!Number.isInteger(estimate) || estimate < 0 || estimate > 1000)
     throw new Error(`TASK_MODULE_ESTIMATE_INVALID:${task.id}`);

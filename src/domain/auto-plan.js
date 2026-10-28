@@ -89,7 +89,11 @@ export function buildPreset(state, preset = 'balanced') {
     if (index !== undefined) plan[index] = { activity, target };
   };
   assignSocial(4, state.group ? 'study_group' : 'sleep');
-  assignSocial(13, 'teacher', 'homeroom');
+  assignSocial(
+    13,
+    'teacher',
+    state.recommendation?.status === 'preparing' ? state.recommendation.teacher : 'homeroom',
+  );
   assignSocial(7, 'exercise');
   assignSocial(19, 'game');
   return plan;

@@ -11,14 +11,14 @@
 
 ## 권장 분담
 
-| 작업               | 주로 수정할 파일                             | 함께 바꾸지 않아도 되는 부분 |
-| ------------------ | -------------------------------------------- | ---------------------------- |
-| 캐릭터·기숙사 표현 | Scene.jsx, 해당 CSS 구역, assets.js          | 시험·입시 공식               |
-| 자습 신청 UI       | Planner.jsx, ActivityPicker.jsx              | 서버 인증                    |
-| 과제·이벤트 추가   | data/events.json, 필요한 경우 과목 JSON      | 메인 화면 조립               |
-| 학점·입시 조정     | grades.js, 관련 domain 테스트                | 캐릭터 이미지                |
-| 저장·로그인        | src/platform, server                         | 콘텐츠 문구                  |
-| 설정·매점          | SettingsPanel.jsx, ShopPanel.jsx, items.json | 41주 일정 계산               |
+| 작업               | 주로 수정할 파일                                        | 함께 바꾸지 않아도 되는 부분 |
+| ------------------ | ------------------------------------------------------- | ---------------------------- |
+| 캐릭터·기숙사 표현 | Scene.jsx, 해당 CSS 구역, assets.js                     | 시험·입시 공식               |
+| 자습 신청 UI       | Planner.jsx, ActivityPicker.jsx                         | 서버 인증                    |
+| 과제·이벤트 추가   | data/events.json, 필요한 경우 과목 JSON                 | 메인 화면 조립               |
+| 학점·입시 조정     | academic-grades.js, admissions.js, data/admissions.json | 캐릭터 이미지                |
+| 저장·로그인        | src/platform, server                                    | 콘텐츠 문구                  |
+| 설정·매점          | SettingsPanel.jsx, ShopPanel.jsx, items.json            | 41주 일정 계산               |
 
 `game.css`는 공유 파일이므로 동시에 스타일을 바꾸면 담당 구역을 합의합니다. 색상·간격 공통값을 바꾸는 작업은 별도 변경으로 검토합니다. 모듈 분리가 모든 Git 충돌을 없애지는 않습니다.
 
@@ -43,13 +43,14 @@
 ## 작업 후 확인
 
 ```sh
-npm run check
-npm test
-npm run build
-npm audit --audit-level=high
+npm run verify
 ```
 
 콘텐츠 검사에서 모르는 과목 ID, 잘못된 능력치, 평가 비율 합계, 이벤트 시점을 확인합니다. 자동 테스트는 전공별 완주와 서버의 잘못된 요청·동시 요청도 확인합니다. GitHub Actions가 PR과 대상 브랜치의 push에서 같은 검사를 실행합니다. GitHub 저장소 설정에서 해당 검사를 필수 상태 검사로 지정하는 작업은 저장소 관리자가 해야 합니다.
+
+`verify`는 콘텐츠·구조·ESLint → 테스트 → 서버 전용 빌드 → 편집기 빌드 → 의존성 검사를 순서대로 실행하며 배포하지 않습니다. GitHub 워크플로는 공개 형식의 가짜 Firebase 설정으로 빌드만 검사합니다. 실제 로그인 검증이나 비밀값 등록을 대신하지 않으며 현재 브랜치를 push하기 전에는 원격 CI가 실행된 것으로 간주하지 않습니다.
+
+명령은 `domain/commands/`의 기능별 파일, 상태는 `domain/state/`, 패널 조립은 `year-game/panels/`로 담당을 나눕니다. 새 기능을 만들 때 큰 엔진·화면 파일에 계속 분기를 붙이지 않습니다. [구체적 확장 절차](gameplay-extension.md)를 따릅니다. 과제·달력은 변경 파일로 ID 단위 병합을 검사하며 같은 항목 충돌은 자동으로 덮어쓰지 않습니다.
 
 ## 새 패널의 담당 범위
 
@@ -71,3 +72,5 @@ npm audit --audit-level=high
 5. `REVISION_CONFLICT`는 다른 창이 먼저 저장한 상황입니다. 최신 저장을 읽고 다시 행동합니다. 다른 사람의 기록을 수동으로 덮어쓰지 않습니다.
 
 진단 보고서는 다운로드만 하며 자동 업로드되지 않습니다. 공유하기 전에 보고서 내용을 직접 확인합니다.
+
+구조 개편 후 서버의 `command`·`phase`·`migrationId`도 확인합니다. 브라우저 명령 요약에는 작업 회차/순서와 원서 방향·진행 날짜·추천서 단계·서류 제출 주의 전후 변화가 남습니다. 인증 토큰·개인 이메일·비밀번호는 로그에 남기지 않습니다.

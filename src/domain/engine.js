@@ -1,133 +1,13 @@
-import { buildPreset } from './auto-plan.js';
-import {
-  activities,
-  CHARACTERS,
-  courses,
-  ELECTIVES,
-  items,
-  LAST_WEEK,
-  MAJORS,
-  roles,
-} from './catalog.js';
-import { baseState, balancedPlan, CONTENT_VERSION, validateState } from './state.js';
-import { applyEffects } from './random.js';
-import { beginWeek } from './events.js';
-import { applyChoice, choiceOptions, INTERVIEW_QUESTIONS } from './choices.js';
-import { effectivePlan, lockedSlots, resolveWeek, finishRunTask, skipRunTask } from './week.js';
-import { enrollCourses } from './course-progress.js';
-import { courseSet, electiveWindow, changeElective } from './enrollment.js';
-import { copyDayPlan, copyDayPreview } from './schedule.js';
-import { taskGameAction } from './task-processing.js';
-import { TaskActionError } from './task-modules/action-error.js';
-import { progressChapter } from './story.js';
-import { beginTaskAttempt, failTaskAttempt } from './task-attempts.js';
-import { moduleSignature, taskGameStatus } from './task-modules/registry.js';
+import { CONTENT_VERSION, validateState } from './state.js';
+import { COMMANDS } from './commands/index.js';
+import { requireRule, GameError } from './errors.js';
 import { copyForTaskInput } from './state-copy.js';
+export { GameError } from './errors.js';
+export { createGame } from './commands/profile.js';
+export { planPreset } from './commands/planning.js';
+export { ENDINGS, endingAvailable } from './endings.js';
+export { effectivePlan } from './schedule.js';
 
-export class GameError extends Error {
-  constructor(code, message) {
-    super(message);
-    this.name = 'GameError';
-    this.code = code;
-  }
-}
-const requireRule = (condition, code, message) => {
-  if (!condition) throw new GameError(code, message);
-};
-function markScheduleEdit(state, slots) {
-  state.flags.editedSchedule = true;
-  if (state.week !== 0) return;
-  if (slots.some((slot) => slot.activity === 'study' && courses[slot.target]?.ability === 'math'))
-    state.flags.tutorialStudy = true;
-  if (slots.some((slot) => slot.activity === 'task' && slot.target === 'practice-report'))
-    state.flags.tutorialTask = true;
-  if (slots.some((slot) => ['sleep', 'exercise', 'game', 'out'].includes(slot.activity)))
-    state.flags.tutorialRecovery = true;
-}
-export function createGame(profile, seed = 20261013) {
-  requireRule(
-    typeof profile?.name === 'string' &&
-      profile.name.trim().length > 0 &&
-      profile.name.trim().length <= 12,
-    'PROFILE_NAME',
-    '이름은 1~12자로 입력해 주세요.',
-  );
-  requireRule(
-    Object.hasOwn(CHARACTERS, profile.character) &&
-      Object.hasOwn(roles, profile.role) &&
-      Object.hasOwn(MAJORS, profile.major),
-    'PROFILE_OPTION',
-    '캐릭터·특성·전공을 다시 선택해 주세요.',
-  );
-  const state = baseState(seed);
-  const electives = profile.electives === undefined ? [] : profile.electives;
-  requireRule(
-    Array.isArray(electives) &&
-      electives.length <= ELECTIVES.length &&
-      new Set(electives).size === electives.length &&
-      electives.every((id) => ELECTIVES.includes(id)),
-    'ELECTIVES_INVALID',
-    '선택과목을 다시 확인해 주세요.',
-  );
-  Object.assign(state, {
-    created: true,
-    name: profile.name.trim(),
-    character: profile.character,
-    role: profile.role,
-    major: profile.major,
-    electives: [...electives],
-    courses: courseSet(profile.major, electives),
-  });
-  applyEffects(state, roles[profile.role].stats, 1, { growth: false });
-  enrollCourses(state);
-  beginWeek(state);
-  state.plan = balancedPlan(state);
-  return state;
-}
-export function planPreset(state, preset) {
-  return buildPreset(state, preset);
-}
-export const ENDINGS = {
-  university: {
-    title: '대학 진학',
-    subtitle: '합격',
-    description: '합격 통지서가 도착했다. 다음 봄에는 새로운 학교로 간다.',
-  },
-  retry: {
-    title: '재도전',
-    subtitle: '다시 도전하는 겨울',
-    description: '입시를 한 해 더 준비하기로 했다. 올해의 기록을 정리하고 새 계획을 세운다.',
-  },
-  work: {
-    title: '아르바이트',
-    subtitle: '첫 출근',
-    description: '일을 시작하기로 했다. 첫 월급이 들어오면 뭘 할지 생각 중이다.',
-  },
-  startup: {
-    title: '창업',
-    subtitle: '프로젝트 출시',
-    description: '학교에서 만들던 프로젝트를 출시했다. 이제 과제 마감 대신 고객의 연락을 기다린다.',
-  },
-  prison: {
-    title: '감옥',
-    subtitle: '위험한 편법의 결말',
-    description: '편법이 들통났다. 게임 속 과장된 결말이지만, 이번 기록은 여기서 끝난다.',
-  },
-  leave: {
-    title: '휴학',
-    subtitle: '학업 중단',
-    description: '학업을 잠시 멈추기로 했다. 지금까지의 기록은 보관한다.',
-  },
-};
-export function endingAvailable(state, id) {
-  if (id === 'leave') return true;
-  if (state.week <= LAST_WEEK) return false;
-  if (state.discipline >= 5 && state.choices.temptation === 'cheat') return id === 'prison';
-  if (id === 'prison') return false;
-  if (id === 'university') return state.admissions.some((a) => a.accepted);
-  if (id === 'startup') return state.stats.science >= 55 && state.stats.reputation >= 40;
-  return ['retry', 'work'].includes(id);
-}
 export function transition(source, command) {
   requireRule(
     validateState(source),
@@ -139,289 +19,28 @@ export function transition(source, command) {
     'COMMAND_INVALID',
     '알 수 없는 요청이에요.',
   );
+  const definition = COMMANDS[command.type];
+  if (!Object.hasOwn(COMMANDS, command.type))
+    throw new GameError('COMMAND_UNKNOWN', '지원하지 않는 요청이에요.');
+  if (!definition.startsGame)
+    requireRule(
+      source.created && (!source.ending || definition.allowEnded),
+      'GAME_CLOSED',
+      '진행 중인 게임에서만 할 수 있어요.',
+    );
   let state =
     command.type === 'task_game' && Object.hasOwn(source.tasks, command.task)
       ? copyForTaskInput(source, command.task)
       : structuredClone(source);
   state.contentVersion = CONTENT_VERSION;
-  if (command.type === 'create') {
-    requireRule(!state.created, 'ALREADY_CREATED', '이미 시작한 게임이에요.');
-    state = createGame(command.profile, state.seed);
-    state.flags.runRevision = source.revision + 1;
-  } else {
-    requireRule(
-      state.created && (!state.ending || command.type === 'story'),
-      'GAME_CLOSED',
-      '진행 중인 게임에서만 할 수 있어요.',
-    );
-    if (['plan', 'preset', 'copy_day'].includes(command.type))
-      requireRule(state.week <= LAST_WEEK, 'YEAR_FINISHED', '한 해의 일정이 끝났어요.');
-    if (command.type === 'story') {
-      requireRule(
-        typeof command.chapter === 'string' &&
-          progressChapter(state, command.chapter, command.action),
-        'STORY_INVALID',
-        '지금 읽을 수 없는 장면입니다.',
-      );
-    } else if (command.type === 'plan') {
-      requireRule(
-        Number.isInteger(command.index) &&
-          command.index >= 0 &&
-          command.index < 21 &&
-          !lockedSlots(state)[command.index],
-        'SLOT_INVALID',
-        '변경할 수 없는 시간이에요.',
-      );
-      requireRule(
-        Object.hasOwn(activities, command.activity),
-        'ACTIVITY_INVALID',
-        '활동을 다시 선택해 주세요.',
-      );
-      const target = command.target ?? null;
-      if (command.activity === 'study')
-        requireRule(
-          state.courses.includes(target),
-          'COURSE_INVALID',
-          '수강 중인 과목을 골라 주세요.',
-        );
-      if (command.activity === 'task')
-        requireRule(
-          state.tasks[target]?.status === 'active' && state.tasks[target]?.special !== 'tutorial',
-          'TASK_INVALID',
-          '진행 중인 할 일을 골라 주세요.',
-        );
-      if (command.activity === 'teacher')
-        requireRule(
-          ['math', 'science', 'homeroom'].includes(target),
-          'TEACHER_INVALID',
-          '선생님을 골라 주세요.',
-        );
-      requireRule(
-        target === null || (typeof target === 'string' && target.length < 100),
-        'TARGET_INVALID',
-        '대상을 다시 골라 주세요.',
-      );
-      state.plan[command.index] = { activity: command.activity, target };
-      markScheduleEdit(state, [state.plan[command.index]]);
-    } else if (command.type === 'task_game') {
-      requireRule(
-        typeof command.task === 'string' &&
-          Object.hasOwn(state.tasks, command.task) &&
-          state.tasks[command.task].status === 'active',
-        'TASK_INVALID',
-        '진행 중인 과제를 선택해 주세요.',
-      );
-      requireRule(
-        state.weekRun?.waiting?.kind === 'task' && state.weekRun.waiting.task === command.task,
-        'TASK_TIME_REQUIRED',
-        '일정에 배정한 작업 시간이 되면 과제를 진행할 수 있습니다.',
-      );
-      try {
-        const task = state.tasks[command.task],
-          action = command.action;
-        if (action?.type === 'start' || action?.type === 'restart') {
-          requireRule(
-            Object.keys(action).length === 1 &&
-              (action.type === 'restart' ? Boolean(task.moduleData) : !task.moduleData),
-            'TASK_GAME_ACTION',
-            '진행 중인 작업 상태를 확인해 주세요.',
-          );
-          if (action.type === 'restart') delete task.moduleData;
-          beginTaskAttempt(state, task);
-          taskGameAction(state, task, { type: 'start' });
-        } else {
-          let actions = action?.type === 'batch' ? action.actions : [action];
-          requireRule(
-            Array.isArray(actions) &&
-              actions.length > 0 &&
-              actions.length <= 32 &&
-              (action?.type !== 'batch' || Object.keys(action).length === 4) &&
-              actions.every(
-                (item) =>
-                  item &&
-                  typeof item === 'object' &&
-                  !Array.isArray(item) &&
-                  !['start', 'restart', 'batch'].includes(item.type),
-              ),
-            'TASK_ACTION_BATCH',
-            '작업 입력 형식이 올바르지 않습니다.',
-          );
-          requireRule(
-            task.attempts?.open,
-            'TASK_GAME_ACTION',
-            '작업을 시작하거나 다시 도전해 주세요.',
-          );
-          if (action.type === 'batch') {
-            const sequence = task.attempts.sequence,
-              from = action.from;
-            requireRule(
-              action.attempt === task.attempts.total &&
-                Number.isInteger(from) &&
-                from >= 0 &&
-                from <= sequence &&
-                from >= sequence - task.attempts.receipts.length,
-              'TASK_INPUT_CONFLICT',
-              '저장된 작업 위치가 다릅니다. 최신 기록을 확인해 주세요.',
-            );
-            const repeated = Math.min(sequence - from, actions.length),
-              offset = sequence - task.attempts.receipts.length;
-            requireRule(
-              actions
-                .slice(0, repeated)
-                .every(
-                  (item, index) =>
-                    moduleSignature(item) === task.attempts.receipts[from + index - offset],
-                ),
-              'TASK_INPUT_CONFLICT',
-              '이미 처리한 입력과 일치하지 않습니다.',
-            );
-            actions = actions.slice(repeated);
-          }
-          for (const [index, item] of actions.entries()) {
-            taskGameAction(state, task, item);
-            task.attempts.sequence++;
-            task.attempts.receipts = [...task.attempts.receipts, moduleSignature(item)].slice(-32);
-            requireRule(
-              taskGameStatus(task) === 'playing' || index === actions.length - 1,
-              'TASK_ACTION_BATCH',
-              '종료된 도전에 추가 입력을 보낼 수 없습니다.',
-            );
-          }
-          if (taskGameStatus(task) === 'success') finishRunTask(state, task);
-          else if (taskGameStatus(task) === 'failure') failTaskAttempt(state, task);
-        }
-      } catch (error) {
-        if (error instanceof TaskActionError) throw new GameError(error.code, error.message);
-        throw error;
-      }
-    } else if (command.type === 'copy_day') {
-      requireRule(
-        Number.isInteger(command.sourceDay) &&
-          command.sourceDay >= 0 &&
-          command.sourceDay < 7 &&
-          Array.isArray(command.days) &&
-          command.days.length > 0 &&
-          command.days.length <= 6 &&
-          new Set(command.days).size === command.days.length &&
-          command.days.every(
-            (day) => Number.isInteger(day) && day >= 0 && day < 7 && day !== command.sourceDay,
-          ),
-        'COPY_DAYS_INVALID',
-        '복사할 요일과 받을 요일을 다시 선택해 주세요.',
-      );
-      requireRule(
-        copyDayPreview(state, command.sourceDay, command.days).some((day) => day.indices.length),
-        'COPY_EMPTY',
-        '복사할 수 있는 자습 시간이 없어요.',
-      );
-      state.plan = copyDayPlan(state, command.sourceDay, command.days);
-      markScheduleEdit(
-        state,
-        copyDayPreview(state, command.sourceDay, command.days).flatMap((day) =>
-          day.indices.map((index) => state.plan[index]),
-        ),
-      );
-    } else if (command.type === 'elective') {
-      requireRule(
-        ELECTIVES.includes(command.course) &&
-          [1, 2].includes(command.term) &&
-          typeof command.enabled === 'boolean',
-        'ELECTIVE_INVALID',
-        '선택과목 신청을 확인해 주세요.',
-      );
-      requireRule(
-        electiveWindow(state, command.term),
-        'REGISTRATION_CLOSED',
-        '지금은 선택과목 신청 기간이 아닙니다.',
-      );
-      requireRule(
-        command.term === 2 || command.enabled || state.week === 0,
-        'COURSE_DROP_CLOSED',
-        '학기가 시작된 과목은 취소할 수 없습니다.',
-      );
-      changeElective(state, command.course, command.term, command.enabled);
-    } else if (command.type === 'preset') {
-      requireRule(
-        ['balanced', 'tasks', 'rest'].includes(command.preset),
-        'PRESET_INVALID',
-        '일정 프리셋을 다시 골라 주세요.',
-      );
-      state.plan = planPreset(state, command.preset);
-      markScheduleEdit(state, state.plan);
-    } else if (command.type === 'advance') {
-      requireRule(
-        state.week <= LAST_WEEK,
-        'YEAR_FINISHED',
-        '한 해가 끝났어요. 진학실에서 다음 길을 선택하세요.',
-      );
-      requireRule(
-        command.skipTask === undefined || typeof command.skipTask === 'boolean',
-        'COMMAND_INVALID',
-        '진행 요청을 확인해 주세요.',
-      );
-      if (state.weekRun?.waiting?.kind === 'task') {
-        requireRule(
-          command.skipTask === true,
-          'TASK_IN_PROGRESS',
-          '현재 작업을 끝내거나 작업을 중단하고 계속해 주세요.',
-        );
-        skipRunTask(state);
-      }
-      state = resolveWeek(state);
-    } else if (command.type === 'choose') {
-      requireRule(
-        state.pending.includes(command.event),
-        'EVENT_INVALID',
-        '이미 결정했거나 아직 발생하지 않은 이벤트예요.',
-      );
-      if (command.event === 'interview_day') {
-        const answered = state.minigames.interview?.answers.length ?? 0;
-        const single = /^answer:[0-2]$/.test(command.option ?? '') && command.answers === undefined;
-        requireRule(
-          single ||
-            (answered === 0 &&
-              Array.isArray(command.answers) &&
-              command.answers.length === INTERVIEW_QUESTIONS.length &&
-              command.answers.every((a) => Number.isInteger(a) && a >= 0 && a < 3)),
-          'ANSWERS_INVALID',
-          '현재 질문의 답변을 선택해 주세요.',
-        );
-      } else {
-        const option = choiceOptions(state, command.event).find((o) => o.id === command.option);
-        requireRule(option, 'OPTION_INVALID', '선택지를 다시 골라 주세요.');
-        requireRule(
-          state.money >= (option.cost ?? 0),
-          'MONEY_LOW',
-          '용돈이 부족해요. 다른 선택지를 골라 주세요.',
-        );
-      }
-      applyChoice(
-        state,
-        command.event,
-        command.option,
-        command.event === 'interview_day' && command.answers === undefined
-          ? [Number(command.option.slice(7))]
-          : command.answers,
-      );
-    } else if (command.type === 'buy') {
-      requireRule(Object.hasOwn(items, command.item), 'ITEM_INVALID', '상품을 다시 선택해 주세요.');
-      const item = items[command.item];
-      requireRule(state.money >= item.price, 'MONEY_LOW', '용돈이 부족해요.');
-      state.money -= item.price;
-      applyEffects(state, item.effect);
-    } else if (command.type === 'ending') {
-      requireRule(
-        endingAvailable(state, command.ending),
-        'ENDING_LOCKED',
-        '아직 선택할 수 없는 결말이에요.',
-      );
-      state.ending = { id: command.ending, week: state.week };
-    } else throw new GameError('COMMAND_UNKNOWN', '지원하지 않는 요청이에요.');
-  }
-  if (state.weekRun && ['plan', 'preset', 'copy_day'].includes(command.type)) {
-    const locked = lockedSlots(state);
-    for (let index = state.weekRun.cursor; index < 21; index++)
-      if (!locked[index]) state.weekRun.plan[index] = { ...state.plan[index] };
+  try {
+    state = definition.apply(state, command);
+  } catch (error) {
+    const failure =
+      error instanceof Error ? error : new Error('COMMAND_HANDLER_FAILURE', { cause: error });
+    failure.commandType = command.type;
+    failure.phase = 'apply';
+    throw failure;
   }
   state.revision = source.revision + 1;
   if (state.weekRun) {
@@ -435,4 +54,3 @@ export function transition(source, command) {
   );
   return state;
 }
-export { effectivePlan };

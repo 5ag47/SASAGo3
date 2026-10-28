@@ -12,5 +12,6 @@ export function taskDelta(before, next, taskId) {
     awards: next.awards,
     assessments: next.assessments.slice(before.assessments.length),
     weekRun: publicWeekRun(next.weekRun),
+    documents: next.documents,
   };
 }

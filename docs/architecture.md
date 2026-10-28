@@ -6,8 +6,13 @@
 data/                        과목·활동·이벤트·아이템·특성의 정적 정의
 src/domain/                  React·DOM·네트워크에 의존하지 않는 순수 게임 규칙
   catalog.js                 데이터 연결과 달력·표시용 정의 (수학·물리 별도 전공)
-  state.js                   저장 형식과 상태 검증
+  state.js / state/          호환 진입점 / 생성·이름 있는 변환·상태 검증
   engine.js                  명령 처리의 단일 진입점 transition(state, command)
+  commands/                  기능별 허용 요청 필드와 명령 처리
+  conditions.js              제한된 JSON 조건과 선택지 자격
+  school-record.js            실제 활동에서 생기부 계산
+  admission-documents.js      제출 시점의 서류 기록 고정
+  recommendation.js          상담·다음날 검토·완료
   week.js                    재개 가능한 21칸 실행, 작업/알림 중단, 생활 부담·피로·시험
   task-attempts.js            회차·주간 상한·도전 비용·품질·실패
   calendar-date/entries.js    실제 날짜·주차 매핑 / 날짜별 표시 공급자
@@ -17,8 +22,11 @@ src/domain/                  React·DOM·네트워크에 의존하지 않는 순
   events.js / choices.js     이벤트 발생·선택
   card-game.js / interview.js 카드 진행 규칙·면접 문항
   minigames.js               미니게임 저장 검증·기한 종료
-  grades.js / random.js      학점·입시 / 저장되는 난수 시드
+  grades.js                  학점·입시의 기존 import 호환 진입점
+  academic-grades/admissions  학점 / 전형별 평가
+  random.js                  저장되는 난수 시드
 src/features/year-game/      화면과 기능별 React 컴포넌트
+  panels/                    기능별 화면 조립과 제목·너비 등록
 src/App.jsx                  현재 게임 진입점 (LegacyApp.jsx는 이전 초안 보관)
 src/platform/                브라우저 저장·Firebase·서버 통신·진단
 server/                      인증·요청 보안·원자적 상태 저장
@@ -30,7 +38,7 @@ tests/server/                접근 격리·JWT·변조·동시성·중복 요�
 
 과제 미니게임은 `task_game` 명령으로 과제 ID와 행동만 받습니다. 도메인 모듈이 행동·완료·결과를 결정하고 공통 처리기가 저장합니다. 정의·그룹 우선순위·스냅샷·모듈/화면 등록 계약은 [과제 모듈 작성 안내](task-authoring.md), 선택 근거는 [ADR-0002](adr/0002-task-game-modules.md)에 있습니다. `assignments.js`는 정의 검사·반복·그룹 해석을, `task-processing.js`는 실행 문맥과 결과 검증을 담당합니다. UI별로 완료·채점 공식을 복제하지 않습니다.
 
-`create`, `plan`, `copy_day`, `preset`, `elective`, `choose`, `advance`, `buy`, `ending`, `story`을 지원합니다. 명령은 클라이언트가 원하는 **행동**이고, 결과 상태는 엔진이 결정합니다. 엔진은 원본을 바꾸지 않으며 새 revision을 반환합니다. 검증 실패 시 전체 변경을 적용하지 않습니다.
+`commands/`는 `create`, `plan`, `copy_day`, `preset`, `elective`, `choose`, `advance`, `buy`, `ending`, `story`, `task_game`, `admission_direction`을 등록합니다. 명령은 클라이언트가 원하는 **행동**이고, 결과 상태는 엔진이 결정합니다. 서버의 허용 필드도 같은 등록부를 사용합니다. 엔진은 원본을 바꾸지 않으며 새 revision을 반환합니다. 검증 실패 시 전체 변경을 적용하지 않습니다.
 
 서버 API는 `{command, expectedRevision, idempotencyKey}`만 받습니다. uid·점수·능력치·전체 저장을 제출하는 필드는 거부합니다. Firebase 서명 검증으로 얻은 uid만 플레이어를 구분하는 데 사용합니다. 튜토리얼 순서로 조작을 잠그지 않으며, 선택 이벤트는 마감까지 응답할 수 있습니다. 미응답은 마감 시 미참여로 기록합니다.
 
@@ -79,6 +87,10 @@ tests/server/                접근 격리·JWT·변조·동시성·중복 요�
 튜토리얼의 화면 확인 기록은 계정과 게임 시작 revision의 해시로 구분합니다. 단원 버튼을 눌렀다는 이유만으로 실습 완료를 주지 않습니다. 방문 기록은 UI 안내에만 사용하며 서버 보상에 영향을 주지 않습니다.
 
 ## 밸런스·서사·운영 도구
+
+기능 경계·명령/저장/패널 등록·조건 분기·간접적인 준비 부담은 [확장 안내](gameplay-extension.md)와 [ADR-0004](adr/0004-modular-gameplay.md)에 정리했습니다. 학점+생기부 중심 평가, 공통 원서 단계와 보존되는 이전 준비, 교사 상담·다음날 추천서 검토를 분리합니다. `data/admissions.json`은 검증되는 입시 설정이고 `documents`는 제출 당시의 고정 자료입니다.
+
+과제·달력 편집은 도메인의 `content-edits.js`와 파일 도구 `content-files.mjs`를 공유합니다. 같은 항목 충돌은 거절하고 다른 항목은 보존합니다. 누락된 상대 import·순환 참조·계층 경계는 자동 검사합니다. `npm run verify`는 로컬과 GitHub 워크플로의 공통 검사 진입점이며 배포를 실행하지 않습니다.
 
 주간 실행·회차·입력 묶음의 결정과 이전 저장 호환은 [ADR-0003](adr/0003-chronological-week.md)에 있습니다. task-input-buffer는 예측 가능한 선택만 미리 표시하고 결과는 서버 응답으로 확정합니다. task-v1 차이 응답은 revision·콘텐츠 버전을 검증하고 과거 기록을 재전송하지 않습니다. 날짜별 일정 추가·실제 발생일 연결은 [달력 작성 안내](calendar-authoring.md)를 따릅니다.
 

@@ -268,7 +268,11 @@ test('reputation speeds up essay progress, not all ordinary assignments', () => 
   state.pending = [];
   const plan = fill(solveActiveTaskGames(state), 'sleep');
   plan.plan[0] = { activity: 'essay', target: null };
-  assert.equal(resolveWeek(plan).tasks.essay.progress, 1.5);
+  const high = resolveWeek(plan).tasks.essay.progress;
+  const ordinary = structuredClone(plan);
+  ordinary.stats.reputation = 35;
+  assert.ok(high > resolveWeek(ordinary).tasks.essay.progress);
+  assert.ok(high > 1 && high <= 1.75);
 });
 test('task preset plans deadlines in order and keeps recovery slots', () => {
   const state = ready();

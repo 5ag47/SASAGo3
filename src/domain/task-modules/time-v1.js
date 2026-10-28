@@ -18,8 +18,8 @@ export default {
   isComplete({ task }) {
     return task.progress >= task.target;
   },
-  estimate({ task }) {
-    return Math.ceil(task.target - task.progress);
+  estimate({ task, workAmount = 1 }) {
+    return Math.ceil((task.target - task.progress) / workAmount);
   },
   complete({ task, abilityAfter, roll }) {
     const difficulty = task.course ? Math.round((roll() - 0.5) * 8) : 0;

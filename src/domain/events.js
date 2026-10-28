@@ -1,6 +1,7 @@
 import { activeTasks, courses, events, MAJORS, REQUIRED, TUTORIAL_TASKS } from './catalog.js';
 import { addTask, academyTasks } from './tasks.js';
-import { applyEffects } from './random.js';
+import { applyEffects, random } from './random.js';
+import { matchesCondition } from './conditions.js';
 import { resolveAdmission } from './grades.js';
 import { CLEANING_WEEKS } from './school-calendar.js';
 import { enrollCourses } from './course-progress.js';
@@ -60,6 +61,13 @@ export function dispatchDayEvents(state, day) {
       continue;
     state.flags.eventDeliveries ??= {};
     state.flags.eventDeliveries[id] = true;
+    if (
+      !matchesCondition(state, event.when) ||
+      (event.chance !== undefined &&
+        event.chance < 1 &&
+        (event.chance <= 0 || random(state) >= event.chance))
+    )
+      continue;
     if (event.kind === 'task') addTask(state, id, event);
     else if (['notice', 'birthday', 'admission', 'creative'].includes(event.kind)) {
       applyEffects(state, event.effect);
@@ -73,11 +81,14 @@ export function dispatchDayEvents(state, day) {
       }
       if (['admission', 'creative'].includes(event.kind)) {
         const accepted = resolveAdmission(state, event);
-        applyEffects(state, { stress: accepted ? -8 : 8 });
-        text = `${accepted ? '합격 기준 통과!' : '아쉬운 결과예요.'} 진학실에서 점수와 평가 기준을 확인하세요.`;
+        const applied = state.admissions.at(-1).applied !== false;
+        if (applied) applyEffects(state, { stress: accepted ? -8 : 8 });
+        text = applied
+          ? `${accepted ? '합격 기준 통과!' : '아쉬운 결과예요.'} 진학실에서 점수와 평가 기준을 확인하세요.`
+          : '지원하지 않은 전형입니다.';
       }
       notice(state, event.name, text, event.kind === 'notice' ? 'info' : 'event');
-    } else {
+    } else if (!Object.hasOwn(state.choices, id)) {
       state.pending.push(id);
       notice(state, event.name, event.description, 'choice');
     }

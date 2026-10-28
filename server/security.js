@@ -1,3 +1,4 @@
+import { COMMANDS } from '../src/domain/commands/index.js';
 export class ApiError extends Error {
   constructor(status, code, message) {
     super(message);
@@ -47,19 +48,9 @@ export async function readJson(request, maxBytes = 8192) {
     throw new ApiError(400, 'JSON_INVALID', 'JSON 형식이 올바르지 않아요.');
   }
 }
-const fields = {
-  create: ['type', 'profile'],
-  plan: ['type', 'index', 'activity', 'target'],
-  task_game: ['type', 'task', 'action'],
-  story: ['type', 'chapter', 'action'],
-  copy_day: ['type', 'sourceDay', 'days'],
-  preset: ['type', 'preset'],
-  advance: ['type', 'skipTask'],
-  choose: ['type', 'event', 'option', 'answers'],
-  buy: ['type', 'item'],
-  ending: ['type', 'ending'],
-  elective: ['type', 'course', 'term', 'enabled'],
-};
+const fields = Object.fromEntries(
+  Object.entries(COMMANDS).map(([id, definition]) => [id, definition.fields]),
+);
 const plain = (value) => value && typeof value === 'object' && !Array.isArray(value);
 export function validateCommand(command) {
   if (
@@ -72,9 +63,13 @@ export function validateCommand(command) {
   if (
     command.type === 'create' &&
     (!plain(command.profile) ||
-      !['name', 'character', 'role', 'major'].every((key) => Object.hasOwn(command.profile, key)) ||
+      !COMMANDS.create.profileShape.required.every((key) => Object.hasOwn(command.profile, key)) ||
       Object.keys(command.profile).some(
-        (k) => !['name', 'character', 'role', 'major', 'electives'].includes(k),
+        (k) =>
+          ![
+            ...COMMANDS.create.profileShape.required,
+            ...COMMANDS.create.profileShape.optional,
+          ].includes(k),
       ))
   )
     throw new ApiError(400, 'PROFILE_SHAPE', '프로필 형식이 올바르지 않아요.');
