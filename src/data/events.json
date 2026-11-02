@@ -1,0 +1,1463 @@
+[
+  {
+    "id": "clean",
+    "name": "방 청소",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "repeat": "weekly"
+    },
+    "work": {
+      "targetProgress": 1,
+      "perAction": 1
+    },
+    "deadline": {
+      "duration": 0
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "academy",
+    "name": "해냄 숙제",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "repeat": "monthly",
+      "months": [
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "monthEnd": true
+    },
+    "onComplete": {
+      "math": 3,
+      "reputation": 2
+    },
+    "onExpire": {
+      "math": -3,
+      "reputation": -3,
+      "stress": 4
+    }
+  },
+  {
+    "id": "thesis",
+    "name": "졸업논문 준비",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "week": 1
+    },
+    "work": {
+      "targetProgress": 4,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 12
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "archive",
+    "name": "수세 아카이빙",
+    "scope": "course",
+    "courseId": "math_seminar",
+    "kind": "task",
+    "trigger": {
+      "week": 1
+    },
+    "work": {
+      "targetProgress": 2,
+      "perAction": 1
+    },
+    "deadline": {
+      "duration": 0
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "project",
+    "name": "정과프 발표준비",
+    "scope": "course",
+    "courseId": "informatics_project",
+    "kind": "task",
+    "trigger": {
+      "week": 1
+    },
+    "work": {
+      "targetProgress": 2,
+      "perAction": 1
+    },
+    "deadline": {
+      "duration": 0
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "algo",
+    "name": "고급알고리즘 문제 만들기",
+    "scope": "course",
+    "courseId": "advanced_algorithms",
+    "kind": "task",
+    "trigger": {
+      "week": 2
+    },
+    "work": {
+      "targetProgress": 2,
+      "perAction": 1
+    },
+    "deadline": {
+      "duration": 0
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "english",
+    "name": "과기시영 수행",
+    "scope": "course",
+    "courseId": "science_english",
+    "kind": "task",
+    "trigger": {
+      "week": 2
+    },
+    "work": {
+      "targetProgress": 2,
+      "perAction": 1
+    },
+    "deadline": {
+      "duration": 0
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "lab",
+    "name": "일물 실험 보고서",
+    "scope": "course",
+    "courseId": "general_physics",
+    "kind": "task",
+    "trigger": {
+      "week": 2
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 5
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "chem_prep",
+    "name": "화학 퀴즈 공부",
+    "scope": "course",
+    "courseId": "general_chemistry",
+    "kind": "task",
+    "trigger": {
+      "week": 2
+    },
+    "work": {
+      "targetProgress": 2,
+      "perAction": 1
+    },
+    "deadline": {
+      "duration": 0
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "general_chemistry": -10,
+      "reputation": -2,
+      "stress": 5
+    }
+  },
+  {
+    "id": "lin1",
+    "name": "선형대수 퀴즈 1",
+    "kind": "exam",
+    "courseId": "linear_algebra",
+    "trigger": {
+      "week": 2
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "lin2",
+    "name": "선형대수 퀴즈 2",
+    "kind": "exam",
+    "courseId": "linear_algebra",
+    "trigger": {
+      "week": 4
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "phys",
+    "name": "물리세미나 퀴즈",
+    "kind": "exam",
+    "courseId": "physics_seminar",
+    "trigger": {
+      "week": 3
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "chem",
+    "name": "화학세미나 퀴즈",
+    "kind": "exam",
+    "courseId": "chemistry_seminar",
+    "trigger": {
+      "week": 3
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "bio",
+    "name": "생물세미나 퀴즈",
+    "kind": "exam",
+    "courseId": "biology_seminar",
+    "trigger": {
+      "week": 3
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "foreign",
+    "name": "외국어 퀴즈",
+    "kind": "exam",
+    "courseId": "foreign_language",
+    "trigger": {
+      "week": 4
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "spot",
+    "name": "쪽지시험",
+    "kind": "exam",
+    "courseId": "math_seminar",
+    "trigger": {
+      "week": 1
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "academy_notice",
+    "name": "해냄 숙제를 매달 완료해야 합니다.",
+    "kind": "natural",
+    "trigger": {
+      "week": 1
+    },
+    "effects": {}
+  },
+  {
+    "id": "thesis_notice",
+    "name": "졸업논문 준비를 시작해야 합니다.",
+    "kind": "natural",
+    "trigger": {
+      "week": 1
+    },
+    "effects": {}
+  },
+  {
+    "id": "chem_bomb",
+    "name": "화학 퀴즈가 터졌습니다. 원점수 평균 11/20",
+    "kind": "natural",
+    "trigger": {
+      "week": 3
+    },
+    "effects": {
+      "stress": 8,
+      "hp": -4
+    },
+    "courseId": "general_chemistry"
+  },
+  {
+    "id": "fridge",
+    "name": "냉장고 점검",
+    "kind": "natural",
+    "trigger": {
+      "week": 4
+    },
+    "effects": {
+      "reputation": -3,
+      "stress": 3
+    },
+    "condition": "dirty",
+    "cost": 1000
+  },
+  {
+    "id": "jeju1",
+    "name": "제주도 자연 탐사활동",
+    "kind": "natural",
+    "trigger": {
+      "week": 3
+    },
+    "effects": {
+      "hp": -14
+    },
+    "major": "생명과학",
+    "lockedDays": [
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "id": "jeju2",
+    "name": "생다이 제주도 탐사",
+    "kind": "natural",
+    "trigger": {
+      "week": 12
+    },
+    "effects": {
+      "stress": -12,
+      "hp": -12
+    },
+    "courseId": "biodiversity",
+    "lockedDays": [
+      4,
+      5,
+      6
+    ]
+  },
+  {
+    "id": "study",
+    "name": "스터디 인원 모집",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 0
+    },
+    "choices": [
+      {
+        "label": "찐친들 스터디",
+        "effects": {},
+        "study": "friends",
+        "chance": 1
+      },
+      {
+        "label": "안친하지만 열심히 하는 스터디",
+        "effects": {},
+        "study": "serious",
+        "chance": 0.7
+      },
+      {
+        "label": "노는 스터디",
+        "effects": {},
+        "study": "play",
+        "chance": 0.9
+      },
+      {
+        "label": "참여하지 않기",
+        "effects": {},
+        "study": "none",
+        "chance": 1
+      }
+    ]
+  },
+  {
+    "id": "home",
+    "name": "귀가주 학원 · 동아리",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 5
+    },
+    "choices": [
+      {
+        "label": "학원",
+        "effects": {
+          "math": 4,
+          "stress": 3
+        },
+        "cost": 1500,
+        "slots": 2
+      },
+      {
+        "label": "동아리",
+        "effects": {
+          "reputation": 3,
+          "stress": -3
+        },
+        "slots": 2
+      },
+      {
+        "label": "휴식",
+        "effects": {
+          "hp": 5,
+          "stress": -5
+        }
+      }
+    ]
+  },
+  {
+    "id": "after_exam",
+    "name": "중간고사 이후",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 8
+    },
+    "choices": [
+      {
+        "label": "게임",
+        "effects": {
+          "hp": -2,
+          "stress": -14
+        }
+      },
+      {
+        "label": "회식",
+        "effects": {
+          "stress": -12
+        },
+        "cost": 2000
+      },
+      {
+        "label": "잠",
+        "effects": {
+          "hp": 10,
+          "stress": -8
+        }
+      }
+    ]
+  },
+  {
+    "id": "arts",
+    "name": "인문예술주간",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 9
+    },
+    "choices": [
+      {
+        "label": "참여",
+        "effects": {
+          "reputation": 2,
+          "stress": -3
+        },
+        "slots": 3,
+        "interview": 3
+      },
+      {
+        "label": "공부하기",
+        "effects": {
+          "stress": 3,
+          "math": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "talk",
+    "name": "입시설명회 · 선배 강연",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 10
+    },
+    "choices": [
+      {
+        "label": "참여",
+        "effects": {
+          "reputation": 2,
+          "stress": -3
+        },
+        "slots": 3,
+        "interview": 3
+      },
+      {
+        "label": "공부하기",
+        "effects": {
+          "stress": 3,
+          "math": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "interview",
+    "name": "연합스터디 · 모의면접",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 10
+    },
+    "choices": [
+      {
+        "label": "참여",
+        "effects": {
+          "reputation": 2,
+          "stress": -3
+        },
+        "slots": 3,
+        "interview": 3
+      },
+      {
+        "label": "공부하기",
+        "effects": {
+          "stress": 3,
+          "math": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "photo",
+    "name": "졸업사진",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 11
+    },
+    "choices": [
+      {
+        "label": "드레스",
+        "effects": {
+          "reputation": 5
+        },
+        "cost": 2000
+      },
+      {
+        "label": "교복",
+        "effects": {
+          "reputation": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "olympiad",
+    "name": "세종정올 · 마크 · 릴스 대전",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 11
+    },
+    "choices": [
+      {
+        "label": "정올",
+        "effects": {
+          "stress": 3
+        },
+        "competition": true,
+        "slots": 2
+      },
+      {
+        "label": "마크",
+        "effects": {
+          "stress": -8,
+          "hp": -1
+        }
+      },
+      {
+        "label": "릴스",
+        "effects": {
+          "stress": -7
+        }
+      }
+    ]
+  },
+  {
+    "id": "math_report",
+    "name": "수세보고서",
+    "scope": "course",
+    "courseId": "math_seminar",
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 4,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 15
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "thesis_finish",
+    "name": "졸업논문 마무리",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 6,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 16
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    },
+    "requires": "thesis"
+  },
+  {
+    "id": "reflection",
+    "name": "소감문",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "week": 16
+    },
+    "work": {
+      "targetProgress": 2,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 18
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "june_linear_algebra",
+    "name": "기말 퀴즈",
+    "kind": "exam",
+    "courseId": "linear_algebra",
+    "trigger": {
+      "week": 14
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "june_advanced_algorithms",
+    "name": "기말 퀴즈",
+    "kind": "exam",
+    "courseId": "advanced_algorithms",
+    "trigger": {
+      "week": 14
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "june_biodiversity",
+    "name": "기말 퀴즈",
+    "kind": "exam",
+    "courseId": "biodiversity",
+    "trigger": {
+      "week": 14
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "june_math_seminar",
+    "name": "기말 퀴즈",
+    "kind": "exam",
+    "courseId": "math_seminar",
+    "trigger": {
+      "week": 14
+    },
+    "grade": {
+      "assessmentId": "quiz",
+      "randomness": 6
+    }
+  },
+  {
+    "id": "final_task_informatics_project",
+    "name": "정과프 수행",
+    "scope": "course",
+    "courseId": "informatics_project",
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 16
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "final_task_physics_seminar",
+    "name": "물세 문제만들기",
+    "scope": "course",
+    "courseId": "physics_seminar",
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 16
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "final_task_general_physics",
+    "name": "일물 실험보고서",
+    "scope": "course",
+    "courseId": "general_physics",
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 16
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "final_task_linear_algebra",
+    "name": "선대 수행",
+    "scope": "course",
+    "courseId": "linear_algebra",
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 16
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "final_task_visual_communication",
+    "name": "비커 수행",
+    "scope": "course",
+    "courseId": "visual_communication",
+    "kind": "task",
+    "trigger": {
+      "week": 13
+    },
+    "work": {
+      "targetProgress": 3,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 16
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "teacher",
+    "name": "추천서 선생님",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 13
+    },
+    "choices": [
+      {
+        "label": "수학 선생님",
+        "effects": {},
+        "teacher": "math"
+      },
+      {
+        "label": "전공 선생님",
+        "effects": {},
+        "teacher": "major"
+      },
+      {
+        "label": "담임 선생님",
+        "effects": {},
+        "teacher": "homeroom"
+      }
+    ]
+  },
+  {
+    "id": "summer",
+    "name": "여름방학 학습 장소",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 17
+    },
+    "choices": [
+      {
+        "label": "관리형 스카",
+        "effects": {},
+        "place": "managed"
+      },
+      {
+        "label": "스터디카페",
+        "effects": {},
+        "place": "cafe"
+      },
+      {
+        "label": "집",
+        "effects": {},
+        "place": "home"
+      }
+    ]
+  },
+  {
+    "id": "summer_academy",
+    "name": "방학 학원",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 17
+    },
+    "choices": [
+      {
+        "label": "학원 위주",
+        "effects": {
+          "stress": 3
+        },
+        "summer": "academy"
+      },
+      {
+        "label": "자습 위주",
+        "effects": {},
+        "summer": "self"
+      },
+      {
+        "label": "쉬기",
+        "effects": {
+          "stress": -8
+        },
+        "summer": "rest"
+      }
+    ]
+  },
+  {
+    "id": "essay_idea",
+    "name": "자소서 구상",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "week": 17
+    },
+    "work": {
+      "targetProgress": 4,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 24
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "compass",
+    "name": "나침반 활동",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 19
+    },
+    "choices": [
+      {
+        "label": "참여",
+        "effects": {
+          "reputation": 3
+        },
+        "slots": 2
+      },
+      {
+        "label": "쉬기",
+        "effects": {
+          "stress": -3
+        }
+      }
+    ]
+  },
+  {
+    "id": "external",
+    "name": "외부대회",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 20
+    },
+    "choices": [
+      {
+        "label": "참가",
+        "effects": {
+          "stress": 3
+        },
+        "competition": true,
+        "slots": 3
+      },
+      {
+        "label": "교내 학습",
+        "effects": {
+          "math": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "applications",
+    "name": "원서 작성",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "week": 25
+    },
+    "work": {
+      "targetProgress": 4,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 28
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    }
+  },
+  {
+    "id": "essay",
+    "name": "자소서 작성",
+    "scope": "common",
+    "courseId": null,
+    "kind": "task",
+    "trigger": {
+      "week": 25
+    },
+    "work": {
+      "targetProgress": 8,
+      "perAction": 1
+    },
+    "deadline": {
+      "at": 28
+    },
+    "onComplete": {
+      "reputation": 1
+    },
+    "onExpire": {
+      "reputation": -2,
+      "stress": 3
+    },
+    "reputationProgress": true
+  },
+  {
+    "id": "info",
+    "name": "원서 지원 정보",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 25
+    },
+    "choices": [
+      {
+        "label": "정보 교환",
+        "effects": {
+          "stress": 6,
+          "hp": -3
+        },
+        "information": true
+      },
+      {
+        "label": "직접 확인",
+        "effects": {
+          "stress": 4,
+          "hp": -2
+        }
+      }
+    ]
+  },
+  {
+    "id": "union",
+    "name": "연합스터디",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 26
+    },
+    "choices": [
+      {
+        "label": "모의면접",
+        "effects": {
+          "stress": 2
+        },
+        "interview": 5,
+        "slots": 2
+      },
+      {
+        "label": "면접관 · 문제 만들기",
+        "effects": {
+          "math": 2
+        },
+        "interview": 3,
+        "slots": 2
+      }
+    ]
+  },
+  {
+    "id": "chuseok",
+    "name": "추석 연휴",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 27
+    },
+    "choices": [
+      {
+        "label": "특강",
+        "effects": {
+          "math": 4,
+          "stress": 4
+        },
+        "cost": 3000,
+        "slots": 3
+      },
+      {
+        "label": "놀기",
+        "effects": {
+          "stress": -12,
+          "hp": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": "yonsei",
+    "name": "연논",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 29
+    },
+    "choices": [
+      {
+        "label": "응시",
+        "effects": {},
+        "admission": "yonsei",
+        "slots": 3
+      },
+      {
+        "label": "다음 일정 준비",
+        "effects": {
+          "stress": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "creative",
+    "name": "창의도전",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 31
+    },
+    "choices": [
+      {
+        "label": "응시",
+        "effects": {},
+        "admission": "creative",
+        "slots": 3
+      },
+      {
+        "label": "다음 일정 준비",
+        "effects": {
+          "stress": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "korea",
+    "name": "고대",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 33
+    },
+    "choices": [
+      {
+        "label": "응시",
+        "effects": {},
+        "admission": "korea",
+        "slots": 3
+      },
+      {
+        "label": "다음 일정 준비",
+        "effects": {
+          "stress": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "suneung",
+    "name": "수능",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 34
+    },
+    "choices": [
+      {
+        "label": "응시",
+        "effects": {},
+        "admission": "suneung",
+        "slots": 3
+      },
+      {
+        "label": "다음 일정 준비",
+        "effects": {
+          "stress": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "skp",
+    "name": "설카포",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 35
+    },
+    "choices": [
+      {
+        "label": "응시",
+        "effects": {},
+        "admission": "skp",
+        "slots": 3
+      },
+      {
+        "label": "다음 일정 준비",
+        "effects": {
+          "stress": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "ending",
+    "name": "입시 결과 · 진로 선택",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 40
+    },
+    "choices": [
+      {
+        "label": "대학 진학",
+        "effects": {},
+        "ending": "university",
+        "requiresOffer": true
+      },
+      {
+        "label": "재수",
+        "effects": {},
+        "ending": "retry"
+      },
+      {
+        "label": "알바",
+        "effects": {},
+        "ending": "job"
+      },
+      {
+        "label": "창업",
+        "effects": {},
+        "ending": "startup"
+      },
+      {
+        "label": "불법 도박장 운영",
+        "effects": {},
+        "ending": "prison"
+      }
+    ]
+  },
+  {
+    "id": "lost",
+    "name": "친구 분실물 찾아주기",
+    "kind": "natural",
+    "trigger": {
+      "week": 6
+    },
+    "effects": {
+      "reputation": 2
+    },
+    "reward": 2000
+  },
+  {
+    "id": "birthday",
+    "name": "생일",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 15
+    },
+    "choices": [
+      {
+        "label": "친구와 함께",
+        "effects": {
+          "stress": -5
+        },
+        "birthday": true,
+        "cost": 1000
+      },
+      {
+        "label": "휴식",
+        "effects": {
+          "hp": 4,
+          "stress": -4
+        }
+      }
+    ]
+  },
+  {
+    "id": "dorm",
+    "name": "배달음식 · 타방",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 7
+    },
+    "choices": [
+      {
+        "label": "규칙 지키기",
+        "effects": {
+          "reputation": 1
+        }
+      },
+      {
+        "label": "몰래 놀기",
+        "effects": {
+          "stress": -10,
+          "reputation": -3
+        },
+        "cost": 2000,
+        "violation": true
+      }
+    ]
+  },
+  {
+    "id": "chat",
+    "name": "카톡이 털렸다",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 23
+    },
+    "choices": [
+      {
+        "label": "사과하기",
+        "effects": {
+          "reputation": 2,
+          "stress": 2
+        }
+      },
+      {
+        "label": "방치",
+        "effects": {
+          "reputation": -4,
+          "stress": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": "gostop",
+    "name": "기숙사 고스톱",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 30
+    },
+    "choices": [
+      {
+        "label": "구경",
+        "effects": {
+          "stress": -4
+        }
+      },
+      {
+        "label": "돈 걸기",
+        "effects": {
+          "stress": -9,
+          "reputation": -4
+        },
+        "cost": 2000,
+        "violation": true
+      }
+    ]
+  },
+  {
+    "id": "riddle",
+    "name": "세상에서 가장 뜨거운 바다는?",
+    "kind": "choice",
+    "scope": "common",
+    "trigger": {
+      "week": 22
+    },
+    "choices": [
+      {
+        "label": "열바다",
+        "effects": {
+          "stress": -4,
+          "reputation": 1
+        }
+      },
+      {
+        "label": "남극해",
+        "effects": {
+          "stress": 1
+        }
+      },
+      {
+        "label": "태평양",
+        "effects": {
+          "stress": 1
+        }
+      }
+    ]
+  }
+]
