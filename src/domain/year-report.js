@@ -1,6 +1,7 @@
 import { activities, roles, STATS } from './catalog.js';
 import { baseState } from './state.js';
 import { gpa } from './grades.js';
+import { classmateResults } from './classmates.js';
 export function yearReport(state) {
   const counts = {};
   for (const entry of state.history)
@@ -32,6 +33,7 @@ export function yearReport(state) {
       .sort(([, a], [, b]) => b - a)
       .map(([id, count]) => ({ id, name: activities[id].name, count })),
     accepted: state.admissions.filter((result) => result.accepted).map((result) => result.name),
+    classmates: classmateResults(state) ?? [],
     milestones: [
       ['thesis', '졸업논문'],
       ['essay', '자기소개서'],

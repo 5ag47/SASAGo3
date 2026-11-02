@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Moon,
   Pencil,
+  PencilLine,
   Sparkles,
   Users,
 } from 'lucide-react';
@@ -26,6 +27,7 @@ export const ACTIVITY_ICONS = {
   club: Sparkles,
   academy: Brain,
   science_academy: FlaskConical,
+  csat_study: PencilLine,
   lecture: BookOpen,
   clean: Home,
   exercise: Heart,

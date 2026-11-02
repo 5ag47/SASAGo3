@@ -474,3 +474,55 @@
     margin-top: 10px;
   }
 }
+
+/* Senior-year pressure: season label, weekend forecast and strain stages. */
+.planner-panel h2 > .season-label.busy {
+  color: #b07f6e;
+  border-left-color: #ead7cc;
+}
+.week-forecast {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  background: var(--sasa-green);
+  color: #6f8569;
+  font-size: 9px;
+}
+.week-forecast > b {
+  font-weight: 550;
+  color: var(--sasa-ink);
+}
+.week-forecast > em {
+  margin-left: auto;
+  font-style: normal;
+  font-weight: 600;
+}
+.week-forecast.stage-1 {
+  background: var(--sasa-sand);
+  color: #94805a;
+}
+.week-forecast.stage-2 {
+  background: var(--sasa-rose);
+  color: #af7767;
+}
+.week-forecast.stage-3 {
+  background: #f1dcd6;
+  color: #9c5b4b;
+}
+.fatigue-tag.stage-1 {
+  color: #94805a;
+  background: var(--sasa-sand);
+}
+.fatigue-tag.stage-3 {
+  color: #fffdf7;
+  background: #b07f6e;
+}
+.ending-school {
+  display: block;
+  margin: 4px 0 6px;
+  color: var(--sasa-navy);
+  font-size: 15px;
+}

@@ -2,6 +2,7 @@ import { ArrowUpRight, Check, ClipboardList, Heart } from 'lucide-react';
 import { characterImage, dayRoom, nightRoom } from '../../assets.js';
 import { activeTasks } from '../../domain/catalog.js';
 import { Progress, StatList } from './ui.jsx';
+import { STRAIN_STAGES } from '../../domain/senior-year.js';
 
 export default function Scene({ state, night, onOpen, onTask }) {
   const tasks = activeTasks(state).sort((a, b) => a.deadline - b.deadline);
@@ -68,7 +69,11 @@ export default function Scene({ state, night, onOpen, onTask }) {
           <div>
             <h2>
               <Heart size={14} /> 능력치{' '}
-              {state.fatigue ? <small className="fatigue-tag">피로</small> : null}
+              {state.fatigue ? (
+                <small className={`fatigue-tag stage-${state.fatigue}`}>
+                  {STRAIN_STAGES[state.fatigue].name}
+                </small>
+              ) : null}
             </h2>
             <button
               data-tutorial="stats"

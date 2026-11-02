@@ -82,6 +82,7 @@ export function reviewPlan(state) {
         ];
       }),
     missingGroup: Boolean(state.group) && !plan.some((slot) => slot.activity === 'study_group'),
-    hasFatigue: Boolean(state.fatigue),
+    hasFatigue: state.fatigue >= 2,
+    strain: state.fatigue,
   };
 }

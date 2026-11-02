@@ -31,12 +31,24 @@ export const ENDINGS = {
     description: '학업을 잠시 멈추기로 했다. 지금까지의 기록은 보관한다.',
   },
 };
+const SCHOOL_ORDER = ['top_interview', 'kaist_postech', 'korea_university'];
+// The offer a student would most likely register at: comprehensive routes by rank, then the rest.
+export function bestOffer(state) {
+  const offers = state.admissions.filter((a) => a.accepted);
+  return (
+    [...offers].sort(
+      (a, b) =>
+        (SCHOOL_ORDER.indexOf(a.profile) + 1 || 9) - (SCHOOL_ORDER.indexOf(b.profile) + 1 || 9),
+    )[0] ?? null
+  );
+}
 export function endingAvailable(state, id) {
   if (id === 'leave') return true;
   if (state.week <= LAST_WEEK) return false;
   if (state.discipline >= 5 && state.choices.temptation === 'cheat') return id === 'prison';
   if (id === 'prison') return false;
   if (id === 'university') return state.admissions.some((a) => a.accepted);
-  if (id === 'startup') return state.stats.science >= 55 && state.stats.reputation >= 40;
+  if (id === 'startup')
+    return state.stats.science >= 70 && state.stats.reputation >= 55 && state.awards >= 1;
   return ['retry', 'work'].includes(id);
 }

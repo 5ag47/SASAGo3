@@ -10,7 +10,7 @@ import { assess, resolveAdmission } from '../../src/domain/grades.js';
 import { effectivePlan, lockedSlots } from '../../src/domain/week.js';
 import { reviewPlan, taskAllocation } from '../../src/domain/planning.js';
 import { assessmentsAt, nextAssessments } from '../../src/domain/school-calendar.js';
-import { events, courses, quizzes, period } from '../../src/domain/catalog.js';
+import { events, courses, quizzes, period, TUTORIAL_LAST_WEEK } from '../../src/domain/catalog.js';
 const profile = { name: '확장 테스트', character: 'girl', role: 'steady', major: 'math' };
 test('the finished year shows graduation rather than wrapping back to December week one', () => {
   assert.equal(period(40).weekOfMonth, 4);
@@ -88,7 +88,9 @@ test('task coverage counts actual locked schedule and recognizes subject study',
   assert.equal(taskAllocation(state, state.tasks['first-study']).covered, true);
   state.flags.reservations = { 0: [{ index: 0, activity: 'lecture', event: 'career_sessions' }] };
   assert.equal(taskAllocation(state, state.tasks['first-study']).slots, 0);
-  assert.equal(reviewPlan(state).due.length, 2);
+  // Practice tasks stay open through the tutorial period instead of closing with the winter week.
+  assert.equal(reviewPlan(state).due.length, 0);
+  assert.equal(reviewPlan({ ...state, week: TUTORIAL_LAST_WEEK }).due.length, 2);
 });
 test('event attendance consumes the shared work budget and keeps its fixed slots', () => {
   const state = fresh();
@@ -189,6 +191,7 @@ test('all six endings are reachable with their stated conditions', () => {
     state.week = ending === 'leave' ? 3 : 41;
     state.stats.science = 70;
     state.stats.reputation = 60;
+    state.awards = 1;
     if (ending === 'university')
       state.admissions.push({
         name: '합격',

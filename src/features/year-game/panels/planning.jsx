@@ -1,12 +1,13 @@
 import { activities, courses, DAYS } from '../../../domain/catalog.js';
 import { effectivePlan, lockedSlots } from '../../../domain/week.js';
 import WeekReviewPanel from '../WeekReviewPanel.jsx';
+import { tutorialOpen } from '../tutorial.js';
 import DayCopy from '../DayCopy.jsx';
 import WeekRunPanel from '../WeekRunPanel.jsx';
 import ActivityPicker from '../ActivityPicker.jsx';
 import { ActivityIcon, activityName, SESSIONS } from '../ui.jsx';
 export default function PlanningPanels(context) {
-  const { state, modal, ui } = context;
+  const { state, modal, tutorial, ui } = context;
   const { busy, send, notify } = context.game;
   const { copyDay, slot, assign, close, advance, open, openEvent, setModal } = ui;
   return (
@@ -81,6 +82,11 @@ export default function PlanningPanels(context) {
         <WeekReviewPanel
           state={state}
           busy={busy}
+          tutorialLeft={
+            tutorialOpen(state, tutorial.count, tutorial.total)
+              ? tutorial.total - tutorial.count
+              : 0
+          }
           onStart={() => advance()}
           onTaskGame={(taskId) => setModal({ type: 'taskGame', taskId })}
           onSchedule={() => open('schedule')}

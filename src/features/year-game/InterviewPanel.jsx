@@ -1,13 +1,28 @@
 import { MessageCircle, Check, Minus } from 'lucide-react';
-import { INTERVIEW_QUESTIONS } from '../../domain/interview.js';
+import {
+  answerFeedback,
+  answerPoints,
+  INTERVIEW_QUESTIONS,
+  interviewSpec,
+  interviewView,
+} from '../../domain/interview.js';
 import { ChoiceButton } from './ui.jsx';
 import './minigames.css';
 
-export default function InterviewPanel({ game, busy, onAnswer, onDone }) {
+// Questions come from the student's own record. Interviews answered before 2026.11 keep
+// their original fixed questions so the review still matches what was asked.
+function questionsFor(state, game) {
+  if (game && !game.questions) return { legacy: true, spec: null, views: INTERVIEW_QUESTIONS };
+  const spec = game?.questions ?? interviewSpec(state);
+  return { legacy: false, spec, views: interviewView(spec) };
+}
+
+export default function InterviewPanel({ state, game, busy, onAnswer, onDone }) {
   const answers = game?.answers ?? [];
   const finished = game?.phase === 'finished';
   const abandoned = game?.phase === 'abandoned';
-  const question = INTERVIEW_QUESTIONS[answers.length];
+  const { legacy, spec, views } = questionsFor(state, game);
+  const question = views[answers.length];
   return (
     <section className="interview-game">
       <span className="event-kicker">
@@ -16,24 +31,26 @@ export default function InterviewPanel({ game, busy, onAnswer, onDone }) {
           ? '결과'
           : abandoned
             ? '기한 종료'
-            : `· 질문 ${answers.length + 1} / ${INTERVIEW_QUESTIONS.length}`}
+            : `· 질문 ${answers.length + 1} / ${views.length}`}
       </span>
       {finished || abandoned ? (
         <>
           <h3 className="event-title">{finished ? `${game.score}점` : '면접이 종료되었습니다.'}</h3>
           <ol className="interview-review">
             {answers.map((answer, index) => {
-              const question = INTERVIEW_QUESTIONS[index];
-              const good = answer === question.correct;
+              const view = views[index];
+              const good = legacy
+                ? answer === view.correct
+                : answerPoints(spec[index], answer) >= 0.8;
               return (
-                <li key={question.text}>
+                <li key={view.text}>
                   <b>
                     {good ? <Check size={16} /> : <Minus size={16} />} 질문 {index + 1} ·{' '}
-                    {good ? '적절한 답변' : '다시 살펴보기'}
+                    {good ? '좋은 답변' : '다시 살펴보기'}
                   </b>
-                  <p>{question.text}</p>
-                  <span>내 답변 · {question.options[answer]}</span>
-                  <p>{question.explanation}</p>
+                  <p>{view.text}</p>
+                  <span>내 답변 · {view.options[answer]}</span>
+                  <p>{legacy ? view.explanation : answerFeedback(spec[index], answer)}</p>
                 </li>
               );
             })}
@@ -45,7 +62,7 @@ export default function InterviewPanel({ game, busy, onAnswer, onDone }) {
       ) : (
         <>
           <div className="interview-progress" aria-label={`${answers.length}개 답변 완료`}>
-            {INTERVIEW_QUESTIONS.map((_, index) => (
+            {views.map((_, index) => (
               <i
                 key={index}
                 className={

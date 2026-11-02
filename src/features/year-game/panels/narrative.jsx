@@ -4,6 +4,7 @@ import { availableChapters } from '../../../domain/story.js';
 import StoryPanel from '../StoryPanel.jsx';
 import EventDialog from '../EventDialog.jsx';
 import { NoticesPanel, RecordsPanel, WeekResult } from '../RecordPanels.jsx';
+import { tutorialOpen, TUTORIAL_UNTIL } from '../tutorial.js';
 export default function NarrativePanels(context) {
   const { state, modal, tutorial, ui } = context;
   const { busy, send } = context.game;
@@ -72,13 +73,14 @@ export default function NarrativePanels(context) {
           onContinue={continueWeek}
           onRead={tutorial.readResult}
         >
-          {state.history.at(-1).week === 0 && (
+          {tutorialOpen(state, tutorial.count, tutorial.total) && (
             <div className="tutorial-recap">
               <b>
-                겨울방학 실습 {tutorial.count}/{tutorial.total}
+                연습 {tutorial.count}/{tutorial.total}
+                {tutorial.count < tutorial.total && ` · 남은 단원은 ${TUTORIAL_UNTIL}까지`}
               </b>
               <button className="subtle" onClick={() => open('tutorial')}>
-                연습 내용 다시 보기
+                {tutorial.count < tutorial.total ? '남은 단원 이어하기' : '연습 내용 다시 보기'}
               </button>
             </div>
           )}

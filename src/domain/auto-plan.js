@@ -3,18 +3,10 @@ import { lockedSlots } from './schedule.js';
 import { taskEstimate } from './task-modules/registry.js';
 import { courseMastery } from './course-progress.js';
 import { balance } from './balance.js';
+import { isVacation, WORK_ACTIVITIES } from './senior-year.js';
 
 const workOrder = [0, 3, 6, 9, 12, 15, 18, 1, 10, 4, 13, 7, 16, 19, 2, 5, 8, 11, 14, 17, 20];
-const workActivities = [
-  'study',
-  'task',
-  'research',
-  'academy',
-  'science_academy',
-  'interview',
-  'essay',
-  'lecture',
-];
+const workActivities = [...WORK_ACTIVITIES, 'lecture'];
 export function buildPreset(state, preset = 'balanced') {
   const locked = lockedSlots(state);
   const free = workOrder.filter((index) => !locked[index]);
@@ -35,7 +27,7 @@ export function buildPreset(state, preset = 'balanced') {
     workActivities.includes(slot.activity),
   ).length;
   const budget =
-    state.fatigue ||
+    state.fatigue >= 2 ||
     state.stats.hp < balance.learning.lowHealth ||
     state.stats.stress >= balance.learning.stressThreshold
       ? balance.presets.recoveryWorkSlots
@@ -81,6 +73,15 @@ export function buildPreset(state, preset = 'balanced') {
         target: subjectOrder[(studyCount++ + state.week) % subjectOrder.length],
       };
     }
+  }
+  // CSAT preparation competes with coursework: one study slot a week, two in vacation.
+  if (state.flags.csat === 'prepare' && state.week <= 33) {
+    let csat = isVacation(state.week) ? 2 : 1;
+    for (const index of [...workSlots].reverse())
+      if (csat > 0 && plan[index].activity === 'study') {
+        plan[index] = { activity: 'csat_study', target: null };
+        csat--;
+      }
   }
   const assignSocial = (preferred, activity, target = null) => {
     const index = [preferred, ...free].find(

@@ -1,5 +1,6 @@
 import { createGame, transition, endingAvailable } from '../../src/domain/engine.js';
-import { choiceOptions, INTERVIEW_QUESTIONS } from '../../src/domain/choices.js';
+import { choiceOptions } from '../../src/domain/choices.js';
+import { bestInterviewAnswers, interviewSpec } from '../../src/domain/interview.js';
 import { courses, events, quizzes } from '../../src/domain/catalog.js';
 import { gpa } from '../../src/domain/grades.js';
 import { lockedSlots } from '../../src/domain/schedule.js';
@@ -43,7 +44,8 @@ function chooseWeek(state, strategy, target) {
       state = transition(state, {
         type: 'choose',
         event: id,
-        answers: INTERVIEW_QUESTIONS.map((q) => q.correct),
+        // The policy answers as a student who knows their own record.
+        answers: bestInterviewAnswers(interviewSpec(state)),
       });
     else {
       let option = normalChoices[id];
@@ -81,6 +83,8 @@ export function simulateYear({
   let state = createGame({ name: '전략 검증', character: 'boy', role, major, electives }, seed);
   let minimumMoney = state.money,
     fatigueWeeks = 0,
+    strainWeeks = 0,
+    peakStress = 0,
     totalTasks = 0;
   while (state.week <= 40) {
     onWeek(state);
@@ -108,7 +112,7 @@ export function simulateYear({
         }
       }
     }
-    if (strategy === 'portfolio' && state.stats.hp >= 50 && state.stats.stress < 50) {
+    if (strategy === 'portfolio' && state.stats.hp >= 45 && state.stats.stress < 65) {
       const index = state.plan.findIndex(
         (slot, index) => !lockedSlots(state)[index] && slot.activity === 'sleep',
       );
@@ -146,7 +150,9 @@ export function simulateYear({
     }
     state = runPlannedWeek(state);
     minimumMoney = Math.min(minimumMoney, state.money);
-    fatigueWeeks += Number(Boolean(state.fatigue));
+    fatigueWeeks += Number(state.fatigue >= 2);
+    strainWeeks += Number(state.fatigue >= 1);
+    peakStress = Math.max(peakStress, state.stats.stress);
   }
   const tasks = Object.values(state.tasks).filter(
     (task) => !['tutorial', 'practice'].includes(task.special),
@@ -163,6 +169,9 @@ export function simulateYear({
     completed: tasks.filter((task) => task.status === 'completed').length,
     expired: tasks.filter((task) => task.status === 'expired').length,
     fatigueWeeks,
+    strainWeeks,
+    peakStress,
+    csatGrade: state.flags.csatGrade ?? null,
     money: state.money,
     minimumMoney,
     admissions: state.admissions.filter((a) => a.accepted).length,

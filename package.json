@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "play": "node tools/play.mjs",
+    "play:login": "node tools/play.mjs --login",
     "dev": "vite --host 127.0.0.1",
     "dev:secure": "node --env-file-if-exists=.env.local tools/dev-secure.mjs",
     "build": "vite build",

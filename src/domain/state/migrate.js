@@ -1,4 +1,4 @@
-import { courses, TUTORIAL_TASKS } from '../catalog.js';
+import { courses, TUTORIAL_LAST_WEEK, TUTORIAL_TASKS } from '../catalog.js';
 import { emptyMinigames } from '../minigames.js';
 import { upgradeTaskFlow } from '../task-flow-migration.js';
 import { defaultTaskGame } from '../task-modules/registry.js';
@@ -259,4 +259,48 @@ export function migrateState(value) {
   }
   return next;
 }
-export const SAVE_MIGRATIONS = Object.freeze([...LEGACY_SAVE_MIGRATIONS, schoolRecordMigration]);
+// 2026.11: fatigue became a 0~3 strain stage and CSAT became an opt-in exam.
+// Old 'fatigue' (0.65 efficiency) maps to stage 2; saves past the CSAT decision keep taking it.
+const seniorYearMigration = {
+  id: 'senior-year-pressure',
+  apply(next) {
+    if (!next.created || !next.flags || next.flags.seniorYearVersion) return next;
+    return {
+      ...next,
+      fatigue: next.fatigue ? 2 : 0,
+      flags: {
+        ...next.flags,
+        seniorYearVersion: 1,
+        ...(next.week > 18 && next.flags.csat === undefined ? { csat: 'prepare' } : {}),
+      },
+    };
+  },
+};
+// 2026.11: practice tasks used to expire with the winter week, which made the remaining lessons
+// impossible after practising "한 주 진행". Saves still inside the window get them back.
+const tutorialWindowMigration = {
+  id: 'tutorial-practice-period',
+  apply(next) {
+    if (!next.created || !next.tasks || next.week > TUTORIAL_LAST_WEEK) return next;
+    const reopened = Object.keys(TUTORIAL_TASKS).filter(
+      (id) =>
+        next.tasks[id] &&
+        next.tasks[id].status !== 'completed' &&
+        next.tasks[id].deadline < TUTORIAL_LAST_WEEK,
+    );
+    if (!reopened.length) return next;
+    const tasks = { ...next.tasks };
+    for (const id of reopened) {
+      const { result, ...task } = tasks[id];
+      void result;
+      tasks[id] = { ...task, status: 'active', deadline: TUTORIAL_LAST_WEEK };
+    }
+    return { ...next, tasks };
+  },
+};
+export const SAVE_MIGRATIONS = Object.freeze([
+  ...LEGACY_SAVE_MIGRATIONS,
+  schoolRecordMigration,
+  seniorYearMigration,
+  tutorialWindowMigration,
+]);

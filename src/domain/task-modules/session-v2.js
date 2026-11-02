@@ -31,7 +31,7 @@ export const SESSION_DEFAULTS = Object.freeze({
 export function sessionSettings(params = {}) {
   return { ...SESSION_DEFAULTS, ...params };
 }
-function validate(params) {
+function validate(params, rules = {}) {
   if (!params || typeof params !== 'object' || Array.isArray(params))
     return ['params 객체가 필요합니다.'];
   const issues = [];
@@ -44,7 +44,14 @@ function validate(params) {
   )
     issues.push('weeklyLimit: 1~1000 또는 null이 필요합니다.');
   for (const key of Object.keys(params))
-    if (!Object.hasOwn(SESSION_DEFAULTS, key)) issues.push(`알 수 없는 설정: ${key}`);
+    if (!Object.hasOwn(SESSION_DEFAULTS, key) && !Object.hasOwn(rules, key))
+      issues.push(`알 수 없는 설정: ${key}`);
+  // Game-specific settings (labels, layouts) are checked by the game that reads them.
+  for (const [key, rule] of Object.entries(rules))
+    if (params[key] !== undefined) {
+      const message = rule(params[key]);
+      if (message) issues.push(`${key}: ${message}`);
+    }
   for (const key of ['cost', 'success', 'mistake', 'failure', 'earlyEffect'])
     if (params[key] !== undefined) {
       const value = params[key];
@@ -74,12 +81,12 @@ function validate(params) {
       issues.push(`${key}: ${min}~${max} 범위가 필요합니다.`);
   return issues;
 }
-export function makeSessionModule(base, id) {
+export function makeSessionModule(base, id, rules = {}) {
   return {
     ...base,
     id,
     session: true,
-    validate,
+    validate: (params) => validate(params, rules),
     game: {
       ...base.game,
       preview(data, action) {

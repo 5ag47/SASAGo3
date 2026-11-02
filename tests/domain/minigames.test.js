@@ -5,7 +5,12 @@ import { beginWeek } from '../../src/domain/events.js';
 import { choiceDeadline, events } from '../../src/domain/catalog.js';
 import { choiceOptions } from '../../src/domain/choices.js';
 import { CARD_ROUNDS, cardMonth, cardScore } from '../../src/domain/card-game.js';
-import { INTERVIEW_QUESTIONS } from '../../src/domain/interview.js';
+import {
+  bestInterviewAnswers,
+  INTERVIEW_QUESTIONS,
+  interviewScore,
+  interviewSpec,
+} from '../../src/domain/interview.js';
 import { migrateState, validateState } from '../../src/domain/state.js';
 
 const choose = (state, event, option) => transition(state, { type: 'choose', event, option });
@@ -29,9 +34,10 @@ function bestMove(state) {
 
 test('each interview answer persists through reload and is not overwritten by a batch submission', () => {
   const source = atEvent('interview_day');
-  const first = choose(source, 'interview_day', 'answer:1');
+  const best = bestInterviewAnswers(interviewSpec(source));
+  const first = choose(source, 'interview_day', `answer:${best[0]}`);
   assert.equal(source.minigames.interview, null);
-  assert.deepEqual(first.minigames.interview.answers, [1]);
+  assert.deepEqual(first.minigames.interview.answers, [best[0]]);
   assert.equal(first.interviewScore, 0);
   const restored = migrateState(JSON.parse(JSON.stringify(first)));
   assert.ok(validateState(restored));
@@ -39,11 +45,14 @@ test('each interview answer persists through reload and is not overwritten by a 
     () => transition(restored, { type: 'choose', event: 'interview_day', answers: [0, 0, 0] }),
     { code: 'ANSWERS_INVALID' },
   );
-  const second = choose(restored, 'interview_day', 'answer:2');
-  const final = choose(second, 'interview_day', 'answer:0');
-  assert.deepEqual(final.minigames.interview.answers, [1, 2, 0]);
+  const second = choose(restored, 'interview_day', `answer:${best[1]}`);
+  const final = choose(second, 'interview_day', `answer:${best[2]}`);
+  assert.deepEqual(final.minigames.interview.answers, best);
   assert.equal(final.minigames.interview.phase, 'finished');
-  assert.equal(final.minigames.interview.score, Math.round(70 + source.stats.speech * 0.3));
+  assert.equal(
+    final.minigames.interview.score,
+    interviewScore(first.minigames.interview.questions, best, source.stats.speech),
+  );
   assert.ok(final.stats.speech > source.stats.speech);
   assert.ok(final.stats.speech < source.stats.speech + 6);
   assert.equal(final.notices.filter((n) => n.title === '실전 면접 기록').length, 1);

@@ -186,7 +186,7 @@
       {
         "id": "review",
         "label": "성적과 지원 준비도 점검",
-        "detail": "담임 친밀도 +5 · 집중력 +3",
+        "detail": "담임 친밀도 +5 · 집중력 +3 · 수능 준비 여부도 상담",
         "effect": {
           "focus": 3
         },
@@ -197,9 +197,12 @@
       {
         "id": "self",
         "label": "성적표를 보고 혼자 계획",
-        "detail": "스트레스 -2",
+        "detail": "스트레스 -2 · 수능은 준비하지 않음",
         "effect": {
           "stress": -2
+        },
+        "flags": {
+          "csat": "skip"
         }
       }
     ]
@@ -303,5 +306,46 @@
         }
       }
     ]
+  },
+  "csat_decision": {
+    "week": 18,
+    "kind": "choice",
+    "name": "수능, 준비할까?",
+    "description": "담임 선생님이 수능 최저와 정시 이야기를 꺼냈다. 수시 원서와 수능 대비를 함께 끌고 갈지 정해야 한다.",
+    "when": {
+      "flag": "counseled",
+      "equals": true
+    },
+    "options": [
+      {
+        "id": "prepare",
+        "label": "수능도 같이 준비한다",
+        "detail": "수능 자습 활동이 열림 · 고대 최저와 정시 지원 가능 · 스트레스 +2",
+        "effect": {
+          "stress": 2
+        },
+        "flags": {
+          "csat": "prepare"
+        }
+      },
+      {
+        "id": "skip",
+        "label": "수시에 집중한다",
+        "detail": "수능 미응시 · 최저가 있는 전형은 불합격 · 스트레스 -3",
+        "effect": {
+          "stress": -3
+        },
+        "flags": {
+          "csat": "skip"
+        }
+      }
+    ]
+  },
+  "regular_admission": {
+    "week": 38,
+    "kind": "admission",
+    "name": "정시 모집 결과",
+    "track": "정시",
+    "description": "수능 성적으로만 뽑는 게임 속 정시 전형이에요."
   }
 }

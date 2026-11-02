@@ -10,7 +10,7 @@ const locations = {
   shop: '아래 메뉴에서 매점을 찾아 가격과 효과를 확인해보세요.',
   calendar: '왼쪽 아래 달력 버튼을 눌러 4월 일정을 찾아보세요.',
   confirm: '자습 신청 아래 한 주 진행 버튼을 찾아보세요.',
-  records: '아래 기록 메뉴에서 겨울방학 결과를 찾아보세요.',
+  records: '아래 기록 메뉴에서 지난주 결과를 찾아보세요.',
 };
 export default function TutorialGuide({ tutorial, state, modal, onHelp, onDismiss }) {
   const lesson = TUTORIAL_LESSONS.find((lesson) => lesson.id === tutorial.active);

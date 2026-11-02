@@ -106,6 +106,21 @@ export default function YearReportPanel({ state }) {
       ) : (
         <p>합격한 전형이 없습니다.</p>
       )}
+      {report.classmates.length > 0 && (
+        <>
+          <h4>친구들의 다음 길</h4>
+          <ul>
+            {report.classmates.map((mate) => (
+              <li key={mate.id}>
+                <span>
+                  {mate.name} · {mate.relation}
+                </span>
+                <b>{mate.text}</b>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </section>
   );
 }

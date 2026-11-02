@@ -520,7 +520,7 @@
     "kind": "admission",
     "name": "수능, 긴 하루의 끝",
     "track": "수능",
-    "description": "수학·과학·서술력과 컨디션이 점수에 반영돼요."
+    "description": "수능 준비를 정한 경우에만 응시해요. 등급은 고대 최저 기준과 정시에 쓰여요."
   },
   "top_interview": {
     "week": 35,

@@ -97,7 +97,7 @@ test('long projects allow multiple rounds per week, expose repeat costs, and sup
   const cram = runPlannedWeek(onlyTask(structuredClone(source), 'thesis', 12));
   assert.equal(cram.tasks.thesis.status, 'completed');
   assert.equal(cram.tasks.thesis.attempts.successful, 12);
-  assert.equal(cram.fatigue, 1);
+  assert.ok(cram.fatigue >= 2);
   assert.ok(cram.tasks.thesis.result.quality < 100);
   let spread = source;
   for (let week = 0; week < 6; week++) spread = runPlannedWeek(onlyTask(spread, 'thesis', 2));

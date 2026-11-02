@@ -19,9 +19,15 @@ import { ADMISSION_DIRECTIONS } from './school-record.js';
 import { refreshDocuments } from './admission-documents.js';
 import { startRecommendation } from './recommendation.js';
 import { createCardGame, playCardGame, cardOptions, cardScore } from './card-game.js';
-import { INTERVIEW_QUESTIONS } from './interview.js';
+import {
+  answerPoints,
+  INTERVIEW_LENGTH,
+  INTERVIEW_QUESTIONS,
+  interviewScore,
+  interviewSpec,
+} from './interview.js';
 import { submitStudyApplication } from './study-applications.js';
-export { INTERVIEW_QUESTIONS } from './interview.js';
+export { INTERVIEW_QUESTIONS, INTERVIEW_LENGTH } from './interview.js';
 
 export function choiceOptions(state, id) {
   const event = events[id];
@@ -116,21 +122,29 @@ export function applyChoice(state, id, selected, answers) {
       'event',
     );
   } else if (event.kind === 'interview') {
-    const game = state.minigames.interview ?? { answers: [], phase: 'active', score: null };
+    // Questions are fixed from the record when the interview starts, so a reload cannot reshuffle them.
+    const game = state.minigames.interview ?? {
+      answers: [],
+      phase: 'active',
+      score: null,
+      questions: interviewSpec(state),
+    };
     game.answers.push(...answers);
     state.minigames.interview = game;
-    if (game.answers.length < INTERVIEW_QUESTIONS.length) return;
-    const correct = game.answers.filter(
-      (answer, i) => answer === INTERVIEW_QUESTIONS[i].correct,
-    ).length;
-    state.interviewScore = Math.round((correct / 3) * 70 + state.stats.speech * 0.3);
+    if (game.answers.length < INTERVIEW_LENGTH) return;
+    const good = game.questions
+      ? game.answers.filter((answer, i) => answerPoints(game.questions[i], answer) >= 0.8).length
+      : game.answers.filter((answer, i) => answer === INTERVIEW_QUESTIONS[i].correct).length;
+    state.interviewScore = game.questions
+      ? interviewScore(game.questions, game.answers, state.stats.speech)
+      : Math.round((good / 3) * 70 + state.stats.speech * 0.3);
     game.phase = 'finished';
     game.score = state.interviewScore;
-    applyEffects(state, { speech: correct * 2, stress: correct >= 2 ? -8 : 5 });
+    applyEffects(state, { speech: good * 2, stress: good >= 2 ? -8 : 5 });
     notice(
       state,
       '실전 면접 기록',
-      `${correct}/3개 질문에서 좋은 답변 · 면접 점수 ${state.interviewScore}점`,
+      `${good}/3개 질문에서 좋은 답변 · 면접 점수 ${state.interviewScore}점`,
       'event',
     );
   } else if (event.kind === 'study') {

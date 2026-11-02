@@ -122,3 +122,82 @@
     flex-wrap: wrap;
   }
 }
+
+/* Classmates: friends, the school's application board and their results. */
+.classmate-list,
+.classmate-results {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.classmate-list li,
+.classmate-results li {
+  padding: 8px 10px;
+  border: 1px solid var(--sasa-line);
+  border-radius: 8px;
+  background: var(--sasa-paper-warm);
+}
+.classmate-list b,
+.classmate-results b {
+  font-size: 12px;
+  color: var(--sasa-ink);
+}
+.classmate-list small,
+.classmate-results small {
+  font-weight: 400;
+  color: var(--sasa-muted);
+  font-size: 10px;
+}
+.classmate-list p,
+.classmate-results p {
+  margin: 3px 0 0;
+  font-size: 11px;
+  color: #6f7a77;
+}
+.classmate-results li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+.classmate-results li p {
+  grid-column: 1 / -1;
+}
+.classmate-results span {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  align-self: start;
+}
+.classmate-results span.accepted {
+  background: var(--sasa-green);
+  color: #6f8569;
+}
+.classmate-results span.rejected {
+  background: var(--sasa-sand);
+  color: #94805a;
+}
+.application-board {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+  font-size: 11px;
+}
+.application-board th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--sasa-muted);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--sasa-line);
+}
+.application-board td {
+  padding: 6px;
+  border-bottom: 1px dashed var(--sasa-line);
+  color: var(--sasa-ink);
+}
+.application-board tr.mine td {
+  background: var(--sasa-blue);
+}
+.application-board small {
+  color: #758669;
+}

@@ -3,6 +3,7 @@ import { balance } from './balance.js';
 import { gpa } from './academic-grades.js';
 import { admissionDefinitions, ADMISSION_DIRECTIONS } from './school-record.js';
 import { currentDocumentFactors } from './admission-documents.js';
+import { csatGrade } from './senior-year.js';
 
 export const ADMISSION_FACTORS = Object.freeze({
   gpa: '학점',
@@ -60,6 +61,8 @@ export function resolveAdmission(state, event) {
     });
     return accepted;
   }
+  if (event.track === '수능') return resolveCsat(state, event);
+  if (event.track === '정시') return resolveRegular(state, event);
   const threshold = admissionThreshold(event);
   if (event.track === '종합') {
     const projection = admissionProjection(state, event.profile);
@@ -70,7 +73,10 @@ export function resolveAdmission(state, event) {
           (projection.applied && projection.submitted ? (random(state) - 0.5) * 12 : 0),
       ),
     );
-    const accepted = projection.applied && projection.submitted && score >= threshold;
+    const minimum = balance.admissions.csatMinimum[event.profile];
+    const grade = state.flags.csatGrade ?? null;
+    const minimumMet = !minimum || (grade !== null && grade <= minimum);
+    const accepted = projection.applied && projection.submitted && score >= threshold && minimumMet;
     state.admissions.push({
       name: event.name,
       profile: event.profile,
@@ -83,16 +89,15 @@ export function resolveAdmission(state, event) {
         ? '지원하지 않은 전형입니다.'
         : !projection.submitted
           ? '서류 준비 또는 지원 방향 선택 미완료 · 원서 미제출'
-          : `기준 ${threshold}점 · 학점·학교생활기록 중심 평가${event.externalAwards === false ? ' · 외부 수상 미반영' : ''}`,
+          : !minimumMet && score >= threshold
+            ? `종합 ${score}점은 기준 통과 · 수능 최저 ${minimum}등급 미충족 (${grade === null ? '미응시' : grade + '등급'})`
+            : `기준 ${threshold}점 · 학점·학교생활기록 중심 평가${minimum ? ` · 수능 최저 ${minimum}등급 이내` : ''}${event.externalAwards === false ? ' · 외부 수상 미반영' : ''}`,
     });
     return accepted;
   }
   const roll = (random(state) - 0.5) * 12;
-  const condition = (state.stats.hp - 50) * 0.04 - Math.max(0, state.stats.stress - 60) * 0.12;
-  const ability =
-    event.track === '논술'
-      ? state.stats.math * 0.6 + state.stats.writing * 0.4
-      : state.stats.math * 0.45 + state.stats.science * 0.35 + state.stats.writing * 0.2;
+  const condition = examCondition(state);
+  const ability = state.stats.math * 0.6 + state.stats.writing * 0.4;
   const score = Math.round(clamp(ability + roll + condition)),
     accepted = score >= threshold;
   state.admissions.push({
@@ -101,6 +106,63 @@ export function resolveAdmission(state, event) {
     accepted,
     week: state.week,
     reason: `기준 ${threshold}점 · 실력·컨디션·난이도 반영`,
+  });
+  return accepted;
+}
+const examCondition = (state) =>
+  (state.stats.hp - 50) * 0.04 - Math.max(0, state.stats.stress - 60) * 0.12;
+// CSAT is an exam, not an offer: it records a grade used by minimums and the regular round.
+function resolveCsat(state, event) {
+  if (state.flags.csat !== 'prepare') {
+    state.admissions.push({
+      name: event.name,
+      score: 0,
+      accepted: false,
+      applied: false,
+      exam: true,
+      week: state.week,
+      reason: '수능 미응시',
+    });
+    return false;
+  }
+  const config = balance.admissions,
+    prep = state.flags.csatPrep ?? 0;
+  const roll = (random(state) - 0.5) * 12;
+  const ability = state.stats.math * 0.45 + state.stats.science * 0.35 + state.stats.writing * 0.2;
+  const score = Math.round(
+    clamp(ability * config.csatAbilityWeight + prep + roll + examCondition(state)),
+  );
+  const grade = csatGrade(score);
+  state.flags.csatGrade = grade;
+  state.admissions.push({
+    name: event.name,
+    score,
+    grade,
+    accepted: false,
+    applied: true,
+    exam: true,
+    week: state.week,
+    reason: `${grade}등급 · 실력·수능 대비 ${Math.round(prep)}·컨디션 반영`,
+  });
+  return false;
+}
+function resolveRegular(state, event) {
+  const grade = state.flags.csatGrade ?? null,
+    limit = balance.admissions.regularGrade;
+  const applied = grade !== null && grade <= limit + 1;
+  const accepted = applied && grade <= limit;
+  state.admissions.push({
+    name: event.name,
+    score: grade === null ? 0 : Math.max(0, 100 - (grade - 1) * 10),
+    accepted,
+    applied,
+    week: state.week,
+    reason:
+      grade === null
+        ? '수능 미응시 · 정시 지원 불가'
+        : !applied
+          ? `수능 ${grade}등급 · 지원 가능 성적 아님`
+          : `수능 ${grade}등급 · 합격선 ${limit}등급`,
   });
   return accepted;
 }

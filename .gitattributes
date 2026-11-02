@@ -4,3 +4,4 @@
 *.jpeg binary
 *.pdf binary
 .githooks/* text eol=lf
+*.cmd text eol=crlf

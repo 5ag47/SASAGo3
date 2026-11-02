@@ -1,5 +1,12 @@
 import { transition } from '../../src/domain/engine.js';
 import { taskModule } from '../../src/domain/task-modules/registry.js';
+function subsetFor(cards, target) {
+  for (let mask = 1; mask < 1 << cards.length; mask++) {
+    const pick = cards.filter((_, index) => mask & (1 << index));
+    if (pick.length >= 2 && pick.reduce((sum, card) => sum + card, 0) === target) return pick;
+  }
+  throw new Error('SIMULATION_SUM_UNSOLVABLE');
+}
 export function solveTaskGame(source, taskId) {
   let state = source;
   const move = (action) => {
@@ -16,7 +23,16 @@ export function solveTaskGame(source, taskId) {
   if (data.kind === 'order')
     for (const card of [...data.cards].sort((a, b) => a - b).slice(data.index))
       actions.push({ type: 'pick', card });
-  else {
+  else if (data.kind === 'report')
+    for (let index = data.placed; index < 5; index++)
+      actions.push({ type: 'pick', card: `s${index}` });
+  // The policy sees the server-side state, so it plays as a student who already knows the answer.
+  else if (data.kind === 'experiment') actions.push({ type: 'answer', variable: data.cause });
+  else if (data.kind === 'sum') {
+    for (const card of data.selected) actions.push({ type: 'toggle', card });
+    for (const card of subsetFor(data.cards, data.target)) actions.push({ type: 'toggle', card });
+    actions.push({ type: 'check' });
+  } else {
     const goal = [...data.goal];
     if (data.phase === 'preview') actions.push({ type: 'ready' });
     for (const cell of data.selected) actions.push({ type: 'toggle', cell });

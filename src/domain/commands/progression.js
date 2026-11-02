@@ -1,4 +1,4 @@
-import { endingAvailable } from '../endings.js';
+import { bestOffer, endingAvailable } from '../endings.js';
 import { items, LAST_WEEK } from '../catalog.js';
 import { applyEffects } from '../random.js';
 import { resolveWeek, skipRunTask } from '../week.js';
@@ -67,6 +67,7 @@ export const progressionCommands = {
         '아직 선택할 수 없는 결말이에요.',
       );
       state.ending = { id: command.ending, week: state.week };
+      if (command.ending === 'university') state.ending.school = bestOffer(state)?.name ?? '';
 
       return state;
     },

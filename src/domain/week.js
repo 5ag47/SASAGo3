@@ -20,10 +20,25 @@ import { effectivePlan } from './schedule.js';
 import { taskModule, taskGameStatus } from './task-modules/registry.js';
 import { finishTaskAttempt, beginTaskAttempt, attemptLimitReached } from './task-attempts.js';
 import { resolveStudyApplication } from './study-applications.js';
-import { balance, ACADEMIC_STATS } from './balance.js';
+import { balance } from './balance.js';
 import { announceChapters } from './story.js';
 import { essayWorkAmount } from './school-record.js';
 import { advanceRecommendation, resolveRecommendation } from './recommendation.js';
+import {
+  activityLock,
+  focusDrift,
+  monthlyAllowance,
+  recoveryFactor,
+  recoveryOrdinal,
+  RECOVERY_ACTIVITIES,
+  seasonAt,
+  slotEffectParts,
+  STRAIN_STAGES,
+  strainMultiplier,
+  strainStage,
+  weeklyLoad,
+  WORK_ACTIVITIES,
+} from './senior-year.js';
 export { effectivePlan, lockedSlots } from './schedule.js';
 
 export function learningEfficiency(state) {
@@ -32,7 +47,7 @@ export function learningEfficiency(state) {
     (config.base + state.stats.focus / config.focusScale) *
     (state.stats.stress >= config.stressThreshold ? config.conditionMultiplier : 1) *
     (state.stats.hp < config.lowHealth ? config.conditionMultiplier : 1) *
-    (state.fatigue ? config.fatigueMultiplier : 1)
+    strainMultiplier(state.fatigue)
   );
 }
 export function startWeek(state) {
@@ -46,8 +61,20 @@ export function startWeek(state) {
   const counts = {};
   let environment = 1;
   let workCount = 0;
-  state.money += balance.weekly.allowance;
-  messages.push(`주간 용돈 +${balance.weekly.allowance.toLocaleString()}원`);
+  const allowance = monthlyAllowance(state.week);
+  if (allowance) {
+    state.money += allowance;
+    messages.push(`이번 달 용돈 +${allowance.toLocaleString()}원`);
+  }
+  const living = balance.weekly.livingCost;
+  if (state.money >= living) {
+    state.money -= living;
+    messages.push(`생활비·매점 -${living.toLocaleString()}원`);
+  } else {
+    state.money = 0;
+    applyEffects(state, { stress: 3 });
+    messages.push('생활비가 모자람 · 스트레스 +3');
+  }
   if (state.week >= 17 && state.week <= 24) {
     const fee = { home: 0, cafe: 4000, managed: 9000 }[state.flags.environment];
     if (state.money >= fee) {
@@ -140,6 +167,12 @@ function executeSlot(state) {
     definition = activities.sleep;
     note = '주간 도전 횟수 상한 · 호실 휴식';
   }
+  const lock = activityLock(state, id);
+  if (lock) {
+    id = 'sleep';
+    definition = activities.sleep;
+    note = lock + ' → 호실 휴식';
+  }
   if ((definition.cost ?? 0) > state.money) {
     id = 'sleep';
     definition = activities.sleep;
@@ -156,15 +189,7 @@ function executeSlot(state) {
     note = '진행할 대상 없음 → 호실 휴식';
   }
   state.money = Math.max(0, state.money - (definition.cost ?? 0) + (definition.income ?? 0));
-  const study = [
-    'study',
-    'task',
-    'research',
-    'academy',
-    'science_academy',
-    'interview',
-    'essay',
-  ].includes(id);
+  const study = WORK_ACTIVITIES.includes(id);
   if (study) run.workCount++;
   counts[id] = (counts[id] ?? 0) + 1;
   const config = balance.learning;
@@ -175,12 +200,24 @@ function executeSlot(state) {
       )
     : 1;
   const efficiency = learningEfficiency(state) * environment * repetition;
-  for (const [key, value] of Object.entries(definition.effect)) {
-    applyEffects(
-      state,
-      { [key]: value },
-      value > 0 && ACADEMIC_STATS.includes(key) ? efficiency : 1,
-    );
+  const recovery = RECOVERY_ACTIVITIES.includes(id) ? recoveryFactor(recoveryOrdinal(counts)) : 1;
+  for (const [key, value, multiplier] of slotEffectParts(id, definition.effect, {
+    efficiency,
+    recovery,
+    pressure: seasonAt(state.week).pressure,
+  }))
+    applyEffects(state, { [key]: value }, multiplier);
+  if (recovery < 1) note = `회복 효과 ×${Math.round(recovery * 100) / 100}`;
+  if (id === 'csat_study') {
+    const config = balance.admissions;
+    state.flags.csatPrep =
+      Math.round(
+        Math.min(
+          config.csatPrepCap,
+          (state.flags.csatPrep ?? 0) + config.csatPrepGain * efficiency,
+        ) * 10,
+      ) / 10;
+    note = `수능 대비 ${state.flags.csatPrep}/${config.csatPrepCap}`;
   }
   if (id === 'study') {
     const courseId = state.courses.includes(slot.target) ? slot.target : state.courses[0];
@@ -335,12 +372,11 @@ export function resolveWeek(source) {
   }
   closeRunDay(state, 6);
   const { messages, actions, plan, workCount, before, beforeCourses, moneyBefore } = run;
-  const weekly = balance.weekly;
-  const stress = weekly.baseStress + Math.round(workCount * weekly.workStress);
-  applyEffects(state, { stress, hp: -weekly.healthCost, focus: -weekly.focusCost });
-  messages.push(`정규수업·일상 피로 · 체력 -${weekly.healthCost} · 집중력 -${weekly.focusCost}`);
+  const load = weeklyLoad(run.week, workCount);
+  applyEffects(state, { stress: load.stress, hp: load.hp, focus: load.focus });
   messages.push(
-    `주간 생활 부담 · 스트레스 +${stress} (기본 ${weekly.baseStress} + 학습량 ${stress - weekly.baseStress})`,
+    `${load.season.label} · 정규수업·생활 부담 · 체력 ${load.hp} · 스트레스 +${load.stress}` +
+      (load.season.pressure > 1 ? ` (시기 부담 ×${load.season.pressure})` : ''),
   );
   if (state.group === 'friends') applyEffects(state, { stress: -2 });
   if (state.group && !plan.some((s) => s.activity === 'study_group')) {
@@ -355,25 +391,20 @@ export function resolveWeek(source) {
       good ? '생활 이벤트 · 스트레스 -3 · 평판 +1' : '생활 이벤트 · 스트레스 +3 · 체력 -2',
     );
   }
-  state.fatigue =
-    state.stats.hp < balance.fatigue.lowHealth ||
-    state.stats.stress >= balance.fatigue.highStress ||
-    run.minHealth <= balance.fatigue.minimumHealth ||
-    run.peakStress >= balance.fatigue.peakStress
-      ? 1
-      : 0;
-  if (
-    state.fatigue &&
-    (run.minHealth <= balance.fatigue.minimumHealth || run.peakStress >= balance.fatigue.peakStress)
-  )
+  const previousStage = state.fatigue;
+  state.fatigue = strainStage(state.stats, run, previousStage);
+  const drift = focusDrift(state.stats, state.fatigue);
+  if (drift) applyEffects(state, { focus: drift });
+  if (state.fatigue)
     messages.push(
-      '과로 누적 · 작업 중 체력 고갈 또는 극심한 스트레스 · 다음 주 학습 효율 ×' +
-        balance.learning.fatigueMultiplier,
+      `${STRAIN_STAGES[state.fatigue].name} · 다음 주 학습 효율 ×${strainMultiplier(state.fatigue)}` +
+        (state.fatigue > previousStage
+          ? ''
+          : previousStage > state.fatigue
+            ? ' · 조금 회복됨'
+            : ' · 그대로'),
     );
-  else if (state.fatigue)
-    messages.push(
-      `만성피로 · 다음 주 학습 효율 ×${balance.learning.fatigueMultiplier}. 체력 ${balance.fatigue.lowHealth} 이상·스트레스 ${balance.fatigue.highStress} 미만으로 회복하세요.`,
-    );
+  else if (previousStage) messages.push('컨디션 회복 · 학습 효율 정상');
   for (const id of [...state.pending])
     if (choiceDeadline(id) <= state.week) {
       abandonMinigame(state, id);

@@ -22,6 +22,7 @@ import { TASK_MODULES } from '../src/domain/task-modules/registry.js';
 import { TASK_GAME_VIEW_IDS } from '../src/features/year-game/task-games/catalog.js';
 import { balance } from '../src/domain/balance.js';
 import { balanceIssues } from '../src/domain/balance-validation.js';
+import { classmateIssues } from '../src/domain/classmates.js';
 import { chapters, chapterIssues } from '../src/domain/story.js';
 import { calendar, calendarIssues, calendarTiming } from '../src/domain/calendar-date.js';
 import { CALENDAR_SOURCE_IDS } from '../src/domain/calendar-entries.js';
@@ -56,6 +57,11 @@ for (const module of Object.values(TASK_MODULES))
       TASK_GAME_VIEW_IDS.includes(module.game.view),
       `Missing task game view: ${module.game.view}`,
     );
+assert.deepEqual(
+  classmateIssues(undefined, { courses, stats: STATS, majors: MAJORS }),
+  [],
+  'data/classmates.json is invalid',
+);
 assert.deepEqual(
   assignmentIssues(assignments, { courses, stats: STATS }),
   [],

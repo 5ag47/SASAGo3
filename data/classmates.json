@@ -1,0 +1,192 @@
+{
+  "school": {
+    "boardWeek": 25,
+    "resultWeek": 38,
+    "otherApplicants": {
+      "top_interview": 8,
+      "kaist_postech": 23,
+      "korea_university": 15,
+      "essay": 12,
+      "regular": 5
+    }
+  },
+  "classmates": {
+    "seoyun": {
+      "name": "서윤",
+      "relation": "룸메이트",
+      "major": "chemistry",
+      "profile": "실험 노트를 날짜별로 정리해 두는 사람. 말수는 적다.",
+      "routes": ["kaist_postech", "korea_university"],
+      "result": { "accepted": true, "text": "카이스트·포스텍 합격. 기숙사 짐을 제일 먼저 쌌다." },
+      "rumors": [
+        {
+          "id": "seoyun-notes",
+          "week": 2,
+          "text": "서윤이가 방학 동안 아바화 실험 노트를 벌써 반 넘게 정리했대."
+        },
+        {
+          "id": "seoyun-thesis",
+          "week": 14,
+          "text": "서윤이는 졸업논문 최종본을 지도 선생님께 냈대.",
+          "when": { "task": "thesis", "status": "active" },
+          "effect": { "stress": 2 }
+        },
+        {
+          "id": "seoyun-essay",
+          "week": 26,
+          "text": "서윤이가 자소서 3차 수정본을 담임 선생님께 보여 드렸대.",
+          "when": { "task": "essay", "status": "active" },
+          "effect": { "stress": 2 }
+        },
+        {
+          "id": "seoyun-night",
+          "week": 33,
+          "text": "면접 전날, 서윤이 책상 불이 새벽 두 시까지 켜져 있었다."
+        }
+      ]
+    },
+    "dohyun": {
+      "name": "도현",
+      "relation": "같은 반",
+      "major": "math",
+      "profile": "수학 문제를 보면 일단 칠판으로 간다. 지는 걸 싫어한다.",
+      "routes": ["top_interview", "kaist_postech"],
+      "result": {
+        "accepted": true,
+        "text": "서울대 합격. 축하한다는 말에 다음 학기 선수강 얘기부터 했다."
+      },
+      "rumors": [
+        {
+          "id": "dohyun-midterm",
+          "week": 5,
+          "text": "도현이는 1회고사 범위를 벌써 두 바퀴 돌렸대.",
+          "effect": { "stress": 1 }
+        },
+        {
+          "id": "dohyun-counsel",
+          "week": 17,
+          "text": "도현이가 성적 상담에서 상향 지원 얘기를 들었대."
+        },
+        {
+          "id": "dohyun-apply",
+          "week": 25,
+          "text": "도현이는 원서를 상향으로 쓴대. 같은 전형 쓰는 애들이 꽤 많다더라."
+        },
+        {
+          "id": "dohyun-interview",
+          "week": 35,
+          "text": "도현이가 면접장에서 나오자마자 웃었다고 한다."
+        }
+      ]
+    },
+    "harin": {
+      "name": "하린",
+      "relation": "스터디",
+      "major": "biology",
+      "profile": "제주 탐사 이야기를 하면 눈이 반짝인다. 계획표를 색으로 칠한다.",
+      "routes": ["korea_university", "regular"],
+      "result": { "accepted": true, "text": "고대 합격. 수능 최저를 한 등급 차이로 맞췄다." },
+      "rumors": [
+        {
+          "id": "harin-jeju",
+          "week": 13,
+          "text": "하린이는 제주 탐사 사진만 300장 찍어 왔대.",
+          "when": { "course": "general_biology" }
+        },
+        {
+          "id": "harin-csat",
+          "week": 18,
+          "text": "하린이가 수능도 같이 준비하재. 스카에 자리 하나 남는대.",
+          "when": { "flag": "counseled", "equals": true }
+        },
+        {
+          "id": "harin-after",
+          "week": 34,
+          "text": "수능이 끝나고 하린이는 가채점표를 접어 주머니에 넣었다."
+        }
+      ]
+    },
+    "minjae": {
+      "name": "민재",
+      "relation": "같은 반",
+      "major": "information",
+      "profile": "정과프 팀장. 밤에 앱을 고치다 아침 자습에 늦는다.",
+      "routes": ["kaist_postech"],
+      "result": {
+        "accepted": false,
+        "text": "카이스트·포스텍 불합격. 친구들과 만든 앱으로 창업 준비를 시작했다."
+      },
+      "rumors": [
+        {
+          "id": "minjae-demo",
+          "week": 10,
+          "text": "민재네 정과프 팀은 벌써 시연 영상까지 찍었대.",
+          "when": { "course": "cs_project" },
+          "effect": { "stress": 1 }
+        },
+        { "id": "minjae-contest", "week": 20, "text": "민재가 외부 대회 본선에 올라갔대." },
+        {
+          "id": "minjae-app",
+          "week": 29,
+          "text": "민재는 원서를 쓰다 말고 앱 업데이트를 하고 있더라."
+        }
+      ]
+    },
+    "yejun": {
+      "name": "예준",
+      "relation": "옆방",
+      "major": "physics",
+      "profile": "층 분위기 담당. 시험이 끝나면 제일 먼저 노래방을 예약한다.",
+      "routes": ["essay", "korea_university"],
+      "result": { "accepted": true, "text": "논술 합격. 합격 소식을 단체방에 제일 먼저 올렸다." },
+      "rumors": [
+        {
+          "id": "yejun-karaoke",
+          "week": 8,
+          "text": "예준이가 중간고사 끝나자마자 노래방 단체 예약을 잡았대.",
+          "effect": { "stress": -2 }
+        },
+        {
+          "id": "yejun-summer",
+          "week": 23,
+          "text": "예준이는 방학 내내 논술 학원에 다녀서 얼굴 보기가 힘들대."
+        },
+        {
+          "id": "yejun-essay",
+          "week": 30,
+          "text": "예준이가 연논 마지막 문제를 끝까지 못 풀었다며 한숨을 쉬었다."
+        }
+      ]
+    },
+    "sua": {
+      "name": "수아",
+      "relation": "스터디장",
+      "major": "math",
+      "profile": "출석표와 벌금표를 직접 만든 스터디장. 정시를 노린다.",
+      "routes": ["regular"],
+      "result": {
+        "accepted": true,
+        "text": "정시 합격. 발표 날에도 아침 자습 자리에 먼저 와 있었다."
+      },
+      "rumors": [
+        {
+          "id": "sua-sheet",
+          "week": 3,
+          "text": "수아가 스터디 출석표를 엑셀로 만들었대. 벌금 계산까지 자동이래."
+        },
+        {
+          "id": "sua-regular",
+          "week": 19,
+          "text": "수아는 수시 원서를 하나도 안 쓴대. 정시만 본다고."
+        },
+        {
+          "id": "sua-morning",
+          "week": 27,
+          "text": "수아는 원서 기간에도 매일 아침 자습에 나온대.",
+          "when": { "stat": "stress", "min": 60 },
+          "effect": { "stress": 1 }
+        }
+      ]
+    }
+  }
+}

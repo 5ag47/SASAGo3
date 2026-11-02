@@ -2,11 +2,14 @@ import { AlertTriangle, ArrowRight, Check, ChevronRight } from 'lucide-react';
 import { choiceDeadline, events, period, effectText } from '../../domain/catalog.js';
 import { reviewPlan } from '../../domain/planning.js';
 import { nextAssessments } from '../../domain/school-calendar.js';
+import { STRAIN_STAGES, strainMultiplier } from '../../domain/senior-year.js';
+import { TUTORIAL_UNTIL } from './tutorial.js';
 import './planning.css';
 
 export default function WeekReviewPanel({
   state,
   busy,
+  tutorialLeft = 0,
   onStart,
   onSchedule,
   onTask,
@@ -86,7 +89,16 @@ export default function WeekReviewPanel({
         <p className="review-warning">스터디 배정 없음 · 불참 벌금 최대 500원</p>
       )}
       {review.recovery === 0 && <p className="review-warning">회복 활동을 배정하지 않았습니다.</p>}
-      {review.hasFatigue && <p className="review-warning">이번 주 피로 상태 · 학습 효과 감소</p>}
+      {tutorialLeft > 0 && (
+        <p className="review-note">
+          연습 단원 {tutorialLeft}개가 남았어요. 진행해도 {TUTORIAL_UNTIL}까지 이어서 할 수 있어요.
+        </p>
+      )}
+      {review.strain > 0 && (
+        <p className="review-warning">
+          이번 주 {STRAIN_STAGES[review.strain].name} · 학습 효율 ×{strainMultiplier(review.strain)}
+        </p>
+      )}
       {review.activityCost > 0 && (
         <p className="review-cost">배정 활동비 {review.activityCost.toLocaleString()}원</p>
       )}

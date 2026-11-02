@@ -69,3 +69,11 @@
     display: none;
   }
 }
+.review-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6f8569;
+  background: var(--sasa-green);
+  border-radius: 6px;
+  padding: 6px 10px;
+}

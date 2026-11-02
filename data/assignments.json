@@ -55,7 +55,9 @@
     "special": "essay",
     "module": {
       "id": "pattern_v2",
-      "params": { "support": "essay" }
+      "params": {
+        "support": "essay"
+      }
     },
     "reward": {
       "writing": 6,
@@ -110,10 +112,6 @@
     },
     "penalty": {
       "reputation": -2
-    },
-    "module": {
-      "id": "order_v2",
-      "params": {}
     }
   },
   "project-2-ai_project": {
@@ -1584,63 +1582,10 @@
     "kind": "group",
     "name": "과목 과제 미니게임",
     "members": [
-      "math_problem_analysis",
-      "project-2-ai_project",
-      "project-2-linear_algebra",
-      "project-2-general_physics",
-      "project-2-physics_seminar",
-      "project-2-general_chemistry",
-      "project-2-chemistry_seminar",
-      "project-2-general_biology",
-      "project-2-biology_seminar",
-      "project-2-cs_project",
-      "project-2-algorithms",
-      "project-2-tech_english",
       "project-2-visual_communication",
-      "project-2-math_seminar",
-      "project-2-foreign_language",
-      "project-10-ai_project",
-      "project-10-linear_algebra",
-      "project-10-general_physics",
-      "project-10-physics_seminar",
-      "project-10-general_chemistry",
-      "project-10-chemistry_seminar",
-      "project-10-general_biology",
-      "project-10-biology_seminar",
-      "project-10-cs_project",
-      "project-10-algorithms",
-      "project-10-tech_english",
       "project-10-visual_communication",
-      "project-10-math_seminar",
-      "project-10-foreign_language",
-      "project-26-ai_project",
-      "project-26-linear_algebra",
-      "project-26-general_physics",
-      "project-26-physics_seminar",
-      "project-26-general_chemistry",
-      "project-26-chemistry_seminar",
-      "project-26-general_biology",
-      "project-26-biology_seminar",
-      "project-26-cs_project",
-      "project-26-algorithms",
-      "project-26-tech_english",
       "project-26-visual_communication",
-      "project-26-math_seminar",
-      "project-26-foreign_language",
-      "project-30-ai_project",
-      "project-30-linear_algebra",
-      "project-30-general_physics",
-      "project-30-physics_seminar",
-      "project-30-general_chemistry",
-      "project-30-chemistry_seminar",
-      "project-30-general_biology",
-      "project-30-biology_seminar",
-      "project-30-cs_project",
-      "project-30-algorithms",
-      "project-30-tech_english",
       "project-30-visual_communication",
-      "project-30-math_seminar",
-      "project-30-foreign_language",
       "urban-project-1",
       "urban-project-2",
       "urban-project-3",
@@ -1676,6 +1621,117 @@
     ],
     "module": {
       "id": "order_v2",
+      "params": {}
+    }
+  },
+  "report_game_group": {
+    "kind": "group",
+    "name": "보고서 구성 미니게임",
+    "members": [
+      "project-2-general_physics",
+      "project-10-general_physics",
+      "project-26-general_physics",
+      "project-30-general_physics",
+      "project-2-general_chemistry",
+      "project-10-general_chemistry",
+      "project-26-general_chemistry",
+      "project-30-general_chemistry",
+      "project-2-math_seminar",
+      "project-10-math_seminar",
+      "project-26-math_seminar",
+      "project-30-math_seminar",
+      "project-2-general_biology",
+      "project-10-general_biology",
+      "project-26-general_biology",
+      "project-30-general_biology"
+    ],
+    "module": {
+      "id": "report_v1",
+      "params": {
+        "layout": "report"
+      }
+    }
+  },
+  "presentation_game_group": {
+    "kind": "group",
+    "name": "발표 구성 미니게임",
+    "members": [
+      "project-2-chemistry_seminar",
+      "project-10-chemistry_seminar",
+      "project-26-chemistry_seminar",
+      "project-30-chemistry_seminar",
+      "project-2-cs_project",
+      "project-10-cs_project",
+      "project-26-cs_project",
+      "project-30-cs_project",
+      "project-2-tech_english",
+      "project-10-tech_english",
+      "project-26-tech_english",
+      "project-30-tech_english",
+      "project-2-foreign_language",
+      "project-10-foreign_language",
+      "project-26-foreign_language",
+      "project-30-foreign_language"
+    ],
+    "module": {
+      "id": "report_v1",
+      "params": {
+        "layout": "presentation"
+      }
+    }
+  },
+  "biology_experiment_group": {
+    "kind": "group",
+    "name": "생물 실험 설계 미니게임",
+    "members": [
+      "project-2-biology_seminar",
+      "project-10-biology_seminar",
+      "project-26-biology_seminar",
+      "project-30-biology_seminar"
+    ],
+    "module": {
+      "id": "experiment_v1",
+      "params": {
+        "variables": ["온도", "빛", "물의 양", "영양분"]
+      }
+    }
+  },
+  "ai_experiment_group": {
+    "kind": "group",
+    "name": "모델 검증 미니게임",
+    "members": [
+      "project-2-ai_project",
+      "project-10-ai_project",
+      "project-26-ai_project",
+      "project-30-ai_project"
+    ],
+    "module": {
+      "id": "experiment_v1",
+      "params": {
+        "variables": ["학습률", "데이터 양", "층 수", "학습 횟수"]
+      }
+    }
+  },
+  "problem_game_group": {
+    "kind": "group",
+    "name": "문제 만들기 미니게임",
+    "members": [
+      "math_problem_analysis",
+      "project-2-linear_algebra",
+      "project-10-linear_algebra",
+      "project-26-linear_algebra",
+      "project-30-linear_algebra",
+      "project-2-physics_seminar",
+      "project-10-physics_seminar",
+      "project-26-physics_seminar",
+      "project-30-physics_seminar",
+      "project-2-algorithms",
+      "project-10-algorithms",
+      "project-26-algorithms",
+      "project-30-algorithms"
+    ],
+    "module": {
+      "id": "sum_v1",
       "params": {}
     }
   },

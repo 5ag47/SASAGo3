@@ -10,6 +10,7 @@ import {
 } from '../../domain/catalog.js';
 import { activityPreview } from '../../domain/activity-preview.js';
 import { courseMastery } from '../../domain/course-progress.js';
+import { activityLock } from '../../domain/senior-year.js';
 import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
 
 export default function ActivityPicker({ state, index, busy, onApply }) {
@@ -36,7 +37,8 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
       (id === 'task' && !tasks.length) ||
       (id === 'research' && state.tasks.thesis?.status !== 'active') ||
       (id === 'essay' && state.tasks.essay?.status !== 'active') ||
-      (id === 'study_group' && !state.group && !state.studyApplication)
+      (id === 'study_group' && !state.group && !state.studyApplication) ||
+      Boolean(activityLock(state, id))
     );
   }
   return (
@@ -91,7 +93,10 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
               disabled={disabled(id)}
               className={`${a.color} ${activity === id ? 'selected' : ''}`}
               aria-pressed={activity === id}
-              title={disabled(id) ? '관련 과제 또는 스터디를 먼저 시작하세요.' : a.description}
+              title={
+                activityLock(state, id) ||
+                (disabled(id) ? '관련 과제 또는 스터디를 먼저 시작하세요.' : a.description)
+              }
             >
               <ActivityIcon id={id} />
               <span>{activityName(id)}</span>

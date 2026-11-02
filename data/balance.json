@@ -42,14 +42,22 @@
       "top_interview": 86,
       "kaist_postech": 80,
       "korea_university": 74
-    }
+    },
+    "csatGrades": [88, 80, 72, 64, 56, 48, 40, 32],
+    "csatAbilityWeight": 0.55,
+    "csatPrepGain": 1.5,
+    "csatPrepCap": 50,
+    "csatMinimum": {
+      "korea_university": 3
+    },
+    "regularGrade": 2
   },
   "weekly": {
-    "allowance": 10000,
     "healthCost": 8,
     "focusCost": 3,
-    "baseStress": 6,
-    "workStress": 0.35
+    "baseStress": 8,
+    "workStress": 0.45,
+    "livingCost": 4000
   },
   "learning": {
     "base": 0.9,
@@ -57,15 +65,104 @@
     "stressThreshold": 70,
     "lowHealth": 30,
     "conditionMultiplier": 0.75,
-    "fatigueMultiplier": 0.65,
+    "fatigueMultiplier": 0.75,
     "repetitionStart": 5,
     "repetitionLoss": 0.07,
-    "repetitionFloor": 0.55
+    "repetitionFloor": 0.55,
+    "strainMultiplier": 0.9,
+    "burnoutMultiplier": 0.6
   },
   "fatigue": {
+    "strainStress": 55,
+    "strainHealth": 45,
+    "tiredStress": 70,
+    "tiredHealth": 30,
+    "burnoutStress": 85,
+    "burnoutHealth": 15,
     "minimumHealth": 5,
-    "peakStress": 95,
-    "lowHealth": 25,
-    "highStress": 80
+    "peakStress": 95
+  },
+  "money": {
+    "monthlyAllowance": 24000
+  },
+  "recovery": {
+    "freeSlots": 6,
+    "loss": 0.12,
+    "floor": 0.35
+  },
+  "focus": {
+    "drift": 0.5,
+    "healthWeight": 0.5,
+    "stagePenalty": 8
+  },
+  "seasons": {
+    "winter": {
+      "from": 0,
+      "to": 0,
+      "pressure": 0.9,
+      "label": "겨울방학",
+      "vacation": true
+    },
+    "new_term": {
+      "from": 1,
+      "to": 4,
+      "pressure": 1,
+      "label": "새 학기"
+    },
+    "first_midterm": {
+      "from": 5,
+      "to": 7,
+      "pressure": 1.45,
+      "label": "1회고사"
+    },
+    "may_events": {
+      "from": 8,
+      "to": 12,
+      "pressure": 1.1,
+      "label": "5월 행사"
+    },
+    "first_final": {
+      "from": 13,
+      "to": 16,
+      "pressure": 1.5,
+      "label": "수행·기말"
+    },
+    "summer": {
+      "from": 17,
+      "to": 24,
+      "pressure": 0.95,
+      "label": "여름방학",
+      "vacation": true
+    },
+    "applications": {
+      "from": 25,
+      "to": 28,
+      "pressure": 1.4,
+      "label": "원서 시즌"
+    },
+    "essay_midterm": {
+      "from": 29,
+      "to": 31,
+      "pressure": 1.2,
+      "label": "논술·2회고사"
+    },
+    "final_stretch": {
+      "from": 32,
+      "to": 35,
+      "pressure": 1.45,
+      "label": "면접·수능"
+    },
+    "second_final": {
+      "from": 36,
+      "to": 36,
+      "pressure": 1.1,
+      "label": "2학기 기말"
+    },
+    "waiting": {
+      "from": 37,
+      "to": 40,
+      "pressure": 0.85,
+      "label": "결과 발표"
+    }
   }
 }

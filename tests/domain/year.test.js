@@ -133,7 +133,7 @@ test('recovery restores health and reduces stress but weekly baseline is still l
   const after = resolveWeek(state);
   assert.ok(after.stats.hp > state.stats.hp);
   assert.ok(after.stats.stress < state.stats.stress);
-  assert.ok(after.history[0].messages.some((m) => m.includes('기본 6')));
+  assert.ok(after.history[0].messages.some((m) => m.includes('정규수업·생활 부담')));
 });
 test('a finished task is not silently reassigned to a new task next week', () => {
   const state = fill(ready(), 'task', 'practice-report');
@@ -147,13 +147,11 @@ test('workload adds stress and a fatigue debuff applies to the following week', 
   state.stats.hp = 40;
   state.stats.stress = 75;
   const after = resolveWeek(state);
-  assert.equal(after.fatigue, 1);
-  assert.ok(
-    after.history[0].messages.some((m) => m.includes('만성피로') || m.includes('과로 누적')),
-  );
+  assert.ok(after.fatigue >= 2);
+  assert.ok(after.history[0].messages.some((m) => m.includes('피로') || m.includes('번아웃')));
   const normal = fill(ready(), 'study', 'linear_algebra');
   normal.stats.math = 0;
-  const tired = { ...structuredClone(normal), fatigue: 1 };
+  const tired = { ...structuredClone(normal), fatigue: 2 };
   assert.ok(resolveWeek(normal).stats.math > resolveWeek(tired).stats.math);
 });
 test('same seed and same commands produce identical outcomes and deltas', () => {

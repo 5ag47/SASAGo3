@@ -161,7 +161,13 @@ export function NoticesPanel({ state, onReview, onTask, onStory }) {
             <article key={n.id}>
               <small>
                 {period(n.week).label} ·{' '}
-                {n.kind === 'choice' ? '선택 이벤트' : n.kind === 'event' ? '결과' : '안내'}
+                {n.kind === 'choice'
+                  ? '선택 이벤트'
+                  : n.kind === 'event'
+                    ? '결과'
+                    : n.kind === 'rumor'
+                      ? '소문'
+                      : '안내'}
               </small>
               <h3>{n.title}</h3>
               <p>{n.text}</p>

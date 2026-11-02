@@ -17,6 +17,7 @@ export default function EventDialog({ state, busy, onChoose, onDone, eventId }) 
   if (event.kind === 'interview')
     return (
       <InterviewPanel
+        state={state}
         game={savedGame}
         busy={busy}
         onAnswer={(answer) => onChoose({ event: id, option: `answer:${answer}` })}

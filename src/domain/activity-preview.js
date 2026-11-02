@@ -2,9 +2,9 @@ import { activities, courses, GROUPS } from './catalog.js';
 import { applyEffects } from './random.js';
 import { learningEfficiency } from './week.js';
 import { learnCourse } from './course-progress.js';
-import { ACADEMIC_STATS } from './balance.js';
+import { seasonAt, slotEffectParts } from './senior-year.js';
 
-// One slot at the current stats, before future repetition, environment and weekly events.
+// One slot at the current stats and season, before repetition, recovery limits and weekly events.
 // It is a display estimate; only the server executes a plan and commits its results.
 export function activityPreview(state, id, target) {
   const next = {
@@ -14,12 +14,11 @@ export function activityPreview(state, id, target) {
   };
   const definition = activities[id],
     efficiency = learningEfficiency(state);
-  for (const [key, value] of Object.entries(definition.effect))
-    applyEffects(
-      next,
-      { [key]: value },
-      value > 0 && ACADEMIC_STATS.includes(key) ? efficiency : 1,
-    );
+  for (const [key, value, multiplier] of slotEffectParts(id, definition.effect, {
+    efficiency,
+    pressure: seasonAt(state.week).pressure,
+  }))
+    applyEffects(next, { [key]: value }, multiplier);
   let courseGain = null;
   if (id === 'study' && state.courses.includes(target)) {
     applyEffects(next, { [courses[target].ability]: definition.gain * efficiency });

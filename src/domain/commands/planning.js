@@ -1,12 +1,14 @@
 import { buildPreset } from '../auto-plan.js';
-import { activities, courses, ELECTIVES, LAST_WEEK } from '../catalog.js';
+import { activities, courses, ELECTIVES, LAST_WEEK, TUTORIAL_LAST_WEEK } from '../catalog.js';
 import { lockedSlots } from '../week.js';
 import { electiveWindow, changeElective } from '../enrollment.js';
 import { copyDayPlan, copyDayPreview } from '../schedule.js';
 import { requireRule } from '../errors.js';
+import { activityLock } from '../senior-year.js';
 function markScheduleEdit(state, slots) {
   state.flags.editedSchedule = true;
-  if (state.week !== 0) return;
+  // Practice evidence counts for the whole tutorial window, not only the winter week.
+  if (state.week > TUTORIAL_LAST_WEEK) return;
   if (slots.some((slot) => slot.activity === 'study' && courses[slot.target]?.ability === 'math'))
     state.flags.tutorialStudy = true;
   if (slots.some((slot) => slot.activity === 'task' && slot.target === 'practice-report'))
@@ -42,6 +44,8 @@ export const planningCommands = {
         'ACTIVITY_INVALID',
         '활동을 다시 선택해 주세요.',
       );
+      const lock = activityLock(state, command.activity);
+      requireRule(!lock, 'ACTIVITY_LOCKED', lock);
       const target = command.target ?? null;
       if (command.activity === 'study')
         requireRule(

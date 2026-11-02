@@ -84,6 +84,14 @@
     "cost": 3000,
     "effect": { "science": 5.5, "hp": -3, "stress": 3 }
   },
+  "csat_study": {
+    "name": "수능 자습",
+    "short": "수능",
+    "category": "학습",
+    "color": "blue",
+    "description": "기출과 모의고사로 수능을 대비해요. 여름 진학 상담에서 수능 준비를 정하면 열려요.",
+    "effect": { "math": 0.6, "science": 0.4, "hp": -2.5, "stress": 3, "focus": -0.5 }
+  },
   "lecture": {
     "name": "입시 강연",
     "short": "강연",
@@ -138,7 +146,7 @@
     "short": "알바",
     "category": "생활",
     "color": "sand",
-    "description": "한 칸에 6,000원을 벌고 사회 경험을 쌓아요.",
+    "description": "방학에만 열려요. 한 칸에 6,000원을 벌지만 체력이 들어요.",
     "income": 6000,
     "effect": { "hp": -4, "stress": 2, "speech": 0.5 }
   }

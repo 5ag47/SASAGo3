@@ -91,22 +91,26 @@ export const GROUPS = {
   },
 };
 export const LAST_WEEK = 40;
+// The practice week is winter week 0, but its lessons stay open until this week so running
+// the week to practise "한 주 진행" does not close the remaining lessons.
+export const TUTORIAL_LAST_WEEK = 2;
 export const TUTORIAL_TASKS = {
   'first-study': {
     module: { id: 'time_v1', params: {} },
     name: '수학 공부 1회',
     description: '수학 과목 자습 한 칸을 배정하세요.',
     target: 1,
-    deadline: 0,
+    deadline: TUTORIAL_LAST_WEEK,
     special: 'tutorial',
     reward: { focus: 3 },
     penalty: {},
   },
   'practice-report': {
     name: '연습 보고서',
-    description: '할 일 진행을 두 칸 배정하세요. 이번 연습 과제는 미완료 불이익이 없습니다.',
+    description:
+      '할 일 진행을 두 칸 배정하고 한 주를 진행하면 그 시간에 작업합니다. 못 끝내도 불이익이 없습니다.',
     target: 2,
-    deadline: 0,
+    deadline: TUTORIAL_LAST_WEEK,
     special: 'practice',
     reward: { writing: 2 },
     penalty: {},
@@ -156,6 +160,7 @@ export function choiceDeadline(id) {
       second_registration: 24,
       summer_place: 24,
       summer_camp: 24,
+      csat_decision: 20,
       applications: 28,
       mock_interview: 28,
     }[id] ??

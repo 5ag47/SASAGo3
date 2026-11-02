@@ -5,6 +5,8 @@ import { effectivePlan, lockedSlots } from '../../domain/week.js';
 import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
 import ContextHint from './ContextHint.jsx';
 import DayCopy from './DayCopy.jsx';
+import { weekForecast } from '../../domain/week-forecast.js';
+import { STRAIN_STAGES, WORK_ACTIVITIES } from '../../domain/senior-year.js';
 
 export default function Planner({
   state,
@@ -21,16 +23,22 @@ export default function Planner({
   const [day, setDay] = useState(0);
   const plan = effectivePlan(state);
   const locked = lockedSlots(state);
-  const studyCount = plan.filter((s) =>
-    ['study', 'task', 'research', 'academy', 'science_academy', 'interview', 'essay'].includes(
-      s.activity,
-    ),
-  ).length;
+  const studyCount = plan.filter((s) => WORK_ACTIVITIES.includes(s.activity)).length;
+  const forecast = state.week <= 40 ? weekForecast(state) : null;
   const fee = plan.reduce((sum, slot) => sum + (activities[slot.activity].cost ?? 0), 0);
   return (
     <aside className="planner-panel">
       <header>
-        <h2>자습 신청</h2>
+        <h2>
+          자습 신청
+          {forecast && (
+            <span
+              className={forecast.season.pressure >= 1.4 ? 'season-label busy' : 'season-label'}
+            >
+              {forecast.season.label}
+            </span>
+          )}
+        </h2>
         <button className="schedule-button" onClick={onWeek}>
           <LayoutGrid size={15} /> 전체 일정
         </button>
@@ -134,8 +142,18 @@ export default function Planner({
           <i className="sage-dot" />
           생활·회복 {21 - studyCount}칸
         </span>
-        <b>21 / 21</b>
       </div>
+      {forecast && (
+        <div
+          className={`week-forecast stage-${forecast.stage}`}
+          title="미니게임·이벤트·시험 결과를 뺀 예상값"
+        >
+          <span>주말 예상</span>
+          <b>체력 {forecast.hp}</b>
+          <b>스트레스 {forecast.stress}</b>
+          {forecast.stage > 0 && <em>{STRAIN_STAGES[forecast.stage].name}</em>}
+        </div>
+      )}
       {fee > 0 && <p className="plan-cost">예정 지출 {fee.toLocaleString()}원</p>}
       <button
         className="primary start-week"

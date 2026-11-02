@@ -53,6 +53,7 @@ export function baseState(seed = 20261013) {
       taskGamesVersion: 1,
       taskFlowVersion: 2,
       schoolRecordVersion: 1,
+      seniorYearVersion: 1,
     },
     fatigue: 0,
     discipline: 0,

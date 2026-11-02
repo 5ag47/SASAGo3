@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Check, ChevronRight } from 'lucide-react';
-import { TUTORIAL_LESSONS } from './tutorial.js';
+import { TUTORIAL_LESSONS, tutorialOpen, TUTORIAL_UNTIL } from './tutorial.js';
 export default function TutorialPanel({ tutorial, state, onLesson }) {
   const [selected, setSelected] = useState(() =>
     TUTORIAL_LESSONS.some((l) => l.id === tutorial.active)
@@ -22,10 +22,13 @@ export default function TutorialPanel({ tutorial, state, onLesson }) {
     : lesson.id === 'results' && state.week > 0
       ? '주간 기록 보기'
       : lesson.action;
+  const practising = tutorialOpen(state, tutorial.count, tutorial.total);
   return (
     <div className="tutorial-course">
       <div className="tutorial-course-heading">
-        <h3>{state.week === 0 ? '겨울방학 연습 주간' : '게임 도움말'}</h3>
+        <h3>
+          {state.week === 0 ? '겨울방학 연습 주간' : practising ? '연습 이어하기' : '게임 도움말'}
+        </h3>
         <span>
           {tutorial.count} / {tutorial.total}
         </span>
@@ -33,6 +36,13 @@ export default function TutorialPanel({ tutorial, state, onLesson }) {
       {state.week === 0 && (
         <p className="tutorial-intro">
           새 학기를 앞두고 기숙사에 돌아왔다. 이번 주는 공부와 과제, 쉬는 시간을 직접 정해 본다.
+          남은 단원은 {TUTORIAL_UNTIL}까지 이어서 할 수 있다.
+        </p>
+      )}
+      {state.week > 0 && practising && (
+        <p className="tutorial-intro">
+          남은 {tutorial.total - tutorial.count}개 단원은 {TUTORIAL_UNTIL}까지 이어서 연습할 수
+          있다.
         </p>
       )}
       <div className="tutorial-workbook">

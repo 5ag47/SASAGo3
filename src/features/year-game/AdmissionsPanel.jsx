@@ -7,10 +7,13 @@ import {
   schoolRecord,
 } from '../../domain/school-record.js';
 import { endingAvailable, ENDINGS } from '../../domain/engine.js';
+import { bestOffer } from '../../domain/endings.js';
+import { balance } from '../../domain/balance.js';
 import { ChoiceButton, Empty, Progress } from './ui.jsx';
 import { resources, events, period } from '../../domain/catalog.js';
 import SchoolRecordPanel from './SchoolRecordPanel.jsx';
 import RecommendationPanel from './RecommendationPanel.jsx';
+import ClassmatesPanel from './ClassmatesPanel.jsx';
 import './admissions.css';
 
 export function AdmissionsPanel({ state, busy, onEnding, onDirection, onSchedule }) {
@@ -111,6 +114,7 @@ export function AdmissionsPanel({ state, busy, onEnding, onDirection, onSchedule
             );
           })}
       </div>
+      <ClassmatesPanel state={state} />
       <h3 className="section-label">전형 결과</h3>
       {Object.entries(resources)
         .filter(([, resource]) => resource.path)
@@ -131,16 +135,30 @@ export function AdmissionsPanel({ state, busy, onEnding, onDirection, onSchedule
             <article key={`${a.name}-${a.week}`}>
               <span
                 className={
-                  a.applied === false ? 'not-applied' : a.accepted ? 'accepted' : 'rejected'
+                  a.exam
+                    ? 'not-applied'
+                    : a.applied === false
+                      ? 'not-applied'
+                      : a.accepted
+                        ? 'accepted'
+                        : 'rejected'
                 }
               >
-                {a.applied === false ? '미지원' : a.accepted ? '합격' : '불합격'}
+                {a.exam
+                  ? a.applied === false
+                    ? '미응시'
+                    : '시험'
+                  : a.applied === false
+                    ? '미지원'
+                    : a.accepted
+                      ? '합격'
+                      : '불합격'}
               </span>
               <div>
                 <h3>{a.name}</h3>
                 <p>{a.reason}</p>
               </div>
-              <b>{a.applied === false ? '—' : `${a.score}점`}</b>
+              <b>{a.applied === false ? '—' : a.exam ? `${a.grade}등급` : `${a.score}점`}</b>
             </article>
           ))}
         </div>
@@ -152,6 +170,15 @@ export function AdmissionsPanel({ state, busy, onEnding, onDirection, onSchedule
         <br />
         1학기 학점 {gpa(state).toFixed(2)} / 4.30 · 종합 지원{' '}
         {{ dream: '상향', balanced: '균형', safe: '안정' }[state.flags.target]}
+        <br />
+        수능{' '}
+        {state.flags.csat === 'prepare'
+          ? state.flags.csatGrade
+            ? `${state.flags.csatGrade}등급`
+            : `준비 중 · 대비 ${Math.round(state.flags.csatPrep ?? 0)}/${balance.admissions.csatPrepCap}`
+          : state.flags.csat === 'skip'
+            ? '미응시'
+            : '여름 상담 뒤 결정'}
       </div>
       {finished && (
         <>
@@ -164,11 +191,13 @@ export function AdmissionsPanel({ state, busy, onEnding, onDirection, onSchedule
                 title={ending.title}
                 description={
                   endingAvailable(state, id)
-                    ? ending.subtitle
+                    ? id === 'university'
+                      ? `${bestOffer(state)?.name ?? ''} 등록`
+                      : ending.subtitle
                     : id === 'university'
                       ? '전형 합격이 필요해요.'
                       : id === 'startup'
-                        ? '과학 55·평판 40 이상이 필요해요.'
+                        ? '과학 70·평판 55 이상, 외부 수상 1회가 필요해요.'
                         : id === 'prison'
                           ? '위험한 편법·반복된 규칙 위반 시 등장해요.'
                           : '현재 선택할 수 없어요.'

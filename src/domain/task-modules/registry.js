@@ -2,11 +2,24 @@ import time from './time-v1.js';
 import contest from './contest-v1.js';
 import order from './order-v1.js';
 import pattern from './pattern-v1.js';
-import { orderSession, patternSession } from './session-v2.js';
+import { orderSession, patternSession, makeSessionModule } from './session-v2.js';
+import report, { reportParams } from './report-v1.js';
+import experiment, { experimentParams } from './experiment-v1.js';
+import sum from './sum-v1.js';
 import { essayWorkAmount } from '../writing-support.js';
 
 // Only reviewed repository modules can execute. JSON selects an ID and parameters.
-const modules = [time, contest, order, pattern, orderSession, patternSession];
+const modules = [
+  time,
+  contest,
+  order,
+  pattern,
+  orderSession,
+  patternSession,
+  makeSessionModule(report, 'report_v1', reportParams),
+  makeSessionModule(experiment, 'experiment_v1', experimentParams),
+  makeSessionModule(sum, 'sum_v1'),
+];
 if (new Set(modules.map((module) => module.id)).size !== modules.length)
   throw new Error('DUPLICATE_TASK_MODULE_ID');
 for (const module of modules)

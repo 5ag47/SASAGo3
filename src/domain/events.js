@@ -9,6 +9,8 @@ import { courseSet, addUrbanProject } from './enrollment.js';
 import { notice } from './notifications.js';
 import { announceChapters } from './story.js';
 import { calendarTiming } from './calendar-date.js';
+import { activityLock } from './senior-year.js';
+import { deliverClassmateNews } from './classmates.js';
 export { notice } from './notifications.js';
 export function beginWeek(state) {
   announceChapters(state);
@@ -26,6 +28,7 @@ export function beginWeek(state) {
   if (state.week === 0)
     for (const [id, task] of Object.entries(TUTORIAL_TASKS)) addTask(state, id, task);
   dispatchDayEvents(state, 0);
+  deliverClassmateNews(state);
   academyTasks(state);
   addUrbanProject(state);
   if (CLEANING_WEEKS.includes(state.week)) {
@@ -45,6 +48,7 @@ export function beginWeek(state) {
       return { ...slot, target: state.courses[0] };
     if (slot.activity === 'task' && state.tasks[slot.target]?.status !== 'active')
       return { activity: 'sleep', target: null };
+    if (activityLock(state, slot.activity)) return { activity: 'sleep', target: null };
     return slot;
   });
 }
@@ -81,11 +85,19 @@ export function dispatchDayEvents(state, day) {
       }
       if (['admission', 'creative'].includes(event.kind)) {
         const accepted = resolveAdmission(state, event);
-        const applied = state.admissions.at(-1).applied !== false;
-        if (applied) applyEffects(state, { stress: accepted ? -8 : 8 });
-        text = applied
-          ? `${accepted ? '합격 기준 통과!' : '아쉬운 결과예요.'} 진학실에서 점수와 평가 기준을 확인하세요.`
-          : '지원하지 않은 전형입니다.';
+        const record = state.admissions.at(-1);
+        const applied = record.applied !== false;
+        if (record.exam && applied) {
+          applyEffects(state, { stress: record.grade <= 3 ? -6 : 6 });
+          text = `수능 ${record.grade}등급. 고대 최저와 정시 결과에 반영돼요.`;
+        } else {
+          if (applied) applyEffects(state, { stress: accepted ? -8 : 8 });
+          text = applied
+            ? `${accepted ? '합격 기준 통과!' : '아쉬운 결과예요.'} 진학실에서 점수와 평가 기준을 확인하세요.`
+            : record.exam
+              ? '수능에 응시하지 않았어요.'
+              : '지원하지 않은 전형입니다.';
+        }
       }
       notice(state, event.name, text, event.kind === 'notice' ? 'info' : 'event');
     } else if (!Object.hasOwn(state.choices, id)) {

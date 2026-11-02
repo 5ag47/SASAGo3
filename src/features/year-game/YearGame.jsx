@@ -22,6 +22,7 @@ import useGame from './useGame.js';
 import useAudio from './useAudio.js';
 import useWorldClock from './useWorldClock.js';
 import useTutorial from './useTutorial.js';
+import { tutorialOpen } from './tutorial.js';
 import TutorialGuide from './TutorialGuide.jsx';
 import Setup from './Setup.jsx';
 import Scene from './Scene.jsx';
@@ -187,7 +188,7 @@ export default function YearGame() {
               <span className="world-time">
                 {gameDate} {DAYS[gameDay]}요일
               </span>
-              {state.week === 0 && (
+              {tutorialOpen(state, tutorial.count, tutorial.total) && (
                 <button className="tutorial-badge" onClick={() => open('tutorial')}>
                   튜토리얼 {tutorial.count}/{tutorial.total}
                 </button>
@@ -216,9 +217,9 @@ export default function YearGame() {
                 {(state.pending.length > 0 ||
                   state.notices.some(
                     (notice) =>
-                      notice.kind === 'task' &&
                       notice.week === state.week &&
-                      state.tasks[notice.task]?.status === 'active',
+                      (notice.kind === 'rumor' ||
+                        (notice.kind === 'task' && state.tasks[notice.task]?.status === 'active')),
                   )) && <i className="notification-dot" />}
               </button>
               <button onClick={() => open('help')} aria-label="도움말">
@@ -309,6 +310,7 @@ export default function YearGame() {
           <section className="ending-card">
             <span className="eyebrow">ENDING</span>
             <h2>{ENDINGS[state.ending.id].title}</h2>
+            {state.ending.school && <b className="ending-school">{state.ending.school}</b>}
             <p>{ENDINGS[state.ending.id].description}</p>
             <div>
               <button className="primary" onClick={() => open('yearReport')}>

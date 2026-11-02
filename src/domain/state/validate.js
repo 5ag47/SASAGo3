@@ -267,8 +267,24 @@ export function validateState(s) {
     !['fatigue', 'discipline', 'awards', 'interviewScore'].every(
       (k) => Number.isFinite(s[k]) && s[k] >= 0,
     ) ||
+    !Number.isInteger(s.fatigue) ||
+    s.fatigue > 3 ||
     !Array.isArray(s.admissions) ||
     !Array.isArray(s.notices)
+  )
+    return false;
+  if (
+    (s.flags.rumors !== undefined &&
+      (!s.flags.rumors ||
+        typeof s.flags.rumors !== 'object' ||
+        Array.isArray(s.flags.rumors) ||
+        Object.keys(s.flags.rumors).length > 500 ||
+        Object.values(s.flags.rumors).some((value) => value !== true))) ||
+    (s.flags.csat !== undefined && !['prepare', 'skip'].includes(s.flags.csat)) ||
+    (s.flags.csatPrep !== undefined &&
+      (!Number.isFinite(s.flags.csatPrep) || s.flags.csatPrep < 0 || s.flags.csatPrep > 100)) ||
+    (s.flags.csatGrade !== undefined &&
+      (!Number.isInteger(s.flags.csatGrade) || s.flags.csatGrade < 1 || s.flags.csatGrade > 9))
   )
     return false;
   if (

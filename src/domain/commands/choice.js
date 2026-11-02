@@ -1,4 +1,4 @@
-import { applyChoice, choiceOptions, INTERVIEW_QUESTIONS } from '../choices.js';
+import { applyChoice, choiceOptions, INTERVIEW_LENGTH } from '../choices.js';
 import { requireRule } from '../errors.js';
 
 export const choiceCommands = {
@@ -17,7 +17,7 @@ export const choiceCommands = {
           single ||
             (answered === 0 &&
               Array.isArray(command.answers) &&
-              command.answers.length === INTERVIEW_QUESTIONS.length &&
+              command.answers.length === INTERVIEW_LENGTH &&
               command.answers.every((a) => Number.isInteger(a) && a >= 0 && a < 3)),
           'ANSWERS_INVALID',
           '현재 질문의 답변을 선택해 주세요.',
