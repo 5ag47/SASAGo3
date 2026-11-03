@@ -1,0 +1,34 @@
+.elective-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 16px 0;
+  color: #4e6049;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.elective-choice input {
+  flex: 0 0 auto;
+  width: 16px !important;
+  height: 16px;
+  margin: 4px 0 0;
+  accent-color: #657e57;
+  padding: 0 !important;
+  box-shadow: none;
+}
+.elective-choice span {
+  min-width: 0;
+}
+.elective-choice small {
+  display: block;
+  font-size: 11px;
+  color: #64715f;
+}
+.elective-registration {
+  margin: 20px 0;
+  border-top: 1px solid #d5dfcf;
+  padding-top: 14px;
+}
+.elective-registration h3 {
+  font-size: 14px;
+}

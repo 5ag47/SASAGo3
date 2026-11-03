@@ -1,33 +1,20 @@
-import { useEffect, useState } from 'react';
-import { SAVE_KEY, initialGame, migrateSave, validSave } from '../game.js';
-
-function readSave() {
-  try {
-    const data = migrateSave(JSON.parse(localStorage.getItem(SAVE_KEY)));
-    return validSave(data) ? data : initialGame();
-  } catch {
-    return initialGame();
-  }
-}
+import { useEffect, useReducer, useState } from 'react';
+import { gameReducer } from '../systems/game-reducer.js';
+import { loadGame, saveGame } from '../systems/save.js';
 
 export function useSavedGame() {
-  const [game, setGame] = useState(readSave);
+  const [game, dispatch] = useReducer(gameReducer, undefined, loadGame);
   const [saveStatus, setSaveStatus] = useState('저장됨');
 
   function saveNow() {
-    try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify(game));
-      setSaveStatus('저장됨');
-      return true;
-    } catch {
-      setSaveStatus('저장 실패');
-      return false;
-    }
+    const saved = saveGame(game);
+    setSaveStatus(saved ? '저장됨' : '저장 실패');
+    return saved;
   }
 
   useEffect(() => {
     if (game.created) saveNow();
   }, [game]);
 
-  return { game, setGame, saveStatus, saveNow };
+  return { game, dispatch, saveStatus, saveNow };
 }

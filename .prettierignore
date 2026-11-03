@@ -1,0 +1,16 @@
+node_modules/
+dist/
+apps/
+godot/
+.local/
+src/App.jsx
+src/components/
+src/hooks/
+src/systems/
+src/data/
+src/game.js
+src/game.test.js
+src/styles.css
+src/week.css
+docs/planning-original.txt
+docs/legacy-prototype.md

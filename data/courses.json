@@ -1,0 +1,272 @@
+{
+  "ai_project": {
+    "name": "인공지능프로젝트",
+    "short": "인공프",
+    "ability": "science",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "인공지능프로젝트 모델 검증·발표",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.6
+    }
+  },
+  "urban_planning": {
+    "name": "도시 환경과 도시 계획",
+    "short": "도도",
+    "ability": "writing",
+    "credits": 2,
+    "category": "교양선택",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "도시 환경과 도시 계획 주간 프로젝트",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.3
+    }
+  },
+  "linear_algebra": {
+    "name": "선형대수",
+    "short": "선대",
+    "ability": "math",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "선형대수 문제풀이",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.7
+    }
+  },
+  "general_physics": {
+    "name": "일반물리",
+    "short": "일물",
+    "ability": "science",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "일반물리 실험 보고서",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.6
+    }
+  },
+  "physics_seminar": {
+    "name": "물리세미나",
+    "short": "물세",
+    "ability": "science",
+    "credits": 2,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "물리세미나 문제 만들기",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.6
+    }
+  },
+  "general_chemistry": {
+    "name": "일반화학",
+    "short": "일화",
+    "ability": "science",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "아바화 탐구 보고서",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.6
+    }
+  },
+  "chemistry_seminar": {
+    "name": "화학세미나",
+    "short": "화세",
+    "ability": "science",
+    "credits": 2,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "화학세미나 발표 준비",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.6
+    }
+  },
+  "general_biology": {
+    "name": "일반생물",
+    "short": "생다이",
+    "ability": "science",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "생물 다양성 관찰 기록",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.6
+    }
+  },
+  "biology_seminar": {
+    "name": "생물세미나",
+    "short": "생세",
+    "ability": "science",
+    "credits": 2,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "생물세미나 실험 설계",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.6
+    }
+  },
+  "cs_project": {
+    "name": "정보과학프로젝트",
+    "short": "정과프",
+    "ability": "science",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "정과프 프로토타입 발표",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.6
+    }
+  },
+  "algorithms": {
+    "name": "고급알고리즘",
+    "short": "고알",
+    "ability": "math",
+    "credits": 3,
+    "category": "전공",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "고급알고리즘 문제 만들기",
+    "workload": {
+      "health": 0.4,
+      "stress": 0.7
+    }
+  },
+  "tech_english": {
+    "name": "과학기술시사영어",
+    "short": "과기시영",
+    "ability": "writing",
+    "credits": 2,
+    "category": "교양필수",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "과기시영 글쓰기·발표",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.3
+    }
+  },
+  "visual_communication": {
+    "name": "비주얼커뮤니케이션",
+    "short": "비커",
+    "ability": "writing",
+    "credits": 2,
+    "category": "교양필수",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "비커 시각화 프로젝트",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.3
+    }
+  },
+  "math_seminar": {
+    "name": "수학세미나",
+    "short": "수세",
+    "ability": "math",
+    "credits": 2,
+    "category": "교양필수",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "수학세미나 아카이빙 보고서",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.7
+    }
+  },
+  "foreign_language": {
+    "name": "외국어",
+    "short": "외국어",
+    "ability": "speech",
+    "credits": 2,
+    "category": "교양필수",
+    "assessments": {
+      "quiz": 0.2,
+      "midterm": 0.3,
+      "final": 0.3,
+      "project": 0.2
+    },
+    "assignment": "외국어 발표 준비",
+    "workload": {
+      "health": 0.2,
+      "stress": 0.3
+    }
+  }
+}

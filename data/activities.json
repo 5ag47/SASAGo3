@@ -1,0 +1,224 @@
+{
+  "study": {
+    "name": "내신 공부",
+    "short": "내신",
+    "category": "학습",
+    "color": "blue",
+    "description": "수강 과목을 골라 능력치를 올려요. 실력이 높아질수록 숙련에 필요한 시간이 늘어요.",
+    "effect": {
+      "hp": -2.5,
+      "stress": 3
+    },
+    "gain": 2.8
+  },
+  "task": {
+    "name": "할 일 진행",
+    "short": "과제",
+    "category": "학습",
+    "color": "purple",
+    "description": "배정한 시간에 미니게임으로 과제를 진행해요. 성공한 진척은 즉시 반영됩니다.",
+    "effect": {
+      "hp": -2,
+      "stress": 2
+    },
+    "gain": 1
+  },
+  "research": {
+    "name": "졸업논문",
+    "short": "졸논",
+    "category": "학습",
+    "color": "purple",
+    "description": "연구 진척도와 과학 실력을 함께 쌓아요. 6월 말 마감이에요.",
+    "effect": {
+      "science": 1,
+      "hp": -3,
+      "stress": 3
+    },
+    "gain": 1
+  },
+  "study_group": {
+    "name": "스터디",
+    "short": "스터디",
+    "category": "함께",
+    "color": "sage",
+    "description": "가입한 스터디 성격에 따라 학습과 스트레스 효과가 달라져요.",
+    "effect": {}
+  },
+  "interview": {
+    "name": "면접 연습",
+    "short": "면접",
+    "category": "진로",
+    "color": "blue",
+    "description": "설명하는 힘을 기르고 면접 실전 점수를 준비해요.",
+    "effect": {
+      "speech": 3,
+      "math": 0.6,
+      "hp": -2,
+      "stress": 1
+    }
+  },
+  "essay": {
+    "name": "자소서 쓰기",
+    "short": "자소서",
+    "category": "진로",
+    "color": "purple",
+    "description": "9월 자기소개서를 진행해요. 높은 평판은 쓸 이야기를 늘려 줘요.",
+    "effect": {
+      "writing": 2,
+      "hp": -1.5,
+      "stress": 1.5
+    }
+  },
+  "teacher": {
+    "name": "선생님 상담",
+    "short": "상담",
+    "category": "함께",
+    "color": "sage",
+    "description": "추천서 후보 선생님과 친밀도를 쌓고 스트레스를 풀어요.",
+    "effect": {
+      "reputation": 1.5,
+      "speech": 0.5,
+      "stress": -3
+    }
+  },
+  "club": {
+    "name": "동아리 활동",
+    "short": "동아리",
+    "category": "함께",
+    "color": "sage",
+    "description": "동아리 프로젝트를 도우며 평판과 매력을 쌓아요.",
+    "effect": {
+      "reputation": 2,
+      "charm": 1.5,
+      "science": 0.5,
+      "stress": -2,
+      "hp": -1
+    }
+  },
+  "academy": {
+    "name": "학원 심층수업",
+    "short": "학원",
+    "category": "학습",
+    "color": "blue",
+    "description": "수학 심층 실력을 빠르게 키워요. 한 칸에 3,000원이 들어요.",
+    "cost": 3000,
+    "effect": {
+      "math": 5.5,
+      "hp": -3,
+      "stress": 3
+    }
+  },
+  "science_academy": {
+    "name": "과학 특강",
+    "short": "과학 학원",
+    "category": "학습",
+    "color": "blue",
+    "description": "과학 실력을 키우는 특강입니다. 한 칸에 3,000원입니다.",
+    "cost": 3000,
+    "effect": {
+      "science": 5.5,
+      "hp": -3,
+      "stress": 3
+    }
+  },
+  "csat_study": {
+    "name": "수능 자습",
+    "short": "수능",
+    "category": "학습",
+    "color": "blue",
+    "description": "기출과 모의고사로 수능을 대비해요. 여름 진학 상담에서 수능 준비를 정하면 열려요.",
+    "effect": {
+      "math": 0.6,
+      "science": 0.4,
+      "hp": -2.5,
+      "stress": 3
+    }
+  },
+  "lecture": {
+    "name": "입시 강연",
+    "short": "강연",
+    "category": "진로",
+    "color": "sand",
+    "description": "선배의 조언과 입시 정보를 얻어요. 자습 한 칸을 사용해요.",
+    "effect": {
+      "speech": 1.5,
+      "writing": 1,
+      "reputation": 1,
+      "stress": -1
+    }
+  },
+  "clean": {
+    "name": "방 청소",
+    "short": "청소",
+    "category": "생활",
+    "color": "sand",
+    "description": "이번 주 기숙사 점검에 대비해요. 점검은 매월 마지막 주예요.",
+    "effect": {
+      "reputation": 1,
+      "stress": -2,
+      "hp": -0.5
+    }
+  },
+  "exercise": {
+    "name": "가벼운 운동",
+    "short": "운동",
+    "category": "회복",
+    "color": "sage",
+    "description": "건강을 회복하고 스트레스를 줄여요.",
+    "effect": {
+      "hp": 3,
+      "stress": -2,
+      "charm": 0.5
+    }
+  },
+  "sleep": {
+    "name": "푹 자기",
+    "short": "수면",
+    "category": "회복",
+    "color": "sand",
+    "description": "호실에서 쉬며 체력을 회복하고 스트레스를 줄여요.",
+    "effect": {
+      "hp": 5,
+      "stress": -3.5
+    }
+  },
+  "game": {
+    "name": "친구와 게임",
+    "short": "게임",
+    "category": "회복",
+    "color": "rose",
+    "description": "스트레스를 시원하게 풀어요. 너무 늦게 자면 체력이 줄어요.",
+    "effect": {
+      "stress": -9,
+      "hp": -2,
+      "charm": 1
+    }
+  },
+  "out": {
+    "name": "외출·회식",
+    "short": "외출",
+    "category": "회복",
+    "color": "rose",
+    "description": "친구와 추억을 만들어요. 한 칸에 2,000원이 들어요.",
+    "cost": 2000,
+    "effect": {
+      "stress": -10,
+      "hp": 1,
+      "reputation": 1,
+      "charm": 2
+    }
+  },
+  "work": {
+    "name": "주말 아르바이트",
+    "short": "알바",
+    "category": "생활",
+    "color": "sand",
+    "description": "방학에만 열려요. 한 칸에 6,000원을 벌지만 체력이 들어요.",
+    "income": 6000,
+    "effect": {
+      "hp": -4,
+      "stress": 2,
+      "speech": 0.5
+    }
+  }
+}
