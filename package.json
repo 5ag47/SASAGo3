@@ -1,17 +1,58 @@
 {
   "name": "sasago3",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev": "vite",
+    "play": "node tools/play.mjs",
+    "play:login": "node tools/play.mjs --login",
+    "dev": "vite --host 127.0.0.1",
+    "dev:secure": "node --env-file-if-exists=.env.local tools/dev-secure.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:secure": "node --env-file-if-exists=.env.local tools/build-secure.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test \"src/**/*.test.js\" \"tests/**/*.test.js\"",
+    "check": "node tools/validate-content.mjs && node tools/check-architecture.mjs && eslint .",
+    "verify": "node tools/verify-release.mjs",
+    "lint": "eslint .",
+    "check:staged": "node tools/check-staged.mjs",
+    "tasks:editor": "vite --config tools/task-editor/vite.config.mjs",
+    "tasks:editor:build": "vite build --config tools/task-editor/vite.config.mjs",
+    "tasks:apply": "node tools/apply-assignments.mjs",
+    "calendar:apply": "node tools/apply-calendar.mjs",
+    "balance:simulate": "node tools/simulate-game.mjs",
+    "perf:input": "node tools/benchmark-input.mjs",
+    "cloud:secret": "node tools/provision-cloud-secret.mjs",
+    "cloud:deploy": "npm run build:secure && wrangler deploy",
+    "cloud:backup": "node tools/cloud-backup.mjs",
+    "smoke:public": "node tools/smoke-public.mjs",
+    "smoke:d1": "node tools/smoke-d1.mjs",
+    "format": "prettier --write data src/domain src/features/year-game src/platform server tests tools docs README.md package.json vite.config.js src/main.jsx",
+    "start:secure": "node --env-file-if-exists=.env.local server/node.mjs"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "firebase": "^13.1.0",
+    "jose": "^6.2.13",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "vite": "^5.0.0"
+    "@eslint/js": "10.0.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "10.13.0",
+    "globals": "17.13.0",
+    "jsdom": "30.1.3",
+    "prettier": "^3.9.10",
+    "vite": "^6.4.5",
+    "wrangler": "4.131.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.6",
+    "sharp": "^0.35.5",
+    "undici": "^7.30.1"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

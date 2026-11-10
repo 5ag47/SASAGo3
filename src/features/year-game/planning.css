@@ -1,0 +1,79 @@
+.week-review .review-tasks {
+  margin: 20px 0;
+}
+.week-review .review-tasks h3 {
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+.week-review .review-tasks button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 8px;
+  border: 0;
+  border-bottom: 1px solid #dbe2d7;
+  background: #fffdf4;
+  text-align: left;
+  color: #56694e;
+}
+.week-review .review-tasks button > span {
+  flex: 1;
+  min-width: 0;
+}
+.week-review .review-tasks b,
+.week-review .review-tasks small {
+  display: block;
+}
+.week-review .review-tasks b {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.week-review .review-tasks small {
+  margin-top: 5px;
+  color: #64715f;
+  font-size: 12px;
+}
+.week-review .review-tasks em {
+  font-size: 12px;
+  font-style: normal;
+  white-space: nowrap;
+}
+.review-exam,
+.review-warning,
+.review-cost {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.review-exam {
+  color: #4f667b;
+}
+.review-warning {
+  color: #925a37;
+}
+.review-cost {
+  color: #56694e;
+}
+.task-allocation {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #4f667b;
+}
+@media (max-width: 480px) {
+  .week-review .review-tasks button {
+    gap: 7px;
+    padding-inline: 0;
+  }
+  .week-review .review-tasks button > svg:last-child {
+    display: none;
+  }
+}
+.review-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6f8569;
+  background: var(--sasa-green);
+  border-radius: 6px;
+  padding: 6px 10px;
+}

@@ -1,0 +1,2960 @@
+{
+  "story_crush": {
+    "week": 2,
+    "name": "좋아하는 애가 생겼다",
+    "description": "자습실에서 자꾸 눈길이 가는 사람이 생겼다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "continue",
+        "label": "조금씩 알아가 보기",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "flags": {
+          "romance_open": true
+        }
+      },
+      {
+        "id": "study",
+        "label": "지금은 공부에 집중",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "math": 2
+        },
+        "flags": {
+          "romance_open": false
+        }
+      }
+    ]
+  },
+  "story_smile": {
+    "week": 4,
+    "name": "눈이 마주친 3초",
+    "description": "교실에서 그 애와 눈이 마주쳤다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "smile",
+        "label": "눈웃음을 짓는다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "chanceResult": {
+          "chance": 0.5,
+          "success": {
+            "hp": 18
+          },
+          "failure": {
+            "stress": 10,
+            "reputation": -5
+          }
+        },
+        "flags": {
+          "romance_smile": true
+        }
+      },
+      {
+        "id": "ignore",
+        "label": "못 본 척 수학 문제를 푼다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "math": 2
+        },
+        "flags": {
+          "romance_open": false
+        }
+      }
+    ],
+    "when": {
+      "flag": "romance_open",
+      "equals": true
+    }
+  },
+  "story_drink": {
+    "week": 8,
+    "name": "자판기 앞에서",
+    "description": "스터디가 끝나고 돌아가는 길, 그 애가 음료를 고르고 있다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "buy",
+        "label": "음료수를 사준다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "cost": 1500,
+        "flags": {
+          "romance_drink": true
+        },
+        "lateRisk": 0.2
+      },
+      {
+        "id": "greet",
+        "label": "인사만 하고 자러 간다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "flags": {
+          "romance_open": false
+        }
+      }
+    ],
+    "when": {
+      "flag": "romance_open",
+      "equals": true
+    }
+  },
+  "story_rival": {
+    "week": 12,
+    "name": "같은 전공 수석",
+    "description": "좋아하는 애가 전공 수석과 둘이 공부하는 모습을 보았다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 15
+    },
+    "lateRisk": 0.2,
+    "when": {
+      "flag": "romance_open",
+      "equals": true
+    }
+  },
+  "story_avoid": {
+    "week": 16,
+    "name": "나를 피하는 것 같다",
+    "description": "요즘 눈을 마주치지 않는 그 애. 어떻게 할까?",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "snack",
+        "label": "아무 말 없이 빼빼로를 건넨다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "cost": 1500,
+        "flags": {
+          "romance_snack": true
+        }
+      },
+      {
+        "id": "confront",
+        "label": "찾아가서 따진다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "reputation": -12
+        },
+        "flags": {
+          "romance_confront": true
+        }
+      },
+      {
+        "id": "leave",
+        "label": "그냥 내버려 둔다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "reputation": -2
+        },
+        "flags": {
+          "romance_open": false
+        }
+      }
+    ],
+    "when": {
+      "flag": "romance_open",
+      "equals": true
+    },
+    "effect": {
+      "stress": 10
+    }
+  },
+  "story_apology": {
+    "week": 16,
+    "name": "어색해진 대화",
+    "description": "상대가 표정을 굳혔다. 다음 말을 고르자.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "confess",
+        "label": "부끄러워하는 걸까? 고백한다",
+        "detail": "상대의 의사를 무시하면 관계가 끝납니다.",
+        "effect": {
+          "reputation": -35,
+          "stress": 15
+        },
+        "flags": {
+          "romance_open": false
+        }
+      },
+      {
+        "id": "sorry",
+        "label": "미안하다고 사과하며 칸쵸를 건넨다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "reputation": 3
+        },
+        "cost": 1000,
+        "flags": {
+          "romance_snack": true
+        }
+      }
+    ],
+    "day": 1,
+    "when": {
+      "flag": "romance_confront",
+      "equals": true
+    }
+  },
+  "story_confession": {
+    "week": 20,
+    "name": "바나나우유와 편지",
+    "description": "동아리 후배가 매점에서 바나나우유와 편지를 건넸다. 고백을 받았다!",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "accept",
+        "label": "고백을 받아준다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "hp": 15,
+          "stress": 5
+        }
+      },
+      {
+        "id": "reject",
+        "label": "거절한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "reputation": -5,
+          "stress": 5
+        }
+      }
+    ],
+    "when": {
+      "all": [
+        {
+          "flag": "romance_open",
+          "equals": true
+        },
+        {
+          "flag": "romance_smile",
+          "equals": true
+        },
+        {
+          "flag": "romance_drink",
+          "equals": true
+        },
+        {
+          "flag": "romance_snack",
+          "equals": true
+        }
+      ]
+    }
+  },
+  "story_rejection": {
+    "week": 21,
+    "name": "답장을 쓰는 밤",
+    "description": "상처를 덜 주고 내 마음을 전할 말을 고른다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "someone",
+        "label": "나 이미 좋아하는 사람 있어",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "busy",
+        "label": "공부하느라 바쁠 것 같아. 미안",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "honest",
+        "label": "내 마음을 솔직하게 이야기한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "when": {
+      "choice": "story_confession",
+      "equals": "reject"
+    }
+  },
+  "story_handhold": {
+    "week": 24,
+    "name": "손을 잡았다",
+    "description": "세 주 동안 약속을 지켰다. 돌아오는 길에 처음 손을 잡았다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "ok",
+        "label": "이 순간을 기억한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "hp": 12
+        },
+        "lateRisk": 0.5
+      }
+    ],
+    "manual": true
+  },
+  "story_kiss": {
+    "week": 28,
+    "name": "조금 더 가까이",
+    "description": "또 세 주의 데이트. 헤어지기 전 짧은 입맞춤에 잠을 설쳤다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "ok",
+        "label": "내일은 알람을 꼭 맞추자",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "hp": 12
+        },
+        "lateRisk": 1
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_21": {
+    "week": 21,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_22": {
+    "week": 22,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_23": {
+    "week": 23,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_24": {
+    "week": 24,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_25": {
+    "week": 25,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_26": {
+    "week": 26,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_27": {
+    "week": 27,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_28": {
+    "week": 28,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_29": {
+    "week": 29,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_30": {
+    "week": 30,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_31": {
+    "week": 31,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_32": {
+    "week": 32,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_33": {
+    "week": 33,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_34": {
+    "week": 34,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_35": {
+    "week": 35,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_36": {
+    "week": 36,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_37": {
+    "week": 37,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_38": {
+    "week": 38,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_39": {
+    "week": 39,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_breakup_40": {
+    "week": 40,
+    "name": "이별통보가 왔다",
+    "description": "4주 동안 데이트를 챙기지 못했다. 상대가 이별을 이야기한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "hold",
+        "label": "미안하다고 말하고 다시 약속한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 8
+        }
+      },
+      {
+        "id": "accept",
+        "label": "상대의 결정을 받아들인다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": 15
+        }
+      }
+    ],
+    "manual": true
+  },
+  "story_roommate": {
+    "week": 3,
+    "name": "밤샘 보고서",
+    "description": "룸메이트와 밤새 보고서를 쓰며 의리를 다졌다.",
+    "kind": "notice",
+    "effect": {
+      "reputation": 5,
+      "hp": -4
+    }
+  },
+  "story_pipes": {
+    "week": 5,
+    "name": "막힌 배관",
+    "description": "호실 배관이 막혔다. 수리를 기다리느라 자습 시간이 지나갔다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 7
+    }
+  },
+  "story_blackout": {
+    "week": 7,
+    "name": "갑작스러운 정전",
+    "description": "1자 도중 기숙사와 본관이 정전됐다. 복도에서 환호성이 터졌다.",
+    "kind": "notice",
+    "effect": {
+      "stress": -8
+    }
+  },
+  "story_water": {
+    "week": 9,
+    "name": "샤워실 단수",
+    "description": "샴푸를 한 순간 물이 끊겼다. 생수로 겨우 헹궈냈다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 8
+    }
+  },
+  "story_snack": {
+    "week": 11,
+    "name": "사라진 냉장고 간식",
+    "description": "이름까지 써 둔 내 간식이 사라졌다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 7
+    }
+  },
+  "story_battery": {
+    "week": 13,
+    "name": "계산기 배터리",
+    "description": "퀴즈 도중 카시오 계산기가 꺼졌다. 교체를 요청했다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 5
+    }
+  },
+  "story_file": {
+    "week": 15,
+    "name": "저장하지 않은 파일",
+    "description": "노트북이 멈추며 작업하던 파일이 날아갔다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 9
+    }
+  },
+  "story_blue": {
+    "week": 18,
+    "name": "블루스크린",
+    "description": "노트북이 멈췄다. 이번 주 첫 자습은 점검에 쓴다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 6
+    }
+  },
+  "story_lobster": {
+    "week": 19,
+    "name": "오늘 급식은 랍스터",
+    "description": "양고기 스테이크와 랍스터가 나왔다. 줄이 길어도 괜찮다.",
+    "kind": "notice",
+    "effect": {
+      "stress": -12,
+      "hp": 8
+    }
+  },
+  "story_debate": {
+    "week": 23,
+    "name": "새벽 3시의 토론",
+    "description": "이대호 100명과 아프리카코끼리. 결론 없이 한 시간을 토론했다.",
+    "kind": "notice",
+    "effect": {
+      "science": 2,
+      "hp": -3,
+      "stress": -4
+    }
+  },
+  "story_dream": {
+    "week": 26,
+    "name": "수학 귀신 영접",
+    "description": "꿈에 나타난 수학자가 막혔던 풀이의 힌트를 주고 갔다.",
+    "kind": "notice",
+    "effect": {
+      "math": 5
+    }
+  },
+  "story_physics": {
+    "week": 28,
+    "name": "실험 장비 파손",
+    "description": "오실로스코프를 잘못 건드렸다. 실험실 정리를 도왔다.",
+    "kind": "notice",
+    "effect": {
+      "reputation": -5,
+      "stress": 8
+    },
+    "course": "general_physics"
+  },
+  "story_chemistry": {
+    "week": 30,
+    "name": "알코올램프",
+    "description": "램프를 쏟았지만 선생님이 침착하게 불을 꺼 주셨다.",
+    "kind": "notice",
+    "effect": {
+      "hp": -7,
+      "reputation": -5
+    },
+    "course": "general_chemistry"
+  },
+  "story_biology": {
+    "week": 32,
+    "name": "귀뚜라미 탈출",
+    "description": "실험용 귀뚜라미가 탈출했다. 다 같이 찾아 나섰다.",
+    "kind": "notice",
+    "effect": {
+      "stress": 7
+    },
+    "course": "general_biology"
+  },
+  "story_loop": {
+    "week": 34,
+    "name": "무한 루프의 늪",
+    "description": "끝나지 않는 반복문을 고쳤다. 밤은 이미 깊었다.",
+    "kind": "notice",
+    "effect": {
+      "hp": -5,
+      "science": 5
+    },
+    "when": {
+      "major": "information"
+    }
+  },
+  "story_router": {
+    "week": 36,
+    "name": "라우터 사건",
+    "description": "기숙사 네트워크 설정을 건드렸다가 사감 선생님께 불려갔다.",
+    "kind": "notice",
+    "effect": {
+      "reputation": -5,
+      "science": 4
+    },
+    "when": {
+      "major": "information"
+    }
+  },
+  "story_winter": {
+    "week": 39,
+    "name": "마지막 기숙사 밤",
+    "description": "입시가 끝난 방에서 친구들과 한 해의 이야기를 나눴다.",
+    "kind": "notice",
+    "effect": {
+      "stress": -10
+    }
+  },
+  "story_eatout": {
+    "week": 10,
+    "name": "오늘 급식은 실패",
+    "description": "친구들이 외식을 제안했다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "함께 외식을 한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -10,
+          "reputation": 4
+        },
+        "cost": 4000
+      },
+      {
+        "id": "skip",
+        "label": "오늘은 아껴 둔다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_delivery": {
+    "week": 14,
+    "name": "미션 임파서블 · 배달음식",
+    "description": "점호 전에 주문한 피자를 찾아오자.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "try",
+        "label": "조심해서 가져온다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "cost": 3000,
+        "chanceResult": {
+          "chance": 0.9,
+          "success": {
+            "stress": -12,
+            "reputation": 5
+          },
+          "failure": {
+            "stress": 10,
+            "reputation": -10
+          }
+        }
+      },
+      {
+        "id": "wait",
+        "label": "허용 시간에 받는다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -3
+        },
+        "cost": 3000
+      },
+      {
+        "id": "skip",
+        "label": "오늘은 주문하지 않는다",
+        "detail": "비용 없음"
+      }
+    ]
+  },
+  "story_pastpaper": {
+    "week": 22,
+    "name": "뜻밖의 족보",
+    "description": "선배가 작년 퀴즈 연습문제를 건넸다. 다음 퀴즈에 자신감이 생겼다.",
+    "kind": "notice",
+    "flags": {
+      "next_quiz_perfect": true
+    }
+  },
+  "story_initial_test": {
+    "week": 0,
+    "name": "해냄학원 반 배치 테스트",
+    "description": "지금 실력으로 첫 테스트를 치러 보자. 공부한 뒤 다시 풀면 결과가 달라진다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "take",
+        "label": "테스트 시작",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_dinner_1": {
+    "week": 1,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_1": {
+    "week": 1,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_2": {
+    "week": 2,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_2": {
+    "week": 2,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_3": {
+    "week": 3,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_3": {
+    "week": 3,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_4": {
+    "week": 4,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_4": {
+    "week": 4,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_5": {
+    "week": 5,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_5": {
+    "week": 5,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_6": {
+    "week": 6,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_6": {
+    "week": 6,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_7": {
+    "week": 7,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_7": {
+    "week": 7,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_8": {
+    "week": 8,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_8": {
+    "week": 8,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_9": {
+    "week": 9,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_9": {
+    "week": 9,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_10": {
+    "week": 10,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_10": {
+    "week": 10,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_11": {
+    "week": 11,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_11": {
+    "week": 11,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_12": {
+    "week": 12,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_12": {
+    "week": 12,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_13": {
+    "week": 13,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_13": {
+    "week": 13,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_14": {
+    "week": 14,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_14": {
+    "week": 14,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_15": {
+    "week": 15,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_15": {
+    "week": 15,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_16": {
+    "week": 16,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_16": {
+    "week": 16,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_17": {
+    "week": 17,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_17": {
+    "week": 17,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_18": {
+    "week": 18,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_18": {
+    "week": 18,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_19": {
+    "week": 19,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_19": {
+    "week": 19,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_20": {
+    "week": 20,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_20": {
+    "week": 20,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_21": {
+    "week": 21,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_21": {
+    "week": 21,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_22": {
+    "week": 22,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_22": {
+    "week": 22,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_23": {
+    "week": 23,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_23": {
+    "week": 23,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_24": {
+    "week": 24,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_24": {
+    "week": 24,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_25": {
+    "week": 25,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_25": {
+    "week": 25,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_26": {
+    "week": 26,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_26": {
+    "week": 26,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_27": {
+    "week": 27,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_27": {
+    "week": 27,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_28": {
+    "week": 28,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_28": {
+    "week": 28,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_29": {
+    "week": 29,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_29": {
+    "week": 29,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_30": {
+    "week": 30,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_30": {
+    "week": 30,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_31": {
+    "week": 31,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_31": {
+    "week": 31,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_32": {
+    "week": 32,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_32": {
+    "week": 32,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_33": {
+    "week": 33,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_33": {
+    "week": 33,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_34": {
+    "week": 34,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_34": {
+    "week": 34,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_35": {
+    "week": 35,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_35": {
+    "week": 35,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_36": {
+    "week": 36,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_36": {
+    "week": 36,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_37": {
+    "week": 37,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_37": {
+    "week": 37,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_38": {
+    "week": 38,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_38": {
+    "week": 38,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_39": {
+    "week": 39,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_39": {
+    "week": 39,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_dinner_40": {
+    "week": 40,
+    "name": "스터디 회식",
+    "description": "이번 주에는 풀이 대신 식탁에서 만난다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "회식에 참여한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "stress": -12
+        },
+        "cost": 1000
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 쉰다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_quiz_crisis_40": {
+    "week": 40,
+    "name": "퀴즈 공부를 전혀 안 했다",
+    "description": "문제가 너무 어렵다. 0점을 받을 것 같다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "honest",
+        "label": "끝까지 스스로 풀어 본다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "cheat",
+        "label": "옆 친구 답안을 베낀다",
+        "detail": "컨닝에 적발되면 평판이 최저치가 됩니다."
+      }
+    ],
+    "manual": true
+  },
+  "story_apply_snu": {
+    "week": 25,
+    "name": "서울대 학과 선택",
+    "description": "여름 상담에서 확인한 석차와 관심 분야를 바탕으로 원서를 쓴다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "none",
+        "label": "이번에는 지원하지 않는다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_apply_yonsei": {
+    "week": 25,
+    "name": "연세대 학과 선택",
+    "description": "여름 상담에서 확인한 석차와 관심 분야를 바탕으로 원서를 쓴다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "none",
+        "label": "이번에는 지원하지 않는다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_apply_kaist": {
+    "week": 25,
+    "name": "카이스트 학과 선택",
+    "description": "여름 상담에서 확인한 석차와 관심 분야를 바탕으로 원서를 쓴다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "none",
+        "label": "이번에는 지원하지 않는다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_first_round": {
+    "week": 33,
+    "name": "1차 합격 발표",
+    "description": "1차 서류 결과가 도착했다. 학과별 내신 기준과 평판, 제출 여부를 확인한다.",
+    "kind": "notice"
+  },
+  "story_interview_kaist": {
+    "week": 33,
+    "name": "카이스트 면접",
+    "description": "제시문을 읽고 풀이를 설명한다. 앞선 면접 기록과 이번 답변을 함께 평가한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "explain",
+        "label": "근거를 짚으며 풀이를 설명한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "rush",
+        "label": "답만 빠르게 말한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "ask",
+        "label": "가정을 확인하고 다시 정리한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "when": {
+      "flag": "hannah_first_round_kaist",
+      "equals": true
+    }
+  },
+  "story_interview_snu": {
+    "week": 35,
+    "name": "서울대 면접",
+    "description": "제시문을 읽고 풀이를 설명한다. 앞선 면접 기록과 이번 답변을 함께 평가한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "explain",
+        "label": "근거를 짚으며 풀이를 설명한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "rush",
+        "label": "답만 빠르게 말한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "ask",
+        "label": "가정을 확인하고 다시 정리한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ],
+    "when": {
+      "flag": "hannah_first_round_snu",
+      "equals": true
+    }
+  },
+  "story_interview_postech": {
+    "week": 36,
+    "name": "포스텍 면접",
+    "description": "제시문을 읽고 풀이를 설명한다. 앞선 면접 기록과 이번 답변을 함께 평가한다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "explain",
+        "label": "근거를 짚으며 풀이를 설명한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "rush",
+        "label": "답만 빠르게 말한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      },
+      {
+        "id": "ask",
+        "label": "가정을 확인하고 다시 정리한다",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_contest_ai": {
+    "week": 20,
+    "name": "포스코 AI대회 · 국제 올림피아드",
+    "description": "방학 동안 외부대회에 도전할 수 있다.",
+    "kind": "choice",
+    "options": [
+      {
+        "id": "posco",
+        "label": "포스코 AI대회 지원",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "hp": -8
+        },
+        "chanceResult": {
+          "chance": 0.05,
+          "success": {
+            "reputation": 12
+          },
+          "failure": {
+            "stress": 3
+          },
+          "income": 20000,
+          "award": true
+        }
+      },
+      {
+        "id": "iaio",
+        "label": "국제AI올림피아드 지원",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "hp": -8
+        },
+        "chanceResult": {
+          "chance": 0.05,
+          "success": {
+            "reputation": 12
+          },
+          "failure": {
+            "stress": 3
+          },
+          "income": 20000,
+          "award": true
+        }
+      },
+      {
+        "id": "iao",
+        "label": "국제천문올림피아드 지원",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+        "effect": {
+          "hp": -8
+        },
+        "chanceResult": {
+          "chance": 0.05,
+          "success": {
+            "reputation": 12
+          },
+          "failure": {
+            "stress": 3
+          },
+          "income": 20000,
+          "award": true
+        }
+      },
+      {
+        "id": "skip",
+        "label": "이번에는 내신과 자습에 집중",
+        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
+      }
+    ]
+  },
+  "story_ai_glasses": {
+    "week": 30,
+    "kind": "choice",
+    "name": "AI 안경을 쓸까?",
+    "description": "논술장에서 쓰면 안 되는 기기다. 적발 확률 95%.",
+    "options": [
+      {
+        "id": "refuse",
+        "label": "내 실력으로 응시한다",
+        "detail": "정상 응시"
+      },
+      {
+        "id": "use",
+        "label": "AI 안경을 사용한다",
+        "detail": "95% 확률 적발 · 적발 시 평판 최저",
+        "chanceResult": {
+          "chance": 0.05,
+          "success": {
+            "stress": -3
+          },
+          "failure": {
+            "reputation": -1000000,
+            "stress": 20
+          }
+        }
+      }
+    ]
+  }
+}

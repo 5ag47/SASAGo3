@@ -1,0 +1,1872 @@
+{
+  "thesis": {
+    "week": 1,
+    "kind": "task",
+    "name": "졸업논문: 첫 질문부터 최종 발표까지",
+    "description": "한 번에 끝내기보다 조금씩. 연구·실험·분석·발표에 총 12칸을 투자하세요.",
+    "target": 12,
+    "deadline": 16,
+    "reward": {
+      "science": 7,
+      "reputation": 6
+    },
+    "penalty": {
+      "reputation": -8,
+      "stress": 10
+    },
+    "special": "research",
+    "module": {
+      "id": "pattern_v2",
+      "params": {
+        "earlyWeeks": 4,
+        "earlyQuality": 90,
+        "earlyEffect": {
+          "science": 0.75,
+          "focus": 0.25
+        },
+        "overloadAfter": 2,
+        "overloadHealth": 0.75,
+        "overloadStress": 1.5
+      }
+    }
+  },
+  "reflection": {
+    "week": 14,
+    "kind": "task",
+    "name": "1학기 활동 소감문",
+    "description": "잘한 일과 아쉬운 일을 기록으로 남겨요.",
+    "target": 2,
+    "deadline": 16,
+    "reward": {
+      "writing": 4,
+      "reputation": 3
+    },
+    "penalty": {
+      "reputation": -4
+    }
+  },
+  "essay": {
+    "week": 25,
+    "kind": "task",
+    "name": "자기소개서 완성",
+    "description": "학교 활동을 바탕으로 자기소개서를 씁니다. 평판과 선생님과의 관계가 작업에 영향을 줍니다.",
+    "target": 8,
+    "deadline": 28,
+    "special": "essay",
+    "module": {
+      "id": "pattern_v2",
+      "params": {
+        "support": "essay"
+      }
+    },
+    "reward": {
+      "writing": 6,
+      "reputation": 3
+    },
+    "penalty": {
+      "stress": 12,
+      "reputation": -5
+    }
+  },
+  "application_form": {
+    "week": 25,
+    "kind": "task",
+    "name": "원서 서류 점검",
+    "description": "서류 점검과 자기소개서를 모두 마치고 지원 방향을 정하면 원서가 제출됩니다.",
+    "target": 3,
+    "deadline": 28,
+    "special": "application",
+    "reward": {
+      "speech": 3
+    },
+    "penalty": {
+      "stress": 10
+    }
+  },
+  "memory_book": {
+    "week": 37,
+    "kind": "task",
+    "name": "우리의 마지막 페이지",
+    "description": "졸업을 앞두고 올해의 순간을 작은 기록집으로 남겨요.",
+    "target": 3,
+    "deadline": 40,
+    "reward": {
+      "writing": 4,
+      "charm": 4
+    },
+    "penalty": {
+      "stress": 2
+    }
+  },
+  "math_problem_analysis": {
+    "week": 13,
+    "kind": "task",
+    "course": "math_seminar",
+    "name": "수학세미나 수리문항분석",
+    "description": "문항의 조건·풀이·변형 문제를 분석합니다.",
+    "target": 3,
+    "deadline": 16,
+    "reward": {
+      "math": 3,
+      "writing": 2
+    },
+    "penalty": {
+      "reputation": -2
+    }
+  },
+  "project-2-ai_project": {
+    "week": 2,
+    "kind": "task",
+    "name": "인공지능프로젝트 모델 검증·발표",
+    "description": "인공지능프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "ai_project",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-linear_algebra": {
+    "week": 2,
+    "kind": "task",
+    "name": "선형대수 문제풀이",
+    "description": "선형대수 수행평가 · 성적 20%에 합산",
+    "course": "linear_algebra",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-general_physics": {
+    "week": 2,
+    "kind": "task",
+    "name": "일반물리 실험 보고서",
+    "description": "일반물리 수행평가 · 성적 20%에 합산",
+    "course": "general_physics",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-physics_seminar": {
+    "week": 2,
+    "kind": "task",
+    "name": "물리세미나 문제 만들기",
+    "description": "물리세미나 수행평가 · 성적 20%에 합산",
+    "course": "physics_seminar",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-general_chemistry": {
+    "week": 2,
+    "kind": "task",
+    "name": "아바화 탐구 보고서",
+    "description": "일반화학 수행평가 · 성적 20%에 합산",
+    "course": "general_chemistry",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-chemistry_seminar": {
+    "week": 2,
+    "kind": "task",
+    "name": "화학세미나 발표 준비",
+    "description": "화학세미나 수행평가 · 성적 20%에 합산",
+    "course": "chemistry_seminar",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-general_biology": {
+    "week": 2,
+    "kind": "task",
+    "name": "생물 다양성 관찰 기록",
+    "description": "일반생물 수행평가 · 성적 20%에 합산",
+    "course": "general_biology",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-biology_seminar": {
+    "week": 2,
+    "kind": "task",
+    "name": "생물세미나 실험 설계",
+    "description": "생물세미나 수행평가 · 성적 20%에 합산",
+    "course": "biology_seminar",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-cs_project": {
+    "week": 2,
+    "kind": "task",
+    "name": "정과프 프로토타입 발표",
+    "description": "정보과학프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "cs_project",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-algorithms": {
+    "week": 2,
+    "kind": "task",
+    "name": "고급알고리즘 문제 만들기",
+    "description": "고급알고리즘 수행평가 · 성적 20%에 합산",
+    "course": "algorithms",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-tech_english": {
+    "week": 2,
+    "kind": "task",
+    "name": "과기시영 글쓰기·발표",
+    "description": "과학기술시사영어 수행평가 · 성적 20%에 합산",
+    "course": "tech_english",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-visual_communication": {
+    "week": 2,
+    "kind": "task",
+    "name": "비커 시각화 프로젝트",
+    "description": "비주얼커뮤니케이션 수행평가 · 성적 20%에 합산",
+    "course": "visual_communication",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-math_seminar": {
+    "week": 2,
+    "kind": "task",
+    "name": "수학세미나 아카이빙 보고서",
+    "description": "수학세미나 수행평가 · 성적 20%에 합산",
+    "course": "math_seminar",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-2-foreign_language": {
+    "week": 2,
+    "kind": "task",
+    "name": "외국어 발표 준비",
+    "description": "외국어 수행평가 · 성적 20%에 합산",
+    "course": "foreign_language",
+    "target": 2,
+    "deadline": 4,
+    "reward": {
+      "speech": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-ai_project": {
+    "week": 10,
+    "kind": "task",
+    "name": "인공지능프로젝트 모델 검증·발표",
+    "description": "인공지능프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "ai_project",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-linear_algebra": {
+    "week": 10,
+    "kind": "task",
+    "name": "선형대수 문제풀이",
+    "description": "선형대수 수행평가 · 성적 20%에 합산",
+    "course": "linear_algebra",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-general_physics": {
+    "week": 10,
+    "kind": "task",
+    "name": "일반물리 실험 보고서",
+    "description": "일반물리 수행평가 · 성적 20%에 합산",
+    "course": "general_physics",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-physics_seminar": {
+    "week": 10,
+    "kind": "task",
+    "name": "물리세미나 문제 만들기",
+    "description": "물리세미나 수행평가 · 성적 20%에 합산",
+    "course": "physics_seminar",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-general_chemistry": {
+    "week": 10,
+    "kind": "task",
+    "name": "아바화 탐구 보고서",
+    "description": "일반화학 수행평가 · 성적 20%에 합산",
+    "course": "general_chemistry",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-chemistry_seminar": {
+    "week": 10,
+    "kind": "task",
+    "name": "화학세미나 발표 준비",
+    "description": "화학세미나 수행평가 · 성적 20%에 합산",
+    "course": "chemistry_seminar",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-general_biology": {
+    "week": 10,
+    "kind": "task",
+    "name": "생물 다양성 관찰 기록",
+    "description": "일반생물 수행평가 · 성적 20%에 합산",
+    "course": "general_biology",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-biology_seminar": {
+    "week": 10,
+    "kind": "task",
+    "name": "생물세미나 실험 설계",
+    "description": "생물세미나 수행평가 · 성적 20%에 합산",
+    "course": "biology_seminar",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-cs_project": {
+    "week": 10,
+    "kind": "task",
+    "name": "정과프 프로토타입 발표",
+    "description": "정보과학프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "cs_project",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-algorithms": {
+    "week": 10,
+    "kind": "task",
+    "name": "고급알고리즘 문제 만들기",
+    "description": "고급알고리즘 수행평가 · 성적 20%에 합산",
+    "course": "algorithms",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-tech_english": {
+    "week": 10,
+    "kind": "task",
+    "name": "과기시영 글쓰기·발표",
+    "description": "과학기술시사영어 수행평가 · 성적 20%에 합산",
+    "course": "tech_english",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-visual_communication": {
+    "week": 10,
+    "kind": "task",
+    "name": "비커 시각화 프로젝트",
+    "description": "비주얼커뮤니케이션 수행평가 · 성적 20%에 합산",
+    "course": "visual_communication",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-math_seminar": {
+    "week": 10,
+    "kind": "task",
+    "name": "수학세미나 아카이빙 보고서",
+    "description": "수학세미나 수행평가 · 성적 20%에 합산",
+    "course": "math_seminar",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-10-foreign_language": {
+    "week": 10,
+    "kind": "task",
+    "name": "외국어 발표 준비",
+    "description": "외국어 수행평가 · 성적 20%에 합산",
+    "course": "foreign_language",
+    "target": 2,
+    "deadline": 12,
+    "reward": {
+      "speech": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-ai_project": {
+    "week": 26,
+    "kind": "task",
+    "name": "인공지능프로젝트 모델 검증·발표",
+    "description": "인공지능프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "ai_project",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-linear_algebra": {
+    "week": 26,
+    "kind": "task",
+    "name": "선형대수 문제풀이",
+    "description": "선형대수 수행평가 · 성적 20%에 합산",
+    "course": "linear_algebra",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-general_physics": {
+    "week": 26,
+    "kind": "task",
+    "name": "일반물리 실험 보고서",
+    "description": "일반물리 수행평가 · 성적 20%에 합산",
+    "course": "general_physics",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-physics_seminar": {
+    "week": 26,
+    "kind": "task",
+    "name": "물리세미나 문제 만들기",
+    "description": "물리세미나 수행평가 · 성적 20%에 합산",
+    "course": "physics_seminar",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-general_chemistry": {
+    "week": 26,
+    "kind": "task",
+    "name": "아바화 탐구 보고서",
+    "description": "일반화학 수행평가 · 성적 20%에 합산",
+    "course": "general_chemistry",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-chemistry_seminar": {
+    "week": 26,
+    "kind": "task",
+    "name": "화학세미나 발표 준비",
+    "description": "화학세미나 수행평가 · 성적 20%에 합산",
+    "course": "chemistry_seminar",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-general_biology": {
+    "week": 26,
+    "kind": "task",
+    "name": "생물 다양성 관찰 기록",
+    "description": "일반생물 수행평가 · 성적 20%에 합산",
+    "course": "general_biology",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-biology_seminar": {
+    "week": 26,
+    "kind": "task",
+    "name": "생물세미나 실험 설계",
+    "description": "생물세미나 수행평가 · 성적 20%에 합산",
+    "course": "biology_seminar",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-cs_project": {
+    "week": 26,
+    "kind": "task",
+    "name": "정과프 프로토타입 발표",
+    "description": "정보과학프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "cs_project",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-algorithms": {
+    "week": 26,
+    "kind": "task",
+    "name": "고급알고리즘 문제 만들기",
+    "description": "고급알고리즘 수행평가 · 성적 20%에 합산",
+    "course": "algorithms",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-tech_english": {
+    "week": 26,
+    "kind": "task",
+    "name": "과기시영 글쓰기·발표",
+    "description": "과학기술시사영어 수행평가 · 성적 20%에 합산",
+    "course": "tech_english",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-visual_communication": {
+    "week": 26,
+    "kind": "task",
+    "name": "비커 시각화 프로젝트",
+    "description": "비주얼커뮤니케이션 수행평가 · 성적 20%에 합산",
+    "course": "visual_communication",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-math_seminar": {
+    "week": 26,
+    "kind": "task",
+    "name": "수학세미나 아카이빙 보고서",
+    "description": "수학세미나 수행평가 · 성적 20%에 합산",
+    "course": "math_seminar",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-26-foreign_language": {
+    "week": 26,
+    "kind": "task",
+    "name": "외국어 발표 준비",
+    "description": "외국어 수행평가 · 성적 20%에 합산",
+    "course": "foreign_language",
+    "target": 2,
+    "deadline": 28,
+    "reward": {
+      "speech": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-ai_project": {
+    "week": 30,
+    "kind": "task",
+    "name": "인공지능프로젝트 모델 검증·발표",
+    "description": "인공지능프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "ai_project",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-linear_algebra": {
+    "week": 30,
+    "kind": "task",
+    "name": "선형대수 문제풀이",
+    "description": "선형대수 수행평가 · 성적 20%에 합산",
+    "course": "linear_algebra",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-general_physics": {
+    "week": 30,
+    "kind": "task",
+    "name": "일반물리 실험 보고서",
+    "description": "일반물리 수행평가 · 성적 20%에 합산",
+    "course": "general_physics",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-physics_seminar": {
+    "week": 30,
+    "kind": "task",
+    "name": "물리세미나 문제 만들기",
+    "description": "물리세미나 수행평가 · 성적 20%에 합산",
+    "course": "physics_seminar",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-general_chemistry": {
+    "week": 30,
+    "kind": "task",
+    "name": "아바화 탐구 보고서",
+    "description": "일반화학 수행평가 · 성적 20%에 합산",
+    "course": "general_chemistry",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-chemistry_seminar": {
+    "week": 30,
+    "kind": "task",
+    "name": "화학세미나 발표 준비",
+    "description": "화학세미나 수행평가 · 성적 20%에 합산",
+    "course": "chemistry_seminar",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-general_biology": {
+    "week": 30,
+    "kind": "task",
+    "name": "생물 다양성 관찰 기록",
+    "description": "일반생물 수행평가 · 성적 20%에 합산",
+    "course": "general_biology",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-biology_seminar": {
+    "week": 30,
+    "kind": "task",
+    "name": "생물세미나 실험 설계",
+    "description": "생물세미나 수행평가 · 성적 20%에 합산",
+    "course": "biology_seminar",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-cs_project": {
+    "week": 30,
+    "kind": "task",
+    "name": "정과프 프로토타입 발표",
+    "description": "정보과학프로젝트 수행평가 · 성적 20%에 합산",
+    "course": "cs_project",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "science": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-algorithms": {
+    "week": 30,
+    "kind": "task",
+    "name": "고급알고리즘 문제 만들기",
+    "description": "고급알고리즘 수행평가 · 성적 20%에 합산",
+    "course": "algorithms",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-tech_english": {
+    "week": 30,
+    "kind": "task",
+    "name": "과기시영 글쓰기·발표",
+    "description": "과학기술시사영어 수행평가 · 성적 20%에 합산",
+    "course": "tech_english",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-visual_communication": {
+    "week": 30,
+    "kind": "task",
+    "name": "비커 시각화 프로젝트",
+    "description": "비주얼커뮤니케이션 수행평가 · 성적 20%에 합산",
+    "course": "visual_communication",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "writing": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-math_seminar": {
+    "week": 30,
+    "kind": "task",
+    "name": "수학세미나 아카이빙 보고서",
+    "description": "수학세미나 수행평가 · 성적 20%에 합산",
+    "course": "math_seminar",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "math": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "project-30-foreign_language": {
+    "week": 30,
+    "kind": "task",
+    "name": "외국어 발표 준비",
+    "description": "외국어 수행평가 · 성적 20%에 합산",
+    "course": "foreign_language",
+    "target": 2,
+    "deadline": 32,
+    "reward": {
+      "speech": 2,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1,
+      "stress": 2
+    }
+  },
+  "urban-project-1": {
+    "week": 1,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 1,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-2": {
+    "week": 2,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 2,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-3": {
+    "week": 3,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 3,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-4": {
+    "week": 4,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 4,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-5": {
+    "week": 5,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 5,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-6": {
+    "week": 6,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 6,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-7": {
+    "week": 7,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 7,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-8": {
+    "week": 8,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 8,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-9": {
+    "week": 9,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 9,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-10": {
+    "week": 10,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 10,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-11": {
+    "week": 11,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 11,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-12": {
+    "week": 12,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 12,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-13": {
+    "week": 13,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 13,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-14": {
+    "week": 14,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 14,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-15": {
+    "week": 15,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 15,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-16": {
+    "week": 16,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 16,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-25": {
+    "week": 25,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 25,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-26": {
+    "week": 26,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 26,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-27": {
+    "week": 27,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 27,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-28": {
+    "week": 28,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 28,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-29": {
+    "week": 29,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 29,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-30": {
+    "week": 30,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 30,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-31": {
+    "week": 31,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 31,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-32": {
+    "week": 32,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 32,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-33": {
+    "week": 33,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 33,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-34": {
+    "week": 34,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 34,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-35": {
+    "week": 35,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 35,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-36": {
+    "week": 36,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 36,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-37": {
+    "week": 37,
+    "kind": "task",
+    "name": "도도: 교통 동선 조사",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 37,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-38": {
+    "week": 38,
+    "kind": "task",
+    "name": "도도: 생활권 지도",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 38,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-39": {
+    "week": 39,
+    "kind": "task",
+    "name": "도도: 녹지 계획",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 39,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "urban-project-40": {
+    "week": 40,
+    "kind": "task",
+    "name": "도도: 접근성 분석",
+    "description": "도시 환경과 도시 계획 주간 프로젝트",
+    "course": "urban_planning",
+    "target": 1,
+    "deadline": 40,
+    "reward": {
+      "writing": 1,
+      "reputation": 1
+    },
+    "penalty": {
+      "reputation": -1
+    }
+  },
+  "subject_game_group": {
+    "kind": "group",
+    "name": "과목 과제 미니게임",
+    "members": [
+      "project-2-visual_communication",
+      "project-10-visual_communication",
+      "project-26-visual_communication",
+      "project-30-visual_communication",
+      "urban-project-1",
+      "urban-project-2",
+      "urban-project-3",
+      "urban-project-4",
+      "urban-project-5",
+      "urban-project-6",
+      "urban-project-7",
+      "urban-project-8",
+      "urban-project-9",
+      "urban-project-10",
+      "urban-project-11",
+      "urban-project-12",
+      "urban-project-13",
+      "urban-project-14",
+      "urban-project-15",
+      "urban-project-16",
+      "urban-project-25",
+      "urban-project-26",
+      "urban-project-27",
+      "urban-project-28",
+      "urban-project-29",
+      "urban-project-30",
+      "urban-project-31",
+      "urban-project-32",
+      "urban-project-33",
+      "urban-project-34",
+      "urban-project-35",
+      "urban-project-36",
+      "urban-project-37",
+      "urban-project-38",
+      "urban-project-39",
+      "urban-project-40"
+    ],
+    "module": {
+      "id": "order_v2",
+      "params": {}
+    }
+  },
+  "report_game_group": {
+    "kind": "group",
+    "name": "보고서 구성 미니게임",
+    "members": [
+      "project-2-general_physics",
+      "project-10-general_physics",
+      "project-26-general_physics",
+      "project-30-general_physics",
+      "project-2-general_chemistry",
+      "project-10-general_chemistry",
+      "project-26-general_chemistry",
+      "project-30-general_chemistry",
+      "project-2-math_seminar",
+      "project-10-math_seminar",
+      "project-26-math_seminar",
+      "project-30-math_seminar",
+      "project-2-general_biology",
+      "project-10-general_biology",
+      "project-26-general_biology",
+      "project-30-general_biology"
+    ],
+    "module": {
+      "id": "report_v1",
+      "params": {
+        "layout": "report"
+      }
+    }
+  },
+  "presentation_game_group": {
+    "kind": "group",
+    "name": "발표 구성 미니게임",
+    "members": [
+      "project-2-chemistry_seminar",
+      "project-10-chemistry_seminar",
+      "project-26-chemistry_seminar",
+      "project-30-chemistry_seminar",
+      "project-2-cs_project",
+      "project-10-cs_project",
+      "project-26-cs_project",
+      "project-30-cs_project",
+      "project-2-tech_english",
+      "project-10-tech_english",
+      "project-26-tech_english",
+      "project-30-tech_english",
+      "project-2-foreign_language",
+      "project-10-foreign_language",
+      "project-26-foreign_language",
+      "project-30-foreign_language"
+    ],
+    "module": {
+      "id": "report_v1",
+      "params": {
+        "layout": "presentation"
+      }
+    }
+  },
+  "biology_experiment_group": {
+    "kind": "group",
+    "name": "생물 실험 설계 미니게임",
+    "members": [
+      "project-2-biology_seminar",
+      "project-10-biology_seminar",
+      "project-26-biology_seminar",
+      "project-30-biology_seminar"
+    ],
+    "module": {
+      "id": "experiment_v1",
+      "params": {
+        "variables": ["온도", "빛", "물의 양", "영양분"]
+      }
+    }
+  },
+  "ai_experiment_group": {
+    "kind": "group",
+    "name": "모델 검증 미니게임",
+    "members": [
+      "project-2-ai_project",
+      "project-10-ai_project",
+      "project-26-ai_project",
+      "project-30-ai_project"
+    ],
+    "module": {
+      "id": "experiment_v1",
+      "params": {
+        "variables": ["학습률", "데이터 양", "층 수", "학습 횟수"]
+      }
+    }
+  },
+  "problem_game_group": {
+    "kind": "group",
+    "name": "문제 만들기 미니게임",
+    "members": [
+      "math_problem_analysis",
+      "project-2-linear_algebra",
+      "project-10-linear_algebra",
+      "project-26-linear_algebra",
+      "project-30-linear_algebra",
+      "project-2-physics_seminar",
+      "project-10-physics_seminar",
+      "project-26-physics_seminar",
+      "project-30-physics_seminar",
+      "project-2-algorithms",
+      "project-10-algorithms",
+      "project-26-algorithms",
+      "project-30-algorithms"
+    ],
+    "module": {
+      "id": "sum_v1",
+      "params": {}
+    }
+  },
+  "common_game_group": {
+    "kind": "group",
+    "name": "공통 과제 미니게임",
+    "members": ["thesis", "reflection", "essay", "application_form", "memory_book"],
+    "module": {
+      "id": "pattern_v2",
+      "params": {}
+    }
+  },
+  "subject-game-math": {
+    "kind": "task",
+    "name": "구구단과 수식",
+    "description": "세 문제의 선택형 미니게임을 진행합니다. 이해도가 높으면 오답 일부가 제외됩니다.",
+    "week": 3,
+    "deadline": 4,
+    "target": 1,
+    "reward": {
+      "math": 2
+    },
+    "penalty": {
+      "stress": 2
+    },
+    "module": {
+      "id": "subject_quiz_v1",
+      "params": {
+        "subject": "math"
+      }
+    },
+    "course": "math_seminar"
+  },
+  "subject-game-physics": {
+    "kind": "task",
+    "name": "포물선과 운동",
+    "description": "세 문제의 선택형 미니게임을 진행합니다. 이해도가 높으면 오답 일부가 제외됩니다.",
+    "week": 6,
+    "deadline": 7,
+    "target": 1,
+    "reward": {
+      "science": 2
+    },
+    "penalty": {
+      "stress": 2
+    },
+    "module": {
+      "id": "subject_quiz_v1",
+      "params": {
+        "subject": "physics"
+      }
+    },
+    "course": "general_physics"
+  },
+  "subject-game-chemistry": {
+    "kind": "task",
+    "name": "원소기호 맞추기",
+    "description": "세 문제의 선택형 미니게임을 진행합니다. 이해도가 높으면 오답 일부가 제외됩니다.",
+    "week": 6,
+    "deadline": 7,
+    "target": 1,
+    "reward": {
+      "science": 2
+    },
+    "penalty": {
+      "stress": 2
+    },
+    "module": {
+      "id": "subject_quiz_v1",
+      "params": {
+        "subject": "chemistry"
+      }
+    },
+    "course": "general_chemistry"
+  },
+  "subject-game-biology": {
+    "kind": "task",
+    "name": "동물 이름 맞추기",
+    "description": "세 문제의 선택형 미니게임을 진행합니다. 이해도가 높으면 오답 일부가 제외됩니다.",
+    "week": 10,
+    "deadline": 11,
+    "target": 1,
+    "reward": {
+      "science": 2
+    },
+    "penalty": {
+      "stress": 2
+    },
+    "module": {
+      "id": "subject_quiz_v1",
+      "params": {
+        "subject": "biology"
+      }
+    },
+    "course": "biodiversity"
+  },
+  "subject-game-earth": {
+    "kind": "task",
+    "name": "나라와 지구 맞추기",
+    "description": "세 문제의 선택형 미니게임을 진행합니다. 이해도가 높으면 오답 일부가 제외됩니다.",
+    "week": 14,
+    "deadline": 15,
+    "target": 1,
+    "reward": {
+      "science": 2
+    },
+    "penalty": {
+      "stress": 2
+    },
+    "module": {
+      "id": "subject_quiz_v1",
+      "params": {
+        "subject": "earth"
+      }
+    }
+  },
+  "subject-game-information": {
+    "kind": "task",
+    "name": "블록 코드 실행",
+    "description": "세 문제의 선택형 미니게임을 진행합니다. 이해도가 높으면 오답 일부가 제외됩니다.",
+    "week": 10,
+    "deadline": 11,
+    "target": 1,
+    "reward": {
+      "science": 2
+    },
+    "penalty": {
+      "stress": 2
+    },
+    "module": {
+      "id": "subject_quiz_v1",
+      "params": {
+        "subject": "information"
+      }
+    },
+    "course": "algorithms"
+  }
+}

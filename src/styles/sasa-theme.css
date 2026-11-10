@@ -1,0 +1,20 @@
+/* Shared visual language from the dorm prototype. No layout or game behavior. */
+:root {
+  --sasa-font: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --sasa-ink: #40536a;
+  --sasa-navy: #50677f;
+  --sasa-muted: #8b959b;
+  --sasa-sage: #8fa89c;
+  --sasa-line: #e2e5df;
+  --sasa-paper: #fffdf7;
+  --sasa-paper-warm: #fffdf4;
+  --sasa-cream: #f6f5f0;
+  --sasa-blue: #e9eff7;
+  --sasa-purple: #efebf4;
+  --sasa-sand: #f4eee1;
+  --sasa-rose: #f7e9e6;
+  --sasa-green: #eaf0e7;
+  --sasa-panel-border: #d3ddc9;
+  --sasa-shadow: 0 5px 20px #2c424b25;
+  --sasa-radius: 10px;
+}

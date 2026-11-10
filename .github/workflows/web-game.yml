@@ -1,0 +1,24 @@
+name: Web game checks
+on:
+  pull_request:
+  push:
+    branches: [test_hannah]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+        env:
+          VITE_FIREBASE_API_KEY: ci-public-placeholder
+          VITE_FIREBASE_AUTH_DOMAIN: sasago3-ci.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: sasago3-ci
+          VITE_FIREBASE_APP_ID: 1:0:web:ci-placeholder

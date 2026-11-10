@@ -1,0 +1,87 @@
+.year-report h3 {
+  margin: 0 0 18px;
+  font-size: 22px;
+}
+.year-report h4 {
+  margin: 24px 0 10px;
+  font-size: 13px;
+  color: #526a7a;
+}
+.year-report-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.year-report-summary > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 13px;
+  min-width: 100px;
+  border: 1px solid #dfdacf;
+  border-radius: 10px;
+  background: #f5f2e9;
+}
+.year-report-summary b {
+  font-size: 24px;
+}
+.year-report-summary small,
+.year-report-summary span {
+  font-size: 11px;
+  color: #6f7b7c;
+}
+.year-report table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.year-report th,
+.year-report td {
+  padding: 8px;
+  border-bottom: 1px solid #e4e0d6;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.year-report th:first-child {
+  text-align: left;
+}
+.year-activity-bars {
+  display: grid;
+  gap: 8px;
+}
+.year-activity-bars > div {
+  display: grid;
+  grid-template-columns: 95px 1fr 46px;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+}
+.year-activity-bars i {
+  display: block;
+  min-width: 2px;
+  height: 7px;
+  border-radius: 4px;
+  background: #8b9fae;
+}
+.year-activity-bars b {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.year-report ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.year-report li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e4e0d6;
+  font-size: 12px;
+}
+.year-report p {
+  font-size: 12px;
+  color: #6e7878;
+}

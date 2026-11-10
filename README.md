@@ -1,24 +1,105 @@
-# SASAGo3 — frontend scaffold
+# SASAGo3
 
-This repo contains a minimal Vite + React scaffold for the SASAGo3 project (main screen only).
+기숙사에서 시작해 입시까지 한 해를 보내는 고3 육성 게임입니다. Vite + React를 사용합니다.
 
-Quick start:
+현재 통합 브랜치: **test_hannah**. 다른 기존 브랜치를 수정·삭제하거나 그쪽으로 병합하지 않습니다.
 
-1. Install dependencies
+- [8개 기존 브랜치 분석](BRANCHES.md)
+- [첨부 기획서 대응·스토리 구현·검증 결과](docs/integration-test-hannah.md)
 
-```bash
-npm install
+이 브랜치는 기존 연간 게임 엔진에 첨부 기획의 연장 자습, 개인 프리셋, 월별 생활·연애 스토리, 과목 퀴즈, 학과 지원과 최종 결과를 통합했습니다. 운영 사이트 배포는 별도이며 이 브랜치가 공개 서버에 반영됐다는 뜻은 아닙니다.
+
+## 실행
+
+배포하지 않아도 내 컴퓨터에서 바로 플레이할 수 있습니다. 처음 한 번만 [Node.js](https://nodejs.org) LTS(22.12 이상)를 설치하세요.
+
+**Windows: 더블클릭**
+
+- `SASAGo3 실행.cmd` — 로그인 없이 바로 시작합니다. 기록은 이 브라우저에만 저장됩니다.
+- `SASAGo3 실행 (Google 로그인).cmd` — 공개 버전과 같은 Google 로그인·서버 계산 모드입니다. `.env.local`에 Firebase 설정이 없으면 로그인 없는 모드로 대신 실행합니다.
+
+**macOS·Linux 또는 터미널**
+
+```sh
+npm run play          # 로그인 없이
+npm run play:login    # Google 로그인
 ```
 
-2. Run dev server
+실행기가 알아서 하는 일:
 
-```bash
-npm run dev
+- 패키지가 없거나 `package-lock.json`이 바뀌었을 때만 `npm ci`를 실행합니다.
+- 로그인 없는 모드는 5173~5180 중 빈 포트를 고릅니다. 로그인 모드는 서버 출처 검사 때문에 5173·4174를 씁니다.
+- 같은 모드의 게임이 이미 켜져 있으면 새로 띄우지 않고 그 주소를 엽니다.
+- 준비가 끝나면 브라우저를 엽니다. 끌 때는 실행 창에서 `Ctrl+C`를 누릅니다.
+
+로그인 없는 모드(`127.0.0.1`)와 로그인 모드(`localhost`)는 서로 다른 주소라 저장도 따로입니다. 기존 개발 명령 `npm run dev`, `npm run dev:secure`도 그대로 쓸 수 있습니다. Firebase 설정을 처음 만드는 경우 [단계별 안내](docs/firebase-setup.md)를 보세요.
+
+## 구현된 게임
+
+- 캐릭터 그림·닉네임·특성·4개 전공 선택: 수학·물리 / 화학 / 생물 / 정보 (구형 물리 저장 호환)
+- 겨울방학 튜토리얼 1주 + 3~12월 40주, 월~일 아침 자습·1자·2자 21칸과 연장 자습 7칸 편성
+- 요일 일정을 여러 날에 한 번에 복사, 연장 포함 · 고정 수업·행사 칸 보존 · 개인 프리셋 3개 저장
+- 수강 과목 프리셋과 21개 과목의 이해도·퀴즈·중간·기말·수행 평가, 학점 가중 GPA
+- 정보 전공 인공지능프로젝트, 교양선택 도시 환경과 도시 계획의 매주 프로젝트, 수학세미나 수리문항분석
+- 마감 있는 과제·학원 숙제·졸업논문·자소서·원서, 시간 투자에 따른 자동 완료
+- 스터디 지원·실패·참여 효과·불참 벌금, 선생님 친밀도·추천서
+- 동아리·인예주·졸업사진·제주 탐사·생일·외부대회·추석·연합스터디
+- 방학 공부 장소와 비용·효율, 고정 학원 칸과 자유 자습의 선택
+- 서류 기반 면접 3문항(완료한 과제·전공 제시문·학교생활 기록에서 출제), 논술·창의도전·수능·종합 전형과 6종 결말
+- 답변별 저장·복구와 면접 결과 검토, 손패·짝 모으기·고/스톱을 선택하는 8턴 카드 미니게임
+- 용돈·아르바이트·매점 즉시 사용, 스트레스·체력·피로 관리
+- 동기 친구 6명의 주차별 소문, 원서 시즌 교내 지원 현황, 친구들의 결과 ([편집 안내](docs/classmates-authoring.md))
+- 과제 형식별 미니게임: 보고서·발표 구성, 변인 통제 실험, 배점 맞추기(과목 이해도가 높을수록 쉬워짐)
+- 시기별 부담(1회고사·기말·원서·수능), 회복 한도, 지침·피로·번아웃 3단계, 자습 신청의 주말 예상
+- 월 용돈·주간 생활비, 방학 한정 알바, 여름 상담 뒤 선택하는 수능 준비와 등급·고대 최저·정시
+- 8개 단원의 첫 주 실습 안내, 편집 가능한 예시 일정, 순서 제한 없는 조작
+- 브라우저 전체를 쓰는 기숙사 HUD, 휴대폰용 자습 패널, 한국 시간 07~19시 낮·그 외 밤 자동 전환
+- UI 텍스트·이미지의 기본 드래그 차단. 입력 필드 편집과 향후 게임 드래그는 예외
+
+과제 완료 보상에 현금은 없습니다. 수학·물리는 하나의 선택으로 표시하며 옛 physics 저장 ID는 호환합니다. 제공되지 않은 ‘지혜의 길잡이’ PDF는 포함하지 않았습니다. 휴학 이후 복학 이야기는 아직 없으며 휴학 결말만 구현했습니다. 대학 이름이 나오는 전형은 게임용 가상 규칙입니다.
+
+개발 확장 지점은 [기능별 안내](docs/gameplay-extension.md)에 있습니다. 명령 계약·저장 변환·패널·과제 모듈을 분리했고 로컬 편집기에서 과제와 날짜별 학사를 수정할 수 있습니다. 전체 검사는 `npm run verify`로 실행합니다. 입시는 학점·생기부 중심이며 관계는 자소서/추천서 준비의 부담을 완만하게 바꿉니다. 제출한 서류는 당시 기록을 보존합니다.
+
+## 저장과 보안
+
+과제와 실제 플레이 모듈을 추가·연결하려면 [과제·미니게임 편집 안내](docs/task-authoring.md)를 따릅니다. `npm run tasks:editor`는 로컬 편집기를 엽니다. 개별/그룹 모듈 지정과 변경 파일 내보내기를 지원하며 공개 게임·플레이어 DB와 분리됩니다. 이번 통합 범위와 미정·미검증 항목은 [통합 보고서](docs/integration-test-hannah.md)에 구분했습니다.
+
+주간 계획은 실제 작업 시간·중요 알림에서 멈추며, 과제는 그 자리에서 진행·완료합니다. 장기 프로젝트도 한 주 여러 번 도전할 수 있고 주간 상한·반복 부담은 모듈에서 지정합니다. [날짜별 달력 일정 작성](docs/calendar-authoring.md), [진행·성능 검증](docs/diagnostics/2026-10-28-game-flow.md)을 참고하세요.
+
+- 로컬 모드: `sasago3-year-v1`에 자동 저장, 직전 백업·파일 내보내기/복원, 버전·범위 검증, 탭 충돌 감지
+- 서버 모드: Google Firebase ID 토큰 서명·프로젝트·만료·Google 제공업체·계정 비활성화/폐기 검사, 서버에서만 결과 계산
+- 서버는 UID·점수·저장 상태를 클라이언트로부터 받아 덮어쓰지 않습니다. 행동 명령·revision·중복 방지 키만 받습니다.
+- 원자적 DB 저장, 요청 중복 방지, 사용자 기록 격리, Origin·CSRF 검사, 본문 크기·요청 빈도 제한
+- 진단 보고서 다운로드 및 요청 ID가 포함된 구조화 서버 로그. 인증 토큰·이메일은 기록하지 않습니다.
+
+공개 서버는 **Cloudflare Workers + D1**에 저장합니다. 로컬 개발 서버 DB는 `.local/game.sqlite`이며 별도 기록입니다. **Firebase는 Google 인증을 담당하며 게임 기록을 Firestore에 저장하지 않습니다.** 브라우저 방문 안내 기록은 계정·게임별로 분리하고 서버 점수와 연결하지 않습니다. 로컬 저장은 직접 수정을 막을 수 없으며 절대적인 보안이나 모든 부정행위 방지를 보장하지 않습니다.
+
+## 검증과 빌드
+
+```sh
+npm run check
+npm test
+npm run build
+npm audit --audit-level=high
 ```
 
-Change the background image at runtime by pasting an image URL into the top-right input; it is saved to `localStorage` so you can change it later.
+서버용 배포 빌드는 공개 Firebase 설정을 넣은 `.env.local`을 준비한 뒤 `npm run build:secure`를 사용합니다. 이 빌드는 브라우저 저장으로 자동 우회하지 않습니다.
 
-Next steps:
-- Add character and room assets in `/public` and update CSS
-- Implement routing, state management, and game logic
-- Create branches and push to remote (see BRANCHES.md)
+공개 서버 갱신은 `npm run cloud:deploy`, 실제 D1 저장 제약 확인은 `npm run smoke:d1`입니다. 저장소 전용 훅은 test_hannah 외 커밋·push와 로컬 비밀 파일 커밋을 막고, `npm run check`에서 데이터·모듈 경계·미선언 변수를 검사합니다. 자세한 운영 범위는 아래 문서를 확인합니다.
+
+## 문서
+
+- [원본 기획](docs/planning-original.txt)
+- [기획 전체와 구현 대응표](docs/requirements.md)
+- [구조와 게임 규칙](docs/architecture.md)
+- [육성 밸런스와 전략 비교](docs/balance.md)
+- [학교 이야기 작성](docs/story-authoring.md)
+- [운영 백업·복구 검증](docs/backup-recovery.md)
+- [협업·충돌 대응](docs/collaboration.md)
+- [UI 연구·사례·수용 판단](docs/ui-research.md)
+- [구현 검증 결과와 미검증 범위](docs/validation.md)
+- [Firebase 처음 설정하기](docs/firebase-setup.md)
+- [보안 범위](docs/security.md)
+- [외부 배포 준비](docs/deployment.md)
+
+기존 React 초안과 Godot 폴더는 보존했습니다. 기존 README는 [초안 기록](docs/legacy-prototype.md)에 보관했습니다. 예전 브라우저 저장 키 `sasago3-save-v1`도 변경하지 않습니다.

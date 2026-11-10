@@ -1,0 +1,174 @@
+.task-game-panel {
+  text-align: center;
+}
+.task-game-panel > small {
+  color: var(--sasa-muted);
+  font-size: 12px;
+}
+.task-game-panel h3 {
+  margin: 12px 0 18px;
+  font-size: 20px;
+}
+.task-game-panel p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.task-order-cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 25px 0;
+}
+.task-order-cards button {
+  width: clamp(44px, 14vw, 66px);
+  height: clamp(64px, 20vw, 90px);
+  border: 2px solid var(--sasa-panel-border);
+  border-radius: 10px;
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+  background: var(--sasa-paper-warm);
+  color: var(--sasa-ink);
+  box-shadow:
+    0 4px 8px #3e514b16,
+    inset 0 1px #fff;
+}
+.task-order-cards button.picked {
+  border-color: #bac8b3;
+  background: var(--sasa-green);
+  color: #8a9c82;
+}
+.task-pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 66px);
+  gap: 10px;
+  justify-content: center;
+  padding: 15px 0;
+}
+.task-pattern-grid button {
+  width: 66px;
+  height: 66px;
+  border: 1px solid #bbc5c6;
+  border-radius: 10px;
+  background: var(--sasa-sand);
+  color: #8a9d9e;
+  font-size: 22px;
+}
+.task-pattern-grid button.lit {
+  background: var(--sasa-sage);
+  color: #fff;
+  border-color: #76929b;
+}
+.task-game-passed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 0;
+  gap: 12px;
+}
+.task-game-passed > b {
+  font-size: 21px;
+  color: #809a7a;
+}
+.task-game-passed > span {
+  font-size: 32px;
+  font-variant-numeric: tabular-nums;
+}
+.task-game-panel .subtle {
+  margin-top: 14px;
+}
+.task-game-action {
+  margin: 10px 0;
+}
+.task-report-outline {
+  list-style: decimal inside;
+  margin: 10px auto 4px;
+  max-width: 320px;
+  text-align: left;
+  font-size: 12px;
+  color: var(--sasa-muted);
+}
+.task-report-outline li {
+  padding: 6px 10px;
+  border-bottom: 1px dashed var(--sasa-line);
+}
+.task-report-outline li.filled {
+  color: var(--sasa-ink);
+  background: var(--sasa-green);
+}
+.task-report-outline li.next {
+  color: #94805a;
+  background: var(--sasa-sand);
+}
+.task-report-cards,
+.task-experiment-vars,
+.task-sum-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 0;
+}
+.task-report-cards button {
+  padding: 10px 12px;
+  border: 1px solid var(--sasa-panel-border);
+  border-radius: 8px;
+  background: var(--sasa-paper-warm);
+  color: var(--sasa-ink);
+  font-size: 12px;
+  box-shadow: 0 3px 6px #3e514b12;
+}
+.task-experiment-vars button,
+.task-sum-cards button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 64px;
+  padding: 6px 10px;
+  border: 2px solid var(--sasa-panel-border);
+  border-radius: 10px;
+  background: var(--sasa-paper-warm);
+  color: var(--sasa-ink);
+  font-size: 15px;
+}
+.task-sum-cards button {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+.task-experiment-vars button small,
+.task-sum-cards button small {
+  font-size: 9px;
+  color: var(--sasa-muted);
+}
+.task-experiment-vars button.chosen,
+.task-sum-cards button.chosen {
+  border-color: #76929b;
+  background: var(--sasa-blue);
+}
+.task-experiment-vars button.ruled-out {
+  opacity: 0.55;
+}
+.task-experiment-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.task-experiment-log {
+  list-style: none;
+  margin: 12px auto 0;
+  padding: 0;
+  max-width: 340px;
+  text-align: left;
+  font-size: 12px;
+}
+.task-experiment-log li {
+  padding: 5px 8px;
+  border-bottom: 1px dashed var(--sasa-line);
+}
+.task-experiment-log li.uncontrolled {
+  color: #af7767;
+}
+.task-sum-over {
+  color: #af7767;
+}

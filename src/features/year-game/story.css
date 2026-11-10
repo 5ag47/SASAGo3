@@ -1,0 +1,92 @@
+.story-scene {
+  color: var(--sasa-ink);
+  background: var(--sasa-paper);
+}
+.story-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sasa-muted);
+  font-size: 12px;
+}
+.story-location small {
+  margin-left: auto;
+}
+.story-scene h2 {
+  font-size: 23px;
+  font-weight: 500;
+  margin: 22px 0;
+}
+.story-dialogue {
+  min-height: 195px;
+  padding: 22px;
+  background: var(--sasa-cream);
+  border: 1px solid var(--sasa-line);
+  border-radius: 7px;
+}
+.story-dialogue > b {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--sasa-navy);
+  color: var(--sasa-paper);
+}
+.story-dialogue p {
+  margin: 15px 0 0;
+  font-size: 16px;
+  line-height: 1.9;
+  word-break: keep-all;
+}
+.story-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.story-library {
+  border: 1px solid var(--sasa-line);
+  border-radius: 7px;
+  margin-bottom: 18px;
+  padding: 14px;
+}
+.story-library summary {
+  cursor: pointer;
+  color: var(--sasa-navy);
+}
+.story-library > div {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+}
+.story-library button {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  text-align: left;
+  background: var(--sasa-cream);
+  border-radius: 5px;
+}
+.story-library button b {
+  font-size: 13px;
+  font-weight: 500;
+}
+.story-library button small {
+  margin-left: auto;
+  color: var(--sasa-muted);
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .story-dialogue {
+    min-height: 215px;
+    padding: 17px;
+  }
+  .story-dialogue p {
+    font-size: 15px;
+  }
+  .story-scene h2 {
+    font-size: 20px;
+  }
+}

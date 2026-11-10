@@ -1,0 +1,203 @@
+.record-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: var(--sasa-cream);
+  border: 1px solid var(--sasa-line);
+  border-radius: var(--sasa-radius);
+}
+.record-summary span,
+.route-comparison article > span {
+  font-size: 11px;
+  color: var(--sasa-muted);
+}
+.school-record-panel {
+  margin: 14px 0;
+  padding: 14px;
+  background: var(--sasa-paper);
+  border: 1px solid var(--sasa-line);
+}
+.recommendation-panel {
+  padding: 14px;
+  margin: 14px 0;
+  background: var(--sasa-paper);
+  border: 1px solid var(--sasa-line);
+  border-radius: var(--sasa-radius);
+}
+.recommendation-panel h3 {
+  margin-top: 0;
+  font-size: 14px;
+}
+.recommendation-panel p {
+  font-size: 12px;
+}
+.school-record-panel summary,
+.route-comparison summary {
+  cursor: pointer;
+  font-size: 12px;
+}
+.record-scores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+.record-scores > div {
+  padding: 10px;
+  background: var(--sasa-green);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+}
+.school-record-panel table,
+.route-comparison table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 11px;
+}
+.school-record-panel td,
+.school-record-panel th,
+.route-comparison td,
+.route-comparison th {
+  text-align: left;
+  border-bottom: 1px solid var(--sasa-line);
+  padding: 8px 5px;
+}
+.admission-directions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.admission-directions > button {
+  flex: 1;
+  padding: 10px;
+  background: var(--sasa-paper);
+  border: 1px solid var(--sasa-line);
+}
+.admission-directions > button[aria-pressed='true'] {
+  background: var(--sasa-green);
+  border-color: var(--sasa-sage);
+}
+.route-comparison {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+.route-comparison article {
+  padding: 15px;
+  background: var(--sasa-cream);
+  border: 1px solid var(--sasa-line);
+  border-radius: var(--sasa-radius);
+}
+.route-comparison h3 {
+  font-size: 14px;
+  margin: 0 0 7px;
+}
+.route-comparison p,
+.school-record-panel p,
+.submission-state {
+  font-size: 12px;
+}
+.route-comparison details {
+  margin-top: 12px;
+}
+.admission-results .not-applied {
+  color: var(--sasa-muted);
+  background: var(--sasa-cream);
+}
+@media (max-width: 600px) {
+  .record-scores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .record-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .admission-directions {
+    flex-wrap: wrap;
+  }
+}
+
+/* Classmates: friends, the school's application board and their results. */
+.classmate-list,
+.classmate-results {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.classmate-list li,
+.classmate-results li {
+  padding: 8px 10px;
+  border: 1px solid var(--sasa-line);
+  border-radius: 8px;
+  background: var(--sasa-paper-warm);
+}
+.classmate-list b,
+.classmate-results b {
+  font-size: 12px;
+  color: var(--sasa-ink);
+}
+.classmate-list small,
+.classmate-results small {
+  font-weight: 400;
+  color: var(--sasa-muted);
+  font-size: 10px;
+}
+.classmate-list p,
+.classmate-results p {
+  margin: 3px 0 0;
+  font-size: 11px;
+  color: #6f7a77;
+}
+.classmate-results li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+.classmate-results li p {
+  grid-column: 1 / -1;
+}
+.classmate-results span {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  align-self: start;
+}
+.classmate-results span.accepted {
+  background: var(--sasa-green);
+  color: #6f8569;
+}
+.classmate-results span.rejected {
+  background: var(--sasa-sand);
+  color: #94805a;
+}
+.application-board {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 14px;
+  font-size: 11px;
+}
+.application-board th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--sasa-muted);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--sasa-line);
+}
+.application-board td {
+  padding: 6px;
+  border-bottom: 1px dashed var(--sasa-line);
+  color: var(--sasa-ink);
+}
+.application-board tr.mine td {
+  background: var(--sasa-blue);
+}
+.application-board small {
+  color: #758669;
+}

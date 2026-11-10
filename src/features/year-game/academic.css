@@ -1,0 +1,26 @@
+.course-mark-details {
+  margin: 18px 0;
+  padding: 14px;
+  background: #f2f5ec;
+  border: 1px solid #d5dfcf;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #4e6049;
+}
+.course-mark-details summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.course-mark-details p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  line-height: 1.7;
+}
+.course-mark-details p b {
+  margin-left: auto;
+}
+.course-mark-details h3 {
+  font-size: 13px;
+  margin: 18px 0 8px;
+}

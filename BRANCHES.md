@@ -1,21 +1,23 @@
-# Branch guide
+# test_hannah 통합 기준 브랜치
 
-Suggested branches and commands:
+2026-11-10 원격의 전체 브랜치 8개를 조회하고, 각 tip의 파일 트리·커밋·주요 게임 코드·데이터·저장 방식을 비교했다. 아래 SHA는 작업 시작 시 기준점이다. 유일한 쓰기 대상은 **test_hannah**이며 다른 브랜치로 병합하지 않는다.
 
-- `main` — production-ready
-- `develop` — integration branch
-- `feature/scaffold` — this initial UI scaffold
+| 브랜치                 | 기준 SHA                                 | 구현과 차이                                                                                                                     | test_hannah의 선택                                                        |
+| ---------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| main                   | f8d35957e117e48e7d40ca42d5dcde9471c4ab8f | 초기 React 메인 화면, 활동 선택, 주간 결과·폰트. 48개 추적 파일                                                                 | 기숙사 게임의 기본 화면·활동 개념 유지. 연간 엔진으로 통합                |
+| ag_test                | 64ec40f71bb7cee1ad629a6fc5fca8367ccf39d6 | 한 해 진행, 전공별 과목, 주간 일정, 체력·피로, 큰 캐릭터 비율. 61개 파일                                                        | 캐릭터 크기와 연간 육성 흐름 채택. 최신 집중력·시간 규칙 적용             |
+| codex/sasago3-web-game | 7bd68b6f72fddaa6b34e5263003d24ce6d883c17 | 분리된 도메인·JSON 데이터, 월간/주간 달력, 과제 미니게임, 학점·생기부·면접, Firebase 인증, SQLite/D1, 테스트·실행기. 335개 파일 | 엔진·안전한 저장·인증·미니게임·테스트·Windows 실행기·CI 채택              |
+| hannah_test            | f9d2d0e50f57b60524e433a16dffd2e2321ef17c | 초기 화면 계열. node_modules를 포함한 5,615개 추적 파일                                                                         | 화면 자산·초기 흐름 비교. 의존성 디렉터리는 가져오지 않고 lockfile로 설치 |
+| test_dy                | 6b9c24923f6acb4b2b3cfb663d5b6b8c28d77027 | 로컬 계정/저장, 자동 저장, 주간 일정·생활 이벤트, 클릭 대사·낮밤. 71개 파일                                                     | 클릭 대사, 성별 표시 없는 캐릭터 선택, 생활 이벤트 채택                   |
+| test_dy_1027           | 92aedfe0eb6a7d7de0feebd95a98c234eeaadf3e | 사용자 제공 링크. test_dy와 게임 소스 동일, .gitignore 차이                                                                     | test_dy와 같은 기능을 한 번만 반영해 중복 방지                            |
+| Integrated_1103        | 492d4d198251d60a3c938925d4a23822d25dc397 | codex 엔진에 ag 비율·dy 대사/불투명 HUD, 건강−스트레스 집중력, 수학 감소·과목별 부담 통합. 335개 파일                           | 이미 결합된 소스를 통합 기반으로 선택한 뒤 첨부 문서 누락 기능 보완       |
+| test_hannah            | fb7543380aa91d752a6837aebf9c7ad11f671d34 | 기존 11개 파일 React 초안                                                                                                       | 이 브랜치의 이력을 부모로 유지한 채 통합 구현 커밋                        |
 
-Create branches locally:
+## 통합 방법
 
-```bash
-git checkout -b feature/scaffold
-git add .
-git commit -m "scaffold: initial Vite+React main screen"
-```
-
-Push to remote:
-
-```bash
-git push -u origin feature/scaffold
-```
+- 다른 브랜치를 체크아웃해 고치거나 포인터를 이동하지 않았다. 원격 참조는 읽기용으로 조회했다.
+- test_hannah에서 Integrated_1103의 파일을 선택 반영하고 codex의 누락된 실행기·CI를 복구했다. `git merge`를 사용하지 않는다.
+- 충돌은 기능 단위로 결정했다. 독립 focus는 계산값, 과제 현금 보상은 없음, 최초 4전공 선택과 자동 2학기 과목 전환, 옛 진학실 메뉴 대신 알림과 최종 결과 화면을 사용한다.
+- v5 로컬 계정 저장과 연간 엔진 저장은 서로 다른 형식이다. 자동 혼합하지 않는다. 연간 엔진 저장의 과거 성적·진행 기록은 migration으로 보존한다.
+- 저장소 훅은 test_hannah 외 커밋·push와 비밀 파일 커밋을 거부한다. CI push 대상도 test_hannah만 지정한다.
+- 자세한 요구사항 대응과 검증 범위: [통합 보고서](docs/integration-test-hannah.md).

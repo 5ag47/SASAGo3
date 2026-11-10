@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-10",
+  "branch": "test_hannah",
+  "contentVersion": "2026.11.10-hannah-1",
+  "tests": {
+    "passed": 281,
+    "failed": 0,
+    "skipped": 0
+  },
+  "checks": {
+    "content": true,
+    "architecture": true,
+    "eslint": true,
+    "serverBuild": true,
+    "editorBuild": true,
+    "ordinaryBuild": true,
+    "simulationRuns": 70
+  },
+  "audit": {
+    "high": 0,
+    "critical": 0,
+    "moderate": 4,
+    "scope": "development ESLint / minimatch"
+  },
+  "secureBuildCredentials": "CI public placeholders, not production credentials",
+  "notVerified": ["visual browser rendering", "real Google account sign-in", "live production D1"],
+  "deployed": false
+}
