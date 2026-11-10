@@ -77,3 +77,9 @@ npm run balance:simulate
 ```
 
 서버용 전체 검증은 `.env.example`을 참고한 실제 공개 Firebase 설정 또는 CI 모형을 넣고 `npm run verify`를 실행한다. 로컬 플레이는 `npm run play`, Windows에서는 루트의 `SASAGo3 실행.cmd`를 사용한다.
+
+## 원격 반영 상태
+
+로컬 통합 커밋과 검증은 완료했으나 원격 push는 완료하지 못했다. 명령줄은 GitHub 로그인 없음(`could not read Username`), 연결된 GitHub 쓰기는 `403 Resource not accessible by integration`으로 거부됐다. 따라서 원격 test_hannah를 포함한 8개 브랜치는 기존 SHA 그대로다. 저장소 쓰기 권한이 있는 GitHub 인증 연결이 필요하다. 인증 토큰을 소스나 대화에 넣지 않는다.
+
+전달 ZIP에는 전체 소스, test_hannah의 Git bundle, 이 보고서와 검증 CSV가 포함된다. 인증이 준비되면 동일한 커밋을 test_hannah에만 정상 push하면 된다. 강제 push와 다른 브랜치 병합은 필요하지 않다.

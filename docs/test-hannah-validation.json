@@ -23,6 +23,16 @@
     "scope": "development ESLint / minimatch"
   },
   "secureBuildCredentials": "CI public placeholders, not production credentials",
-  "notVerified": ["visual browser rendering", "real Google account sign-in", "live production D1"],
-  "deployed": false
+  "notVerified": [
+    "visual browser rendering",
+    "real Google account sign-in",
+    "live production D1"
+  ],
+  "deployed": false,
+  "remotePushCompleted": false,
+  "remotePushBlockers": [
+    "Git CLI is not authenticated",
+    "GitHub integration write returned 403 Resource not accessible by integration"
+  ],
+  "remoteBranchesChanged": 0
 }
