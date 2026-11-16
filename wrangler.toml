@@ -1,0 +1,28 @@
+name = "sasago3-play-20261027"
+main = "server/worker.js"
+compatibility_date = "2026-10-27"
+workers_dev = true
+preview_urls = false
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = true
+
+[vars]
+# Replace these only after following docs/deployment.md. They are public configuration.
+FIREBASE_PROJECT_ID = "sasago3"
+FIREBASE_API_KEY = "AIzaSyAa1bGH6xMvmpZjMLsXLBZf27jQW0_MSAs"
+PUBLIC_ORIGIN = "https://sasago3-play-20261027.sasago3.workers.dev"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sasago3-game"
+database_id = "e20b4a54-7e80-4fb1-a772-0fcde2be3f0c"
+
+[observability]
+enabled = true
+
+[triggers]
+crons = ["0 * * * *"]

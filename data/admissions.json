@@ -1,0 +1,97 @@
+{
+  "school_record": {
+    "kind": "record",
+    "weights": {
+      "coursework": 0.5,
+      "exploration": 0.2,
+      "participation": 0.15,
+      "continuity": 0.15
+    },
+    "courseSamples": 6,
+    "explorationSamples": 6,
+    "generalCourseCredit": 0.5,
+    "communitySlots": 10,
+    "thesisCredit": 1.5,
+    "disciplinePenalty": 2
+  },
+  "essay_support": {
+    "kind": "essay",
+    "progressCap": 1.75,
+    "weights": {
+      "execution": 0.4,
+      "record": 0.35,
+      "teacher": 0.15,
+      "writing": 0.1
+    },
+    "reputationStart": 35,
+    "reputationSpan": 45,
+    "reputationBonus": 0.5,
+    "teacherProgressBonus": 0.25,
+    "burden": {
+      "hp": 1.2,
+      "focus": 0.6,
+      "stress": 1.8
+    }
+  },
+  "top_interview": {
+    "kind": "route",
+    "weights": {
+      "gpa": 0.35,
+      "record": 0.35,
+      "fit": 0.1,
+      "essay": 0.1,
+      "recommendation": 0.05,
+      "interview": 0.05
+    },
+    "externalAwards": false
+  },
+  "kaist_postech": {
+    "kind": "route",
+    "weights": {
+      "gpa": 0.25,
+      "record": 0.4,
+      "fit": 0.15,
+      "essay": 0.08,
+      "recommendation": 0.05,
+      "interview": 0.07
+    },
+    "externalAwards": true
+  },
+  "korea_university": {
+    "kind": "route",
+    "weights": {
+      "gpa": 0.4,
+      "record": 0.3,
+      "fit": 0.05,
+      "essay": 0.1,
+      "recommendation": 0.05,
+      "interview": 0.1
+    },
+    "externalAwards": true
+  },
+  "direction_dream": {
+    "kind": "direction",
+    "id": "dream",
+    "name": "상향 지원",
+    "routes": ["top_interview", "kaist_postech"]
+  },
+  "direction_balanced": {
+    "kind": "direction",
+    "id": "balanced",
+    "name": "균형 지원",
+    "routes": ["kaist_postech", "korea_university"]
+  },
+  "direction_safe": {
+    "kind": "direction",
+    "id": "safe",
+    "name": "안정 지원",
+    "routes": ["korea_university"]
+  },
+  "recommendation_support": {
+    "kind": "recommendation",
+    "sessions": 2,
+    "healthCost": 3,
+    "focusCost": 1.5,
+    "stressCost": 4
+  }
+}

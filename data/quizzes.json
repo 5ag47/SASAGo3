@@ -1,0 +1,20 @@
+{
+  "common_knowledge": {
+    "question": "호주의 수도는 어디일까?",
+    "options": ["시드니", "캔버라", "멜버른"],
+    "correct": 1,
+    "explanation": "호주의 수도는 캔버라다."
+  },
+  "sphinx": {
+    "question": "어릴 때는 네 발, 자라서는 두 발, 늙어서는 세 발로 걷는 것은?",
+    "options": ["사람", "책상", "강아지"],
+    "correct": 0,
+    "explanation": "기어 다니는 아기, 두 발로 걷는 어른, 지팡이를 짚는 노인을 뜻한다."
+  },
+  "guess_card": {
+    "question": "친구가 뒤집어 둔 카드의 색은?",
+    "options": ["빨강", "파랑", "초록"],
+    "correct": null,
+    "explanation": "카드 색은 선택할 때 무작위로 결정된다."
+  }
+}

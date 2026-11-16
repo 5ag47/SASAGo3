@@ -1,0 +1,199 @@
+.calendar-heading {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.calendar-heading h3 {
+  font-size: 20px;
+  margin: 0;
+  flex: 1;
+}
+.calendar-heading > button {
+  padding: 8px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-left: 1px solid var(--sasa-line);
+  border-top: 1px solid var(--sasa-line);
+}
+.calendar-grid > b {
+  text-align: center;
+  padding: 9px 0;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--sasa-cream);
+  border-right: 1px solid var(--sasa-line);
+  border-bottom: 1px solid var(--sasa-line);
+}
+.calendar-grid > button {
+  min-height: 80px;
+  padding: 7px 5px;
+  border-right: 1px solid var(--sasa-line);
+  border-bottom: 1px solid var(--sasa-line);
+  text-align: left;
+  overflow: hidden;
+  background: var(--sasa-paper);
+  position: relative;
+}
+.calendar-grid > button[data-current-week='true'] {
+  background: var(--sasa-green);
+}
+.calendar-grid > button[aria-selected='true'] {
+  box-shadow: inset 0 0 0 2px var(--sasa-navy);
+}
+.calendar-grid > button[data-other-month='true'] {
+  color: var(--sasa-muted);
+  background: var(--sasa-cream);
+}
+.calendar-grid > button > span {
+  display: inline-grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.calendar-grid > button[data-today='true'] > span {
+  background: var(--sasa-navy);
+  border-radius: 50%;
+  color: var(--sasa-paper);
+}
+.calendar-grid small {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 9px;
+  margin-bottom: 3px;
+  padding: 2px 3px;
+  background: var(--sasa-blue);
+  border-radius: 2px;
+}
+.calendar-grid small.deadline {
+  background: var(--sasa-purple);
+}
+.calendar-grid small.note {
+  background: var(--sasa-sand);
+}
+.calendar-grid em {
+  font-size: 9px;
+  font-style: normal;
+}
+.calendar-grid i {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--sasa-sage);
+  position: absolute;
+  right: 7px;
+  top: 15px;
+}
+.calendar-day-detail {
+  border-top: 1px solid var(--sasa-line);
+  margin-top: 20px;
+  padding-top: 10px;
+}
+.calendar-day-detail h3 {
+  font-size: 16px;
+}
+.calendar-day-detail h3 small {
+  font-size: 12px;
+  font-weight: 400;
+}
+.calendar-day-detail article {
+  padding: 10px;
+  border-left: 3px solid var(--sasa-sage);
+  margin: 8px 0;
+  background: var(--sasa-cream);
+}
+.calendar-day-detail article.deadline {
+  border-color: var(--sasa-muted);
+}
+.calendar-day-detail article b {
+  font-weight: 500;
+  font-size: 13px;
+}
+.calendar-day-detail article p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+.calendar-day-detail article small {
+  display: block;
+  color: var(--sasa-muted);
+  font-size: 11px;
+  margin-top: 5px;
+}
+.calendar-day-detail summary {
+  cursor: pointer;
+  padding: 10px 0;
+}
+.run-resume {
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  z-index: 6;
+  border: 1px solid var(--sasa-panel-border);
+  border-radius: var(--sasa-radius);
+  background: var(--sasa-paper);
+  box-shadow: var(--sasa-shadow);
+  padding: 12px;
+}
+.tutorial-guide {
+  position: fixed;
+  z-index: 35;
+  left: 20px;
+  bottom: 90px;
+  width: min(300px, calc(100vw - 40px));
+  padding: 17px;
+  border: 1px solid var(--sasa-panel-border);
+  border-radius: var(--sasa-radius);
+  background: var(--sasa-paper);
+  box-shadow: var(--sasa-shadow);
+}
+.tutorial-guide p {
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 10px 0;
+}
+.tutorial-guide > div {
+  display: flex;
+  justify-content: space-between;
+}
+.tutorial-guide button {
+  font-size: 11px;
+  padding: 5px;
+  color: var(--sasa-navy);
+}
+.tutorial-target {
+  outline: 3px solid #b6a17c !important;
+  outline-offset: 3px;
+}
+.task-attempt-cost {
+  padding: 10px;
+  background: var(--sasa-sand);
+  border-radius: 5px;
+}
+@media (max-width: 600px) {
+  .calendar-grid > button {
+    min-height: 68px;
+    padding: 5px 2px;
+  }
+  .calendar-heading {
+    gap: 3px;
+  }
+  .calendar-heading h3 {
+    font-size: 17px;
+  }
+  .calendar-grid small {
+    font-size: 8px;
+  }
+  .run-resume {
+    left: 15px;
+    right: 15px;
+    font-size: 12px;
+    bottom: 10px;
+  }
+}

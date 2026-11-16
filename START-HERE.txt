@@ -1,0 +1,23 @@
+﻿SASAGo3 — GitHub Desktop에서 test_hannah 푸시하기
+
+1. 이 ZIP을 새 폴더에 모두 압축 해제합니다.
+2. GitHub Desktop에서 SASAGo3 쓰기 권한이 있는 계정(예: 5ag47)으로 로그인합니다.
+3. File > Add local repository > Choose...에서 이 안내 파일 옆 SASAGo3 폴더를 선택합니다.
+4. Current branch가 test_hannah인지 확인합니다.
+5. Push origin을 누릅니다. 기존 코드 변경은 이미 커밋되어 있어 추가 커밋은 필요 없습니다.
+
+대상: https://github.com/5ag47/SASAGo3
+브랜치: test_hannah
+포함된 마지막 커밋: a7820965a275552a4a187be636709754ac534925
+기준 원격 커밋: fb7543380aa91d752a6837aebf9c7ad11f671d34
+기준 원격보다 2개 커밋 앞선 상태입니다.
+
+다른 브랜치에 병합하거나 새 저장소를 만들 필요가 없습니다.
+원격 변경 때문에 충돌 안내가 나오면 강제 푸시하지 말고 화면을 공유해 주세요.
+이 폴더에는 Git 기록이 포함되어 있으므로 .git 폴더를 삭제하지 마세요.
+GitHub 로그인 정보나 토큰은 포함되어 있지 않습니다.
+
+검증: 기존 코드 테스트 281개 통과, 빌드 통과.
+이번 패키징에서는 Git 기록 무결성, 원본과의 커밋/소스 일치,
+단일 test_hannah 브랜치 및 푸시 대상 제한을 확인했습니다.
+실제 Windows GitHub Desktop UI 실행은 검증하지 않았습니다.

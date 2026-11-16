@@ -1,0 +1,12 @@
+#!/bin/sh
+# This integration work is explicitly restricted to one branch.
+if [ "$(git branch --show-current)" != "test_hannah" ]; then
+  echo "Push denied: only test_hannah is authorized." >&2
+  exit 1
+fi
+while read -r local_ref local_oid remote_ref remote_oid; do
+  if [ "$remote_ref" != "refs/heads/test_hannah" ] || [ "$local_oid" = "0000000000000000000000000000000000000000" ]; then
+    echo "Push denied: only a non-deletion update of test_hannah is authorized." >&2
+    exit 1
+  fi
+done

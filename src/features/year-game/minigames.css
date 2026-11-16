@@ -1,0 +1,219 @@
+.interview-progress {
+  display: flex;
+  gap: 5px;
+  margin: 16px 0;
+}
+.interview-progress i {
+  flex: 1;
+  height: 4px;
+  border-radius: 3px;
+  background: #e5e2d9;
+}
+.interview-progress i.done {
+  background: #8ea58e;
+}
+.interview-progress i.current {
+  background: #728b9d;
+}
+.interview-review {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 18px 0;
+  list-style: none;
+}
+.interview-review li {
+  padding: 13px;
+  border: 1px solid #dfddd4;
+  border-radius: 10px;
+  background: #f7f4ed;
+}
+.interview-review b {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+}
+.interview-review p,
+.interview-review span {
+  display: block;
+  margin: 7px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.interview-review span,
+.minigame-status {
+  color: #667985;
+  font-size: 12px;
+}
+.card-scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid #ddd8c9;
+  border-radius: 12px;
+  background: #f4f0e6;
+}
+.card-scoreboard > div {
+  display: grid;
+  min-width: 64px;
+  gap: 3px;
+  text-align: center;
+}
+.card-scoreboard b {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.card-scoreboard small,
+.card-scoreboard p,
+.card-scoreboard span {
+  font-size: 12px;
+  color: #64716f;
+}
+.card-scoreboard em {
+  font-size: 12px;
+  margin-left: 3px;
+  font-style: normal;
+}
+.card-table {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 155px;
+  padding: 15px;
+  border-radius: 12px;
+  background: #465f57;
+  border: 3px solid #d6c9ab;
+}
+.flower-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 48px;
+  min-height: 70px;
+  padding: 6px 3px;
+  border: 2px solid #eee8d8;
+  border-radius: 5px;
+  color: #fffdf5;
+  background: #718a78;
+  box-shadow: 0 2px 3px #0002;
+}
+.flower-card span {
+  font-size: 11px;
+  font-weight: 700;
+}
+.flower-card i {
+  font-size: 22px;
+  font-style: normal;
+  line-height: 1.2;
+}
+.flower-card.flower-1 {
+  background: #92605e;
+}
+.flower-card.flower-2 {
+  background: #71838f;
+}
+.flower-card.flower-3 {
+  background: #8b7857;
+}
+.flower-card small {
+  position: absolute;
+  bottom: -9px;
+  white-space: nowrap;
+  border-radius: 5px;
+  padding: 2px 5px;
+  background: #f4df94;
+  color: #574923;
+  font-size: 10px;
+}
+.card-hand {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 0 18px;
+}
+.card-hand .flower-card {
+  width: 65px;
+  min-height: 94px;
+  transition: transform 0.15s;
+}
+.card-hand .flower-card:hover:not(:disabled),
+.card-hand .flower-card:focus-visible {
+  transform: translateY(-5px);
+  outline: 3px solid #a7b7c2;
+  outline-offset: 3px;
+}
+.card-hand .has-match {
+  border-color: #e9ce7b;
+}
+.card-hand-title {
+  margin: 16px 0 10px;
+  text-align: center;
+  font-size: 14px;
+}
+.card-hand-title small {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #6b7577;
+}
+.card-decision {
+  padding: 18px 0;
+  text-align: center;
+}
+.card-decision h3,
+.card-result h3 {
+  margin: 0;
+  font-size: 22px;
+}
+.card-decision p,
+.card-result p {
+  font-size: 13px;
+}
+.card-decision > div {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.card-decision small {
+  display: block;
+  margin-top: 10px;
+  color: #796a56;
+  font-size: 11px;
+}
+.card-result {
+  margin: 20px 0;
+  text-align: center;
+}
+.card-move-log {
+  margin: 10px 0;
+  padding: 10px 10px 10px 24px;
+  border-radius: 8px;
+  background: #f1eee6;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #53615f;
+}
+.card-rules {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #63716b;
+}
+.card-rules summary {
+  cursor: pointer;
+}
+.card-rules p {
+  line-height: 1.8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-hand .flower-card {
+    transition: none;
+  }
+}

@@ -1,0 +1,287 @@
+.game-window {
+  font-size: 16px;
+}
+.game-window button,
+.game-window select {
+  font-size: 15px;
+}
+.condition-card {
+  min-width: 250px;
+  padding: 18px;
+}
+.condition-card h2,
+.paper-title h2 {
+  font-size: 18px;
+}
+.stat-list.compact .stat-line {
+  font-size: 15px;
+  min-height: 29px;
+}
+.stat-list.compact .progress-track {
+  height: 10px;
+}
+.campaign-planner {
+  padding: 7px 12px;
+  background: #f9f5e9;
+  border: 1px solid #c4cec2;
+  border-radius: 10px;
+  margin: 5px 0;
+}
+.campaign-planner label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.campaign-planner select {
+  min-width: 0;
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #aebdb6;
+  background: white;
+  border-radius: 5px;
+}
+.campaign-planner summary {
+  cursor: pointer;
+  padding: 6px 0;
+}
+.campaign-planner small {
+  display: block;
+  color: #8b5151;
+  padding-top: 5px;
+}
+.campaign-planner input {
+  width: 100%;
+  max-width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.saved-preset {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 5px;
+}
+.saved-preset span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.saved-preset button {
+  border: 1px solid #b7c3b7;
+  border-radius: 5px;
+  padding: 4px 7px;
+}
+.notification-dot {
+  font-size: 11px;
+  color: white;
+  font-style: normal;
+  text-align: center;
+  min-width: 13px;
+  min-height: 13px;
+  line-height: 13px;
+}
+.pending-notices button,
+.notices-list article {
+  border-radius: 15px;
+  border: 1px solid #d3ddd2;
+  background: #f7faef;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+.pending-notices button {
+  width: 100%;
+  box-shadow: 0 3px 0 #d3ddd2;
+}
+.narrative-overlay .modal::backdrop {
+  background: rgba(10, 16, 28, 0.88);
+  backdrop-filter: blur(3px);
+}
+.narrative-overlay .modal {
+  border: 3px solid #cbd6c1;
+  box-shadow: 0 0 50px #1118;
+}
+.story-dialogue,
+.event-title + .dialog-lead {
+  font-size: 18px;
+  line-height: 1.8;
+}
+.event-title {
+  font-size: 24px;
+}
+.activity-replay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #e7eee3;
+  border: 1px solid #c4cec2;
+  border-radius: 12px;
+}
+.activity-replay > div:nth-child(2) {
+  flex: 1;
+  min-width: 150px;
+}
+.activity-replay h3,
+.activity-replay p {
+  margin: 4px 0;
+}
+.activity-replay input {
+  width: 100%;
+}
+.activity-animation {
+  background: #f8f4e7;
+  border-radius: 50%;
+  padding: 16px;
+  animation: working 0.45s ease-in-out;
+}
+@keyframes working {
+  0% {
+    transform: translateY(3px) rotate(-7deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(7deg);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.christmas .window-toolbar {
+  background: #dce9dd;
+  border-bottom: 3px solid #a94d4c;
+}
+.christmas .scene::after {
+  content: '❄  ✦  ❄  ✦  ❄';
+  position: absolute;
+  top: 12px;
+  left: 42%;
+  font-size: 27px;
+  letter-spacing: 28px;
+  color: #fff;
+  pointer-events: none;
+  text-shadow: 0 1px 4px #415947;
+}
+.profile-settings {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ccd2c7;
+  margin-bottom: 16px;
+}
+.profile-settings label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.profile-settings input {
+  min-width: 0;
+  flex: 1;
+  padding: 8px;
+}
+.profile-settings button {
+  margin-top: 8px;
+  padding: 7px 12px;
+}
+@media (max-height: 850px) and (min-width: 761px) {
+  .planner-panel {
+    overflow-y: auto;
+  }
+  .session-card {
+    min-height: 56px;
+  }
+  .campaign-planner {
+    padding: 5px 9px;
+  }
+  .condition-card {
+    padding: 12px;
+  }
+  .scene-left {
+    gap: 10px;
+  }
+}
+@media (max-width: 760px) {
+  .condition-card {
+    min-width: 0;
+  }
+  .game-window {
+    font-size: 15px;
+  }
+  .campaign-planner select {
+    font-size: 14px;
+  }
+  .story-dialogue {
+    font-size: 17px;
+  }
+  .stat-list.compact .stat-line {
+    font-size: 14px;
+  }
+  .christmas .scene::after {
+    left: 40%;
+    letter-spacing: 5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .activity-animation {
+    animation: none;
+  }
+  .narrative-overlay * {
+    transition: none;
+  }
+}
+
+.result-reason {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #59675c;
+}
+
+.activity-animation {
+  position: relative;
+  width: 95px;
+  height: 120px;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  animation: working 0.8s ease-in-out infinite;
+}
+.activity-animation img {
+  width: 95px;
+  height: 120px;
+  object-fit: contain;
+}
+.activity-animation svg {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: #416a70;
+  background: #faf7e8;
+  padding: 4px;
+  border-radius: 8px;
+}
+.activity-sleep {
+  animation: none;
+  transform: rotate(-12deg);
+}
+.night-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: #e7e6ef;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.night-overview select {
+  max-width: 100%;
+  min-width: 0;
+  font-size: 12px;
+  border-radius: 5px;
+  padding: 6px 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .activity-animation {
+    animation: none;
+  }
+}

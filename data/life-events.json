@@ -1,0 +1,440 @@
+{
+  "kaist_postech": {
+    "week": 35,
+    "kind": "admission",
+    "name": "카이스트·포스텍 종합 평가",
+    "track": "종합",
+    "externalAwards": true,
+    "description": "교과·면접·활동에 외부 수상 실적도 반영하는 게임 속 전형이다.",
+    "profile": "kaist_postech"
+  },
+  "korea_university": {
+    "week": 35,
+    "kind": "admission",
+    "name": "고대 종합 평가",
+    "track": "종합",
+    "externalAwards": true,
+    "description": "서류 제출과 종합 준비도를 확인한다.",
+    "profile": "korea_university"
+  },
+  "dorm_delivery": {
+    "week": 3,
+    "kind": "choice",
+    "name": "야식 배달",
+    "description": "취침 점검 시간이 가까워졌다.",
+    "options": [
+      {
+        "id": "room",
+        "label": "호실로 배달받기",
+        "detail": "3,000원 · 스트레스 -8 · 벌점 +1",
+        "cost": 3000,
+        "effect": {
+          "stress": -8,
+          "hp": 3
+        },
+        "discipline": 1
+      },
+      {
+        "id": "allowed",
+        "label": "허용 시간에 휴게실에서 먹기",
+        "detail": "1,000원 · 스트레스 -4",
+        "cost": 1000,
+        "effect": {
+          "stress": -4
+        }
+      },
+      {
+        "id": "sleep",
+        "label": "오늘은 먼저 자기",
+        "detail": "체력 +4",
+        "effect": {
+          "hp": 4
+        }
+      }
+    ]
+  },
+  "common_knowledge": {
+    "week": 6,
+    "kind": "quiz",
+    "quiz": "common_knowledge",
+    "name": "쉬는 시간 상식 퀴즈",
+    "description": "성적에 반영되지 않는 짧은 퀴즈다."
+  },
+  "may_union_study": {
+    "week": 10,
+    "kind": "choice",
+    "name": "5월 연합 스터디",
+    "description": "다른 스터디와 풀이를 교환하기로 했다.",
+    "options": [
+      {
+        "id": "join",
+        "label": "풀이 발표에 참여",
+        "detail": "자습 1칸 · 구술력 +3 · 평판 +2",
+        "effect": {
+          "speech": 3,
+          "reputation": 2
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "interview"
+        }
+      },
+      {
+        "id": "pass",
+        "label": "이번에는 개인 일정 유지",
+        "detail": "집중력 +1",
+        "effect": {}
+      }
+    ]
+  },
+  "career_sessions": {
+    "week": 11,
+    "kind": "choice",
+    "name": "입시설명회와 선배 강연",
+    "description": "듣고 싶은 강연만 골라 시간을 남길 수 있다.",
+    "options": [
+      {
+        "id": "both",
+        "label": "설명회와 선배 강연 모두 참석",
+        "detail": "자습 2칸 · 스트레스 -5",
+        "effect": {
+          "stress": -5
+        },
+        "reserve": {
+          "count": 2,
+          "activity": "lecture"
+        }
+      },
+      {
+        "id": "one",
+        "label": "필요한 강연 하나만 참석",
+        "detail": "자습 1칸 · 스트레스 -2",
+        "effect": {
+          "stress": -2
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "lecture"
+        }
+      },
+      {
+        "id": "none",
+        "label": "강연 대신 자습",
+        "detail": "자습 유지 · 스트레스 +3",
+        "effect": {
+          "stress": 3
+        }
+      }
+    ]
+  },
+  "school_contest": {
+    "week": 12,
+    "kind": "choice",
+    "name": "세종정올 번외 경기",
+    "description": "마인크래프트 건축과 짧은 영상 부문이 열렸다.",
+    "options": [
+      {
+        "id": "build",
+        "label": "건축 부문 참가",
+        "detail": "자습 1칸 · 과학 +2 · 스트레스 -5",
+        "effect": {
+          "science": 2,
+          "stress": -5
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "club"
+        },
+        "flags": {
+          "schoolContest": "build"
+        }
+      },
+      {
+        "id": "video",
+        "label": "영상 부문 참가",
+        "detail": "자습 1칸 · 매력 +3 · 스트레스 -5",
+        "effect": {
+          "charm": 3,
+          "stress": -5
+        },
+        "reserve": {
+          "count": 1,
+          "activity": "club"
+        },
+        "flags": {
+          "schoolContest": "video"
+        }
+      },
+      {
+        "id": "watch",
+        "label": "구경만 하기",
+        "detail": "스트레스 -3",
+        "effect": {
+          "stress": -3
+        }
+      }
+    ]
+  },
+  "summer_counseling": {
+    "week": 17,
+    "kind": "choice",
+    "name": "1학기 성적 상담",
+    "description": "담임 선생님과 성적표를 보고 여름 계획을 점검한다.",
+    "options": [
+      {
+        "id": "review",
+        "label": "성적과 지원 준비도 점검",
+        "detail": "담임 친밀도 +5 · 집중력 +3 · 수능 준비 여부도 상담",
+        "effect": {},
+        "flags": {
+          "counseled": true
+        }
+      },
+      {
+        "id": "self",
+        "label": "성적표를 보고 혼자 계획",
+        "detail": "스트레스 -2 · 수능은 준비하지 않음",
+        "effect": {
+          "stress": -2
+        },
+        "flags": {
+          "csat": "skip"
+        }
+      }
+    ]
+  },
+  "summer_science": {
+    "week": 18,
+    "kind": "choice",
+    "name": "여름 과학 특강",
+    "description": "수학 특강과 별도로 과학 수업을 신청할 수 있다.",
+    "options": [
+      {
+        "id": "join",
+        "label": "과학 특강 신청",
+        "detail": "방학 매주 2칸 고정 · 주 6,000원",
+        "flags": {
+          "scienceCamp": true
+        }
+      },
+      {
+        "id": "self",
+        "label": "과학도 자습으로 준비",
+        "detail": "자습 유지",
+        "flags": {
+          "scienceCamp": false
+        }
+      }
+    ]
+  },
+  "riddle_break": {
+    "week": 19,
+    "kind": "quiz",
+    "quiz": "sphinx",
+    "name": "친구의 수수께끼",
+    "description": "잠깐 머리를 식힐 문제다."
+  },
+  "card_guess": {
+    "week": 23,
+    "kind": "quiz",
+    "quiz": "guess_card",
+    "name": "감으로 찍기",
+    "description": "이번에는 추리할 단서가 없다."
+  },
+  "dorm_visit": {
+    "week": 29,
+    "kind": "choice",
+    "name": "점호 뒤 타방 초대",
+    "description": "친구가 옆방에서 놀자고 연락했다.",
+    "options": [
+      {
+        "id": "visit",
+        "label": "점호 뒤 타방에 간다",
+        "detail": "스트레스 -7 · 평판 +2 · 벌점 +1",
+        "effect": {
+          "stress": -7,
+          "reputation": 2
+        },
+        "discipline": 1
+      },
+      {
+        "id": "tomorrow",
+        "label": "내일 휴게실에서 만나기로",
+        "detail": "스트레스 -3",
+        "effect": {
+          "stress": -3
+        }
+      },
+      {
+        "id": "rest",
+        "label": "호실에서 쉰다",
+        "detail": "체력 +3",
+        "effect": {
+          "hp": 3
+        }
+      }
+    ]
+  },
+  "dorm_cards": {
+    "week": 38,
+    "kind": "choice",
+    "name": "기숙사 고스톱 한 판",
+    "description": "돈을 걸지 않고 점수만 세기로 했다.",
+    "options": [
+      {
+        "id": "play",
+        "label": "친구들과 한 판",
+        "detail": "자습 1칸 · 같은 달 패 모으기 · 고·스톱 선택",
+        "reserve": {
+          "count": 1,
+          "activity": "game"
+        },
+        "flags": {
+          "cardGame": true
+        }
+      },
+      {
+        "id": "watch",
+        "label": "옆에서 구경",
+        "detail": "스트레스 -3",
+        "effect": {
+          "stress": -3
+        }
+      }
+    ]
+  },
+  "csat_decision": {
+    "week": 18,
+    "kind": "choice",
+    "name": "수능, 준비할까?",
+    "description": "담임 선생님이 수능 최저와 정시 이야기를 꺼냈다. 수시 원서와 수능 대비를 함께 끌고 갈지 정해야 한다.",
+    "when": {
+      "flag": "counseled",
+      "equals": true
+    },
+    "options": [
+      {
+        "id": "prepare",
+        "label": "수능도 같이 준비한다",
+        "detail": "수능 자습 활동이 열림 · 고대 최저와 정시 지원 가능 · 스트레스 +2",
+        "effect": {
+          "stress": 2
+        },
+        "flags": {
+          "csat": "prepare"
+        }
+      },
+      {
+        "id": "skip",
+        "label": "수시에 집중한다",
+        "detail": "수능 미응시 · 최저가 있는 전형은 불합격 · 스트레스 -3",
+        "effect": {
+          "stress": -3
+        },
+        "flags": {
+          "csat": "skip"
+        }
+      }
+    ]
+  },
+  "regular_admission": {
+    "week": 38,
+    "kind": "admission",
+    "name": "정시 모집 결과",
+    "track": "정시",
+    "description": "수능 성적으로만 뽑는 게임 속 정시 전형이에요."
+  },
+  "testdy_chemistry_quiz_review": {
+    "name": "화학 퀴즈를 마친 날",
+    "description": "예상보다 어려웠던 퀴즈. 잠깐 숨을 돌리고 다음 공부를 준비해요.",
+    "week": 3,
+    "kind": "notice",
+    "course": "general_chemistry",
+    "effect": {
+      "stress": 8,
+      "hp": -4
+    }
+  },
+  "testdy_home_week": {
+    "name": "귀가주 학원 · 동아리",
+    "description": "이번 귀가주에는 무엇을 할까요?",
+    "week": 5,
+    "kind": "choice",
+    "options": [
+      {
+        "id": "academy",
+        "label": "학원",
+        "detail": "수학 +4 · 스트레스 +3 · 1,500원 · 2칸",
+        "cost": 1500,
+        "effect": {
+          "math": 4,
+          "stress": 3
+        },
+        "reserve": {
+          "activity": "lecture",
+          "count": 2
+        }
+      },
+      {
+        "id": "club",
+        "label": "동아리",
+        "detail": "평판 +3 · 스트레스 −3 · 2칸",
+        "effect": {
+          "reputation": 3,
+          "stress": -3
+        },
+        "reserve": {
+          "activity": "club",
+          "count": 2
+        }
+      },
+      {
+        "id": "rest",
+        "label": "휴식",
+        "detail": "건강 +5 · 스트레스 −5",
+        "effect": {
+          "hp": 5,
+          "stress": -5
+        }
+      }
+    ]
+  },
+  "testdy_compass_activity": {
+    "name": "나침반 활동",
+    "description": "나침반 활동에 참여할까요?",
+    "week": 19,
+    "kind": "choice",
+    "options": [
+      {
+        "id": "join",
+        "label": "참여",
+        "detail": "평판 +3 · 2칸",
+        "effect": {
+          "reputation": 3
+        },
+        "reserve": {
+          "activity": "lecture",
+          "count": 2
+        }
+      },
+      {
+        "id": "rest",
+        "label": "쉬기",
+        "detail": "스트레스 −3",
+        "effect": {
+          "stress": -3
+        }
+      }
+    ]
+  },
+  "testdy_lost_property": {
+    "name": "친구 분실물 찾아주기",
+    "description": "샤프심과 카시오 계산기가 든 필통을 찾아줬다. 친구가 고마움의 표시로 2,000원을 건넸다.",
+    "week": 6,
+    "kind": "notice",
+    "effect": {
+      "reputation": 2
+    },
+    "income": 2000
+  }
+}

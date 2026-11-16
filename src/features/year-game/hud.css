@@ -1,0 +1,656 @@
+/* Controls share a solid, legible surface. The room remains the full viewport. */
+.game-hud .game-main {
+  height: 100dvh;
+  padding: 12px 0 14px;
+}
+.game-hud .window-toolbar {
+  margin-bottom: 14px;
+  min-height: 43px;
+  height: 43px;
+}
+.game-hud .window-toolbar b {
+  font-size: 13px;
+}
+.world-time {
+  color: #c3d1d8;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  border-left: 1px solid #8495a6;
+  margin-left: 8px;
+  padding-left: 15px;
+}
+.hud-tools {
+  gap: 14px !important;
+}
+.hud-tools button {
+  position: relative;
+}
+.notification-dot {
+  position: absolute;
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background: #e1ba81;
+  border: 1px solid #52677f;
+  top: 2px;
+  right: 2px;
+}
+.game-hud .planner-panel {
+  background: var(--sasa-paper-warm);
+  backdrop-filter: none;
+  box-shadow: 0 5px 20px #2c424b25;
+}
+.game-hud .planner-panel > header {
+  margin-bottom: 25px;
+  align-items: center;
+}
+.game-hud .planner-panel h2 {
+  margin: 0;
+  font-size: 21px;
+}
+.schedule-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #758669;
+  padding: 7px 0 7px 8px;
+  margin-left: auto;
+}
+.game-hud .planner-days {
+  margin-bottom: 18px;
+}
+.game-hud .planner-days > button {
+  min-height: 43px;
+  font-size: 12px;
+  color: #6e8261;
+}
+.game-hud .session-cards {
+  gap: 11px;
+}
+.game-hud .session-card {
+  min-height: 77px;
+  border-width: 1px;
+  padding: 13px 10px;
+}
+.game-hud .session-card:hover:not(:disabled) {
+  box-shadow: 0 0 0 2px #7b94894a;
+  transform: translateY(-1px);
+}
+.game-hud .session-label > b {
+  font-size: 13px;
+  color: #4b6473;
+}
+.game-hud .session-label > small {
+  font-size: 10px;
+  color: #7b8a78;
+}
+.game-hud .session-time {
+  color: #6a7f70;
+  font-size: 12px;
+}
+.game-hud .session-time small {
+  color: #82917b;
+}
+.game-hud .session-card > svg:last-child {
+  color: #71866c;
+}
+.game-hud .preset-row {
+  margin: 19px 0;
+}
+.game-hud .week-minimap {
+  display: none;
+}
+.game-hud .preset-row > span {
+  color: #7a8c6e;
+}
+.game-hud .preset-row button {
+  padding: 7px 9px;
+  color: #6a7f5c;
+}
+.game-hud .plan-summary {
+  margin-top: auto;
+  padding-top: 15px;
+  color: #75896a;
+}
+.game-hud .start-week {
+  margin-top: 17px;
+  min-height: 49px;
+}
+.game-hud .start-week > span {
+  font-size: 14px;
+}
+.game-hud .scene-left {
+  top: 10px;
+}
+.game-hud .task-paper {
+  background: #fffdf1;
+}
+.game-hud .condition-card {
+  background: #fffdf5;
+  padding-bottom: 16px;
+  backdrop-filter: none;
+}
+.game-hud .scene-character {
+  bottom: 38px;
+}
+.game-hud .avatar {
+  cursor: default;
+}
+.game-hud .avatar:hover {
+  transform: none;
+}
+.game-hud .compact .stat-line {
+  font-size: 12px;
+  grid-template-columns: 4em minmax(0, 1fr) 2.2em;
+  gap: 0.5em;
+}
+.game-hud .compact .stat-line > span {
+  color: #687966;
+  white-space: nowrap;
+}
+.game-hud .save-indicator[data-status='error'] i {
+  background: #b45140;
+}
+.game-hud .save-indicator[data-status='busy'] i {
+  background: #b78d38;
+}
+.game-hud .paper-task b {
+  color: #56694e;
+  font-size: 12px;
+}
+.game-hud .paper-task small {
+  color: #839175;
+}
+.paper-task .assign-hint {
+  display: block;
+  text-align: right;
+  margin-top: 7px;
+  color: #708962;
+  font-size: 9px;
+}
+.fatigue-tag {
+  font-size: 9px;
+  color: #af7767;
+  background: #f7e9e0;
+  border-radius: 3px;
+  padding: 3px 5px;
+}
+.game-hud .game-menu {
+  background: #fffdf3;
+  backdrop-filter: none;
+  margin-top: 3px;
+}
+.game-hud .game-menu nav {
+  gap: 27px;
+}
+.game-hud .game-menu nav > button {
+  color: #5b7556;
+  font-size: 11px;
+}
+.game-hud .game-menu nav > .mobile-more-button {
+  display: none;
+}
+.game-hud .wallet {
+  color: #688461;
+}
+.game-hud .wallet b {
+  font-size: 20px;
+  font-family: Arial, sans-serif;
+  font-weight: 500;
+}
+.game-hud .wallet small {
+  font-size: 10px;
+  font-weight: 400;
+}
+.weekly-overview {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+}
+.weekly-overview > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.weekly-overview h3 {
+  font-size: 12px;
+  color: #71865e;
+  text-align: center;
+  padding: 8px 0;
+}
+.weekly-overview button {
+  padding: 12px 6px;
+  min-height: 105px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #d4dfc9;
+}
+.weekly-overview small {
+  font-size: 9px;
+  color: #7a8d6b;
+}
+.weekly-overview b {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+.weekly-overview em {
+  font-size: 9px;
+  color: #7c8f6d;
+  font-style: normal;
+  line-height: 1.7;
+}
+.pending-notices {
+  margin: 0 0 23px;
+}
+.pending-notices > button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  border: 1px solid #c8d9b6;
+  border-radius: 7px;
+  width: 100%;
+  background: #f1f7e6;
+  text-align: left;
+  margin-bottom: 9px;
+}
+.pending-notices b {
+  display: block;
+  font-size: 13px;
+  color: #64814f;
+  font-weight: 500;
+}
+.pending-notices small {
+  display: block;
+  font-size: 10px;
+  color: #8a9e77;
+  margin-top: 7px;
+}
+.pending-notices svg {
+  color: #91a97b;
+}
+.stat-change-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+  margin: 18px 0;
+}
+.stat-change-table th {
+  color: #859577;
+  font-size: 10px;
+  font-weight: 400;
+  background: #f2f6e9;
+  text-align: left;
+  padding: 11px 13px;
+}
+.stat-change-table td {
+  border-bottom: 1px solid #e6ecdd;
+  padding: 12px 13px;
+  color: #627757;
+}
+.stat-change-table td:nth-child(2) {
+  font-family: Arial, sans-serif;
+  color: #84917c;
+}
+.stat-change-table th:last-child,
+.stat-change-table td:last-child {
+  text-align: right;
+}
+.stat-change-table .delta {
+  font-size: 13px;
+}
+.result-messages summary {
+  font-size: 11px;
+  color: #7c906b;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.result-messages > p {
+  color: #758a64;
+}
+.action-deltas {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  font-style: normal;
+  margin-top: 5px;
+}
+.action-deltas > span {
+  font-size: 9px;
+  color: #7b8e6b;
+}
+.action-deltas .delta {
+  font-size: 10px;
+}
+.activity-detail {
+  padding: 13px;
+  margin: 17px 0;
+  background: #f3f6eb;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #7c906b;
+}
+.activity-detail summary {
+  cursor: pointer;
+}
+.activity-detail p {
+  margin-top: 12px;
+  line-height: 1.9;
+}
+@media (max-width: 600px) {
+  .game-hud .world-time {
+    display: none;
+  }
+}
+@media (max-width: 1100px) and (min-width: 721px) {
+  .game-hud .paper-task b {
+    font-size: 10px;
+  }
+  .game-hud .compact .stat-line {
+    font-size: 10px;
+  }
+  .game-hud .game-menu nav {
+    gap: 20px;
+  }
+  .game-hud .game-menu nav > button {
+    min-width: 40px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 720px) {
+  .game-hud .game-main {
+    height: 100dvh;
+    padding: 10px 0;
+  }
+  .game-hud .window-toolbar {
+    min-height: 41px;
+    height: 41px;
+    margin-bottom: 12px;
+  }
+  .game-hud .window-toolbar b {
+    font-size: 10px;
+  }
+  .world-time {
+    font-size: 9px;
+    margin-left: 0;
+    padding-left: 9px;
+  }
+  .hud-tools {
+    gap: 8px !important;
+  }
+  .hud-tools button {
+    padding: 3px;
+  }
+  .hud-tools svg {
+    width: 16px;
+  }
+  .game-hud .scene-left {
+    top: 10px;
+  }
+  .game-hud .paper-task b {
+    font-size: 10px;
+  }
+  .game-hud .compact .stat-line {
+    font-size: 10px;
+  }
+  .game-hud .planner-panel {
+    background: #fffdf4;
+    padding-top: 19px;
+  }
+  .game-hud .planner-panel > header {
+    margin-bottom: 24px;
+  }
+  .game-hud .session-card {
+    min-height: 67px;
+  }
+  .game-hud .game-menu {
+    min-height: 65px;
+    padding: 10px 12px;
+  }
+  .game-hud .game-menu nav {
+    gap: 9px;
+  }
+  .game-hud .game-menu nav > button {
+    font-size: 9px;
+  }
+  .game-hud .game-menu nav > .extra-nav {
+    display: none;
+  }
+  .game-hud .game-menu nav > .mobile-more-button {
+    display: flex;
+  }
+  .game-hud .wallet b {
+    font-size: 14px;
+  }
+  .game-hud .wallet small {
+    font-size: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .weekly-overview {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .weekly-overview > div {
+    display: grid;
+    grid-template-columns: 24px repeat(3, 1fr);
+    gap: 6px;
+    align-items: center;
+  }
+  .weekly-overview button {
+    min-height: 83px;
+    padding: 9px 5px;
+  }
+  .weekly-overview h3 {
+    font-size: 11px;
+  }
+}
+@media (max-height: 700px) {
+  .game-hud .planner-panel > header {
+    margin-bottom: 15px;
+  }
+  .game-hud .planner-days {
+    margin-bottom: 12px;
+  }
+  .game-hud .session-card,
+  .game-hud .planner-panel .session-card {
+    min-height: 54px;
+    padding: 9px;
+  }
+  .game-hud .preset-row {
+    margin: 11px 0;
+  }
+  .game-hud .start-week {
+    min-height: 43px;
+    margin-top: 10px;
+  }
+}
+
+/* Senior-year pressure: season label, weekend forecast and strain stages. */
+.planner-panel h2 > .season-label.busy {
+  color: #b07f6e;
+  border-left-color: #ead7cc;
+}
+.week-forecast {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  background: var(--sasa-green);
+  color: #6f8569;
+  font-size: 9px;
+}
+.week-forecast > b {
+  font-weight: 550;
+  color: var(--sasa-ink);
+}
+.week-forecast > em {
+  margin-left: auto;
+  font-style: normal;
+  font-weight: 600;
+}
+.week-forecast.stage-1 {
+  background: var(--sasa-sand);
+  color: #94805a;
+}
+.week-forecast.stage-2 {
+  background: var(--sasa-rose);
+  color: #af7767;
+}
+.week-forecast.stage-3 {
+  background: #f1dcd6;
+  color: #9c5b4b;
+}
+.fatigue-tag.stage-1 {
+  color: #94805a;
+  background: var(--sasa-sand);
+}
+.fatigue-tag.stage-3 {
+  color: #fffdf7;
+  background: #b07f6e;
+}
+.ending-school {
+  display: block;
+  margin: 4px 0 6px;
+  color: var(--sasa-navy);
+  font-size: 15px;
+}
+
+/* Integrated lobby: ag_test character scale and test_dy solid controls. */
+.game-hud .game-main {
+  padding: 0;
+}
+.game-hud .window-toolbar {
+  margin-bottom: 0;
+  border-radius: 0;
+}
+.game-hud .game-menu {
+  margin-top: 0;
+  border-radius: 0;
+}
+.game-hud .avatar {
+  height: min(54dvh, 520px);
+  cursor: pointer;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.game-hud .avatar img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.game-hud .scene-character {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.lobby-speech {
+  background: var(--sasa-paper);
+  color: var(--sasa-ink);
+  border: 1px solid var(--sasa-panel-border);
+  border-radius: var(--sasa-radius);
+  padding: 12px 16px;
+  max-width: 260px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  line-height: 1.7;
+  box-shadow: var(--sasa-shadow);
+}
+.game-hud .compact .stat-line {
+  grid-template-columns: 5em minmax(0, 1fr) 2.6em;
+}
+.integrated-setup {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--setup-bg) center / cover;
+}
+.integrated-setup .setup-card {
+  width: min(100%, 560px);
+  background: var(--sasa-paper);
+  padding: 26px;
+  border-radius: var(--sasa-radius);
+  box-shadow: var(--sasa-shadow);
+}
+.integrated-setup .logo {
+  font-size: 28px;
+  margin-bottom: 22px;
+}
+.enrollment-majors {
+  border: 0;
+  padding: 0;
+  margin: 14px 0;
+}
+.enrollment-majors legend {
+  margin-bottom: 12px;
+}
+.enrollment-majors label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--sasa-cream);
+  border: 1px solid var(--sasa-line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.enrollment-majors label.selected {
+  background: var(--sasa-blue);
+  border-color: var(--sasa-navy);
+}
+.enrollment-majors input {
+  width: auto;
+}
+.enrollment-lock-note {
+  font-size: 12px;
+  color: var(--sasa-ink);
+  margin: 16px 0;
+}
+@media (max-width: 720px) {
+  .game-hud .game-main {
+    padding: 0;
+  }
+  .game-hud .avatar {
+    height: min(39dvh, 300px);
+  }
+  .lobby-speech {
+    font-size: 11px;
+    max-width: 170px;
+    padding: 9px 11px;
+  }
+  .integrated-setup {
+    padding: 12px;
+  }
+  .integrated-setup .setup-card {
+    padding: 20px;
+  }
+}
+@media (max-height: 600px) and (min-width: 721px) {
+  .game-hud .avatar {
+    height: 43dvh;
+  }
+  .lobby-speech {
+    margin-bottom: 8px;
+    padding: 8px 12px;
+  }
+}
+
+.game-hud .window-toolbar {
+  background: var(--sasa-navy);
+  margin-left: 0;
+  margin-right: 0;
+  backdrop-filter: none;
+}
