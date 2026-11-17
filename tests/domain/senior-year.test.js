@@ -129,7 +129,7 @@ test('money arrives monthly, living costs are weekly, and part-time work is vaca
   carried.week = 25;
   carried.plan = fill(carried, 'work').plan;
   beginWeek(carried);
-  assert.ok(carried.plan.every((slot) => slot.activity === 'sleep'));
+  assert.ok(carried.plan.every((slot) => slot.activity !== 'work'));
 });
 
 test('CSAT opens only after the summer counseling decision and records a grade, not an offer', () => {

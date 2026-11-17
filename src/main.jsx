@@ -8,6 +8,7 @@ import './features/year-game/game.css';
 import './features/year-game/immersive.css';
 import './features/year-game/hud.css';
 import './features/year-game/tutorial.css';
+import './features/year-game/simulator.css';
 
 installErrorLogging();
 installGameInputPolicy();

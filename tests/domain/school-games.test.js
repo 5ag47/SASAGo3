@@ -93,16 +93,16 @@ test('game settings are validated by the game that reads them', () => {
   assert.throws(() => play('report_v1', create('report_v1', 50), [{ type: 'pick', card: 's9' }]));
 });
 
-test('course tasks now open their format game and finish through the real week', () => {
+test('course tasks finish through scheduled time without a mini-game', () => {
   let state = createGame({ name: '실험', character: 'boy', role: 'steady', major: 'math' }, 41);
   state = solveActiveTaskGames(
     transition(state, { type: 'choose', event: 'winter_study', option: 'friends' }),
   );
-  while (state.week < 2) state = runPlannedWeek({ ...state, pending: [] });
+  while (state.week < 3) state = runPlannedWeek({ ...state, pending: [] });
   const report = Object.values(state.tasks).find((task) => task.name === '일반물리 실험 보고서');
   const problem = Object.values(state.tasks).find((task) => task.name === '선형대수 문제풀이');
-  assert.equal(report.module.id, 'report_v1');
-  assert.equal(problem.module.id, 'sum_v1');
+  assert.equal(report.module.id, 'time_v1');
+  assert.equal(problem.module.id, 'time_v1');
   const planned = {
     ...state,
     pending: [],

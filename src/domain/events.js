@@ -14,6 +14,8 @@ import { announceChapters } from './story.js';
 import { calendarTiming } from './calendar-date.js';
 import { activityLock } from './senior-year.js';
 import { deliverClassmateNews } from './classmates.js';
+import { effectMap, scenarioScore } from './scenarios.js';
+import { buildPreset } from './auto-plan.js';
 export { notice } from './notifications.js';
 export function beginWeek(state) {
   announceChapters(state);
@@ -55,13 +57,15 @@ export function beginWeek(state) {
     if (activityLock(state, slot.activity)) return { activity: 'sleep', target: null };
     return slot;
   });
+  state.plan = buildPreset(state);
 }
 
-export function dispatchDayEvents(state, day) {
-  for (const [id, event] of Object.entries(events)) {
+export function dispatchDayEvents(state, day, phase = 'start', definitions = events) {
+  for (const [id, event] of Object.entries(definitions)) {
     const timing = calendarTiming('event:' + id, event.week, event.day ?? 0);
     if (
       event.manual ||
+      (event.phase ?? 'start') !== phase ||
       timing.week !== state.week ||
       timing.day !== day ||
       state.flags.eventDeliveries?.[id] ||
@@ -77,13 +81,34 @@ export function dispatchDayEvents(state, day) {
         (event.chance <= 0 || random(state) >= event.chance))
     )
       continue;
-    if (event.kind === 'task') addTask(state, id, event);
-    else if (['notice', 'birthday', 'admission', 'creative'].includes(event.kind)) {
+    if (event.kind === 'task') {
+      applyEffects(state, event.effect);
+      addTask(state, id, event);
+    } else if (['notice', 'birthday', 'admission', 'creative'].includes(event.kind)) {
       applyEffects(state, event.effect);
       Object.assign(state.flags, event.flags);
       state.money += event.income ?? 0;
       state.campaign.lateRisk = Math.min(1, state.campaign.lateRisk + (event.lateRisk ?? 0));
       let text = id === 'story_first_round' ? firstRoundResults(state) : event.description;
+      if (event.scenarioKind === 'exam') {
+        const score = scenarioScore(state, event, () => random(state));
+        state.assessments.push({
+          id: `${id}:${event.grade.assessmentId}`,
+          course: event.course,
+          kind: event.grade.kind,
+          score,
+          term: state.week <= 16 ? 1 : 2,
+          week: state.week,
+        });
+        text = `${event.description} ${score}점.`;
+      }
+      if (event.outcomes) {
+        const outcome = event.outcomes.find((o) => matchesCondition(state, o.when));
+        if (outcome) {
+          applyEffects(state, effectMap(outcome.effects));
+          text = outcome.description;
+        }
+      }
       if (event.kind === 'birthday') {
         const popular = state.stats.charm + state.stats.reputation >= 100;
         applyEffects(state, { stress: popular ? -15 : -6, reputation: popular ? 3 : 1 });

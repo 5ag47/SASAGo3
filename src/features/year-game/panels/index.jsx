@@ -23,6 +23,7 @@ export const PANELS = Object.freeze({
   result: { title: '주간 결과', wide: true, View: narrative },
   shop: { title: '매점', wide: false, View: system },
   settings: { title: '설정', wide: false, View: system },
+  developer: { title: '개발자 모드', wide: false, View: system },
   help: { title: '도움말', wide: true, View: system },
   tutorial: { title: '첫 주 연습', wide: true, View: system },
   menu: { title: '메뉴', wide: false, View: system },

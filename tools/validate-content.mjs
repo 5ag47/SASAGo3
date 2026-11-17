@@ -18,8 +18,16 @@ import {
   ELECTIVES,
   assignments,
   assignmentEvents,
+  scenarios,
+  scenarioEvents,
 } from '../src/domain/catalog.js';
 import { assignmentIssues } from '../src/domain/assignments.js';
+import { scenarioIssues } from '../src/domain/scenarios.js';
+assert.deepEqual(
+  scenarioIssues(scenarios, { courses, stats: STATS, majors: MAJORS }),
+  [],
+  'Scenario JSON contract is invalid',
+);
 import { TASK_MODULES } from '../src/domain/task-modules/registry.js';
 import { TASK_GAME_VIEW_IDS } from '../src/features/year-game/task-games/catalog.js';
 import { balance } from '../src/domain/balance.js';
@@ -109,7 +117,8 @@ assert.equal(
   Object.keys(storyEvents).length +
     Object.keys(lifeEvents).length +
     Object.keys(planStory).length +
-    Object.keys(assignmentEvents).length,
+    Object.keys(assignmentEvents).length +
+    Object.keys(scenarioEvents).length,
   'Duplicate story/life event ID',
 );
 for (const [id, quiz] of Object.entries(quizzes)) {
@@ -128,6 +137,12 @@ function effects(value = {}) {
 for (const [id, course] of Object.entries(courses)) {
   assert.ok(/^[a-z][a-z0-9_-]+$/.test(id));
   assert.ok(course.name && Object.hasOwn(STATS, course.ability));
+  assert.equal(course.id, id);
+  assert.ok(typeof course.description === 'string' && course.description.length > 0);
+  assert.ok(
+    Array.isArray(course.prerequisites) &&
+      course.prerequisites.every((key) => Object.hasOwn(courses, key)),
+  );
   assert.ok(course.credits > 0);
   for (const key of ['health', 'stress'])
     assert.ok(

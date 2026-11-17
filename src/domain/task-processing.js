@@ -4,6 +4,7 @@ import { random, applyEffects } from './random.js';
 import { taskModule, taskModuleSpec, validModuleData } from './task-modules/registry.js';
 import { requireAction } from './task-modules/action-error.js';
 import { supportedEssayQuality, supportedEssayCost } from './school-record.js';
+import { scenarioScore } from './scenarios.js';
 
 export function taskContext(state, task) {
   const statsAfter = (effects) => {
@@ -95,7 +96,14 @@ export function publicTasks(tasks) {
 }
 export function resolveTaskOutcome(state, task, completed) {
   const handler = taskModule(task);
-  const result = handler[completed ? 'complete' : 'expire'](taskContext(state, task));
+  const result = task.resolution
+    ? {
+        effects: (completed ? task.reward : task.penalty) ?? {},
+        score: completed
+          ? scenarioScore(state, task, () => random(state))
+          : Math.round((task.progress / task.target) * task.resolution.params.expireScore),
+      }
+    : handler[completed ? 'complete' : 'expire'](taskContext(state, task));
   if (
     !result ||
     (result.score !== null &&

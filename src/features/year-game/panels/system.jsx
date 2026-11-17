@@ -1,6 +1,7 @@
 import TutorialPanel from '../TutorialPanel.jsx';
 import ShopPanel from '../ShopPanel.jsx';
 import SettingsPanel from '../SettingsPanel.jsx';
+import DeveloperPanel from '../DeveloperPanel.jsx';
 import { ChoiceButton } from '../ui.jsx';
 import { NAV } from './navigation.js';
 export default function SystemPanels(context) {
@@ -20,6 +21,9 @@ export default function SystemPanels(context) {
       )}
       {modal.type === 'settings' && (
         <SettingsPanel game={game} audio={audio} onClose={close} onLeave={() => open('leave')} />
+      )}
+      {modal.type === 'developer' && game.developer && (
+        <DeveloperPanel game={game} onProgress={ui.finishDeveloperAdvance} />
       )}
       {['help', 'tutorial'].includes(modal.type) && (
         <TutorialPanel tutorial={tutorial} state={state} onLesson={lesson} />

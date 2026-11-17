@@ -12,7 +12,7 @@ export function buildPreset(state, preset = 'balanced') {
   const free = workOrder.filter((index) => !locked[index]);
   const plan = Array.from({ length: 21 }, (_, index) =>
     locked[index]
-      ? { ...state.plan[index] }
+      ? { ...locked[index] }
       : { activity: index % 3 === 0 ? 'skip' : 'sleep', target: null },
   );
   if (preset === 'rest') {

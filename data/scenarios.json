@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "events": {
+    "project-2-general_physics": {
+      "id": "project-2-general_physics",
+      "name": "일반물리 실험 보고서",
+      "description": "실험 결과를 정리해 보고서를 제출하세요.",
+      "scope": "course",
+      "courseId": "general_physics",
+      "kind": "task",
+      "trigger": {
+        "type": "scheduled",
+        "term": "semester_1",
+        "week": 3,
+        "day": 0,
+        "phase": "start",
+        "probability": 1,
+        "maxOccurrencesPerTerm": 1
+      },
+      "deadline": {
+        "week": 5,
+        "day": 6,
+        "phase": "end"
+      },
+      "work": {
+        "targetProgress": 3,
+        "perAction": {
+          "timeSlots": 1,
+          "progress": 1,
+          "cost": {
+            "money": 0
+          },
+          "effects": [
+            {
+              "type": "stat_delta",
+              "stat": "hp",
+              "amount": -2
+            },
+            {
+              "type": "stat_delta",
+              "stat": "stress",
+              "amount": 2
+            }
+          ]
+        }
+      },
+      "resolution": {
+        "rule": "report_score",
+        "params": {
+          "ability": "science",
+          "base": 65,
+          "abilityWeight": 0.35,
+          "randomness": 4,
+          "maxScore": 100,
+          "expireScore": 55
+        }
+      },
+      "grade": {
+        "assessmentId": "physics_lab_report_01",
+        "kind": "project"
+      },
+      "effects": {
+        "onComplete": [
+          {
+            "type": "stat_delta",
+            "stat": "reputation",
+            "amount": 2
+          }
+        ],
+        "onExpire": [
+          {
+            "type": "stat_delta",
+            "stat": "reputation",
+            "amount": -3
+          }
+        ]
+      }
+    },
+    "story_delivery": {
+      "id": "story_delivery",
+      "name": "미션 임파서블 · 배달음식",
+      "description": "점호 전에 주문한 피자를 찾아오자.",
+      "scope": "common",
+      "kind": "choice",
+      "trigger": {
+        "type": "scheduled",
+        "term": "year",
+        "week": 14,
+        "day": 0,
+        "phase": "start",
+        "probability": 1,
+        "maxOccurrencesPerTerm": 1
+      },
+      "options": [
+        {
+          "id": "try",
+          "label": "조심해서 가져온다",
+          "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+          "cost": 3000,
+          "chanceResult": {
+            "chance": 0.9,
+            "success": {
+              "stress": -12,
+              "reputation": 5
+            },
+            "failure": {
+              "stress": 10,
+              "reputation": -10
+            }
+          }
+        },
+        {
+          "id": "wait",
+          "label": "허용 시간에 받는다",
+          "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
+          "effect": {
+            "stress": -3
+          },
+          "cost": 3000
+        },
+        {
+          "id": "skip",
+          "label": "오늘은 주문하지 않는다",
+          "detail": "비용 없음"
+        }
+      ]
+    },
+    "room_check": {
+      "id": "room_check",
+      "name": "호실 점검",
+      "description": "사감 선생님이 방을 둘러본다.",
+      "scope": "common",
+      "kind": "natural",
+      "trigger": {
+        "type": "scheduled",
+        "term": "semester_1",
+        "week": 4,
+        "day": 6,
+        "phase": "end",
+        "probability": 1,
+        "maxOccurrencesPerTerm": 4,
+        "repeatEvery": 4,
+        "untilWeek": 16
+      },
+      "outcomes": [
+        {
+          "when": {
+            "stat": "reputation",
+            "min": 60
+          },
+          "description": "정돈된 책상에 선생님이 고개를 끄덕였다.",
+          "effects": [
+            {
+              "type": "stat_delta",
+              "stat": "stress",
+              "amount": -2
+            }
+          ]
+        },
+        {
+          "description": "책상 위를 정리하라는 말을 들었다.",
+          "effects": [
+            {
+              "type": "stat_delta",
+              "stat": "stress",
+              "amount": 2
+            }
+          ]
+        }
+      ]
+    },
+    "physics_check_quiz": {
+      "id": "physics_check_quiz",
+      "name": "일반물리 쪽지시험",
+      "description": "운동량과 에너지 단원을 확인한다.",
+      "scope": "course",
+      "courseId": "general_physics",
+      "kind": "exam",
+      "trigger": {
+        "type": "scheduled",
+        "term": "semester_1",
+        "week": 5,
+        "day": 2,
+        "phase": "start",
+        "probability": 1,
+        "maxOccurrencesPerTerm": 1
+      },
+      "resolution": {
+        "rule": "ability_score",
+        "params": {
+          "ability": "science",
+          "base": 50,
+          "abilityWeight": 0.5,
+          "randomness": 12,
+          "maxScore": 100,
+          "expireScore": 0
+        }
+      },
+      "grade": {
+        "assessmentId": "physics_check_quiz_01",
+        "kind": "quiz"
+      }
+    }
+  }
+}

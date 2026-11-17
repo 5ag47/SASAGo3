@@ -40,7 +40,8 @@ test('new games have four documented presets including biology diversity and inf
   assert.ok(fresh('information').courses.includes('physics_seminar'));
   assert.ok(fresh().campaign.priorGpa >= 3 && fresh().campaign.priorGpa <= 4.3);
   assert.equal(fresh().campaign.priorGpa, fresh().campaign.priorGpa);
-  assert.notEqual(fresh('math', 1).campaign.priorGpa, fresh('math', 5678).campaign.priorGpa);
+  assert.equal(fresh('math', 1).campaign.priorGpa, 4);
+  assert.equal(fresh('math', 5678).campaign.priorGpa, 4);
 });
 test('morning commands reject recovery/tasks; extended study accepts only enrolled subjects', () => {
   const s = fresh();
@@ -157,13 +158,12 @@ test('study groups create their different monthly and weekly schedules without d
     );
   }
 });
-test('union study occurs three times each week except Chuseok, mock interview rotates monthly', () => {
+test('union study and mock interviews are reduced to one monthly task each', () => {
   const s = at(fresh(), 25);
-  assert.equal(Object.keys(s.tasks).filter((k) => k.startsWith('union-25-')).length, 3);
-  at(s, 27);
-  assert.ok(!s.tasks['union-27-1']);
-  at(s, 28);
-  assert.match(s.tasks['mock-28'].name, /면접관/);
+  for (let week = 26; week <= 28; week++) at(s, week);
+  assert.equal(Object.keys(s.tasks).filter((k) => k.startsWith('union-')).length, 1);
+  assert.ok(s.tasks['union-26-1']);
+  assert.equal(Object.keys(s.tasks).filter((k) => k.startsWith('mock-')).length, 1);
 });
 test('all three essay stages unlock in sequence and never pay cash', () => {
   const s = at(fresh(), 25),

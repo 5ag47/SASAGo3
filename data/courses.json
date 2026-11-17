@@ -15,7 +15,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.6
-    }
+    },
+    "id": "ai_project",
+    "description": "인공지능프로젝트 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "urban_planning": {
     "name": "도시 환경과 도시 계획",
@@ -33,7 +37,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "urban_planning",
+    "description": "도시 환경과 도시 계획 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "linear_algebra": {
     "name": "선형대수",
@@ -51,7 +59,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.7
-    }
+    },
+    "id": "linear_algebra",
+    "description": "선형대수 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "general_physics": {
     "name": "일반물리",
@@ -69,7 +81,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.6
-    }
+    },
+    "id": "general_physics",
+    "description": "일반물리 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "physics_seminar": {
     "name": "물리세미나",
@@ -87,7 +103,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.6
-    }
+    },
+    "id": "physics_seminar",
+    "description": "물리세미나 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "general_chemistry": {
     "name": "일반화학",
@@ -105,7 +125,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.6
-    }
+    },
+    "id": "general_chemistry",
+    "description": "일반화학 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "chemistry_seminar": {
     "name": "화학세미나",
@@ -123,7 +147,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.6
-    }
+    },
+    "id": "chemistry_seminar",
+    "description": "화학세미나 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "general_biology": {
     "name": "일반생물",
@@ -141,7 +169,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.6
-    }
+    },
+    "id": "general_biology",
+    "description": "일반생물 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "biology_seminar": {
     "name": "생물세미나",
@@ -159,7 +191,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.6
-    }
+    },
+    "id": "biology_seminar",
+    "description": "생물세미나 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "cs_project": {
     "name": "정보과학프로젝트",
@@ -177,7 +213,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.6
-    }
+    },
+    "id": "cs_project",
+    "description": "정보과학프로젝트 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "algorithms": {
     "name": "고급알고리즘",
@@ -195,7 +235,11 @@
     "workload": {
       "health": 0.4,
       "stress": 0.7
-    }
+    },
+    "id": "algorithms",
+    "description": "고급알고리즘 수업과 평가. 3학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "tech_english": {
     "name": "과학기술시사영어",
@@ -213,7 +257,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "tech_english",
+    "description": "과학기술시사영어 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "visual_communication": {
     "name": "비주얼커뮤니케이션",
@@ -231,7 +279,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "visual_communication",
+    "description": "비주얼커뮤니케이션 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "math_seminar": {
     "name": "수학세미나",
@@ -249,7 +301,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.7
-    }
+    },
+    "id": "math_seminar",
+    "description": "수학세미나 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "foreign_language": {
     "name": "외국어",
@@ -267,7 +323,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "foreign_language",
+    "description": "외국어 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "biodiversity": {
     "name": "생물다양성의이해",
@@ -285,7 +345,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.6
-    }
+    },
+    "id": "biodiversity",
+    "description": "생물다양성의이해 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "cs_project_2": {
     "name": "정보과학프로젝트2",
@@ -303,7 +367,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.6
-    }
+    },
+    "id": "cs_project_2",
+    "description": "정보과학프로젝트2 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "world_history": {
     "name": "세계문화와역사",
@@ -321,7 +389,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "world_history",
+    "description": "세계문화와역사 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "reading": {
     "name": "융합독서",
@@ -339,7 +411,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "reading",
+    "description": "융합독서 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "ideation": {
     "name": "3D아이데이션",
@@ -357,7 +433,11 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "ideation",
+    "description": "3D아이데이션 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   },
   "music_tech": {
     "name": "음악과테크놀로지",
@@ -375,6 +455,10 @@
     "workload": {
       "health": 0.2,
       "stress": 0.3
-    }
+    },
+    "id": "music_tech",
+    "description": "음악과테크놀로지 수업과 평가. 2학점.",
+    "prerequisites": [],
+    "graduationRequirement": null
   }
 }

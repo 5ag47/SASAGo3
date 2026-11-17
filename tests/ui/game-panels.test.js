@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import { createServer } from 'vite';
 import { createGame, transition } from '../../src/domain/engine.js';
 import { beginWeek } from '../../src/domain/events.js';
+import { DEVELOPER_SAVE_KEY } from '../../src/platform/local-save.js';
 import { SAVE_KEY } from '../../src/domain/state.js';
 
 const vite = await createServer({
@@ -42,10 +43,17 @@ test.after(() => vite.close());
 function fresh() {
   return createGame({ name: '화면 테스트', character: 'boy', role: 'steady', major: 'math' });
 }
-async function mount(t) {
-  const dom = new JSDOM('<div id="root"></div>', { url: 'https://game.example' });
+async function mount(t, url = 'https://game.example') {
+  const dom = new JSDOM('<div id="root"></div>', { url });
   const previous = Object.getOwnPropertyDescriptors(globalThis);
-  for (const name of ['window', 'document', 'navigator', 'localStorage', 'sessionStorage'])
+  for (const name of [
+    'window',
+    'document',
+    'navigator',
+    'localStorage',
+    'sessionStorage',
+    'FormData',
+  ])
     Object.defineProperty(globalThis, name, { configurable: true, value: dom.window[name] });
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   dom.window.HTMLDialogElement.prototype.showModal = function () {
@@ -61,6 +69,7 @@ async function mount(t) {
       'navigator',
       'localStorage',
       'sessionStorage',
+      'FormData',
       'IS_REACT_ACT_ENVIRONMENT',
     ]) {
       if (previous[name]) Object.defineProperty(globalThis, name, previous[name]);
@@ -184,6 +193,7 @@ test('pattern task UI responds immediately, resumes and confirms completion at p
   let state = fresh(),
     continued = false;
   state.tasks['practice-report'].target = 1;
+  state.tasks['practice-report'].module = { id: 'pattern_v2', params: {} };
   state.plan = Array.from({ length: 21 }, (_, index) =>
     index === 0
       ? { activity: 'task', target: 'practice-report' }
@@ -258,49 +268,37 @@ test('the authoring editor exposes task group membership and the two playable ex
   );
   assert.ok([...document.querySelectorAll('option')].some((option) => option.value === 'order_v1'));
 });
-test('tutorial practice leads to the actual calendar button without opening the feature itself', async (t) => {
-  const render = await mount(t);
-  localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
+test('tutorial guides the actual lobby and planner, and can be reopened', async (t) => {
+  const render = await mount(t),
+    state = fresh();
+  state.pending = [];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   await render(YearGame);
-  await click(document.querySelector('.tutorial-badge'));
-  await click(
-    [...document.querySelectorAll('.tutorial-workbook nav button')].find((button) =>
-      button.textContent.includes('시험과 학사'),
-    ),
-  );
-  await click(document.querySelector('.lesson-content .primary'));
   assert.equal(document.querySelector('dialog'), null);
-  assert.ok(document.querySelector('.tutorial-guide').textContent.includes('왼쪽 아래'));
-  assert.equal(document.querySelector('.calendar-grid'), null);
-  await click(document.querySelector('[data-tutorial="calendar"]'));
-  assert.equal(document.querySelectorAll('.calendar-grid [role="gridcell"]').length, 42);
-  await click(document.querySelector('[aria-label="다음 달"]'));
-  await click(document.querySelector('[aria-label="다음 달"]'));
-  assert.match(document.querySelector('.calendar-heading h3').textContent, /4월/);
-  assert.match(document.querySelector('.tutorial-badge').textContent, /1\/8/);
+  assert.match(document.querySelector('.lobby-guide').textContent, /자습 신청/);
+  await click(document.querySelector('.lobby-guide button'));
+  assert.ok(document.querySelector('.schedule-workspace'));
+  assert.match(document.querySelector('.inline-guide').textContent, /오른쪽/);
+  await click(document.querySelector('.inline-guide button'));
+  assert.equal(document.querySelector('dialog'), null);
+  assert.match(document.querySelector('.lobby-guide').textContent, /한 주 시작/);
+  await click(document.querySelector('[aria-label="안내 닫기"]'));
+  assert.equal(document.querySelector('.lobby-guide'), null);
+  await click(document.querySelector('.guide-reopen'));
+  assert.match(document.querySelector('.lobby-guide').textContent, /1\/5/);
 });
-test('the full game plans first, performs two work rounds and completes the report before the week ends', async (t) => {
-  const render = await mount(t);
-  localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
+
+test('ordinary play automatically completes scheduled report work without a mini-game', async (t) => {
+  const render = await mount(t),
+    state = fresh();
+  state.pending = [];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   await render(YearGame);
-  await click(document.querySelector('.start-week'));
-  await click(document.querySelector('.week-review > .primary'));
-  for (let round = 0; round < 2; round++) {
-    await click(document.querySelector('.task-game-panel .primary'));
-    const goal = [...document.querySelectorAll('.task-pattern-grid button')].flatMap(
-      (button, index) => (button.classList.contains('lit') ? [index] : []),
-    );
-    await click(document.querySelector('.task-game-panel .primary'));
-    for (const cell of goal)
-      await click(document.querySelectorAll('.task-pattern-grid button')[cell]);
-    await click(document.querySelector('.task-game-panel .primary'));
-    const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-    assert.equal(saved.tasks['practice-report'].progress, round + 1);
-    assert.equal(saved.week, 0);
-    assert.equal(saved.tasks['practice-report'].status, round === 1 ? 'completed' : 'active');
-    await click(document.querySelector('.task-game-passed .primary'));
-  }
-  assert.equal(JSON.parse(localStorage.getItem(SAVE_KEY)).week, 1);
+  await click(document.querySelector('.week-start'));
+  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+  assert.equal(saved.week, 1);
+  assert.equal(saved.tasks['practice-report'].status, 'completed');
+  assert.equal(document.querySelector('.task-game-panel'), null);
   assert.match(document.querySelector('dialog').textContent, /주간 결과/);
 });
 
@@ -477,13 +475,98 @@ test('extended study and custom preset controls send explicit commands, then sho
   await render(CampaignPlanner, props());
   assert.equal(document.querySelector('select').disabled, true);
 });
-test('main navigation omits help and admissions room while weekly overview exposes seven nights', async (t) => {
+test('lobby shows the character first and opens a complete planner only through its menu', async (t) => {
+  const render = await mount(t),
+    state = fresh();
+  state.pending = [];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  await render(YearGame);
+  assert.ok(document.querySelector('.avatar img'));
+  assert.equal(document.querySelector('.schedule-grid'), null);
+  assert.doesNotMatch(document.querySelector('.game-menu').textContent, /진로|동아리|진학실/);
+  await click(document.querySelector('.lobby-schedule'));
+  assert.equal(document.querySelectorAll('.schedule-cell').length, 28);
+  assert.equal(document.querySelector('dialog select'), null);
+  await click([...document.querySelectorAll('[role="tab"]')].find((b) => b.textContent === '휴식'));
+  const rest = [...document.querySelectorAll('.palette-items button')].find((b) =>
+    b.textContent.includes('휴식'),
+  );
+  await click(rest);
+  assert.match(document.querySelector('.schedule-palette h3').textContent, /월요일 2자/);
+  await click(rest);
+  assert.match(document.querySelector('.schedule-palette h3').textContent, /화요일 1자/);
+  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+  assert.equal(saved.plan[1].activity, 'sleep');
+  assert.equal(saved.plan[2].activity, 'sleep');
+  await click(
+    [...document.querySelectorAll('.schedule-footer button')].find((b) =>
+      b.textContent.includes('신청 완료'),
+    ),
+  );
+  assert.equal(document.querySelector('.schedule-workspace'), null);
+});
+
+test('an important event appears automatically, and selection can change before confirmation', async (t) => {
   const render = await mount(t);
   localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
   await render(YearGame);
-  assert.doesNotMatch(document.querySelector('.window-toolbar').textContent, /도움말|진학실/);
-  await click(
-    [...document.querySelectorAll('button')].find((b) => b.textContent.includes('전체 일정')),
-  );
-  assert.equal(document.querySelectorAll('.night-overview select').length, 7);
+  assert.ok(document.querySelector('.event-stage'));
+  const before = JSON.parse(localStorage.getItem(SAVE_KEY));
+  await click(document.querySelectorAll('.event-stage .choice-row')[0]);
+  await click(document.querySelectorAll('.event-stage .choice-row')[3]);
+  assert.equal(document.querySelectorAll('.event-stage .choice-row.selected').length, 1);
+  assert.deepEqual(JSON.parse(localStorage.getItem(SAVE_KEY)).choices, before.choices);
+  await click(document.querySelector('.event-stage .primary'));
+  assert.equal(JSON.parse(localStorage.getItem(SAVE_KEY)).choices.winter_study, 'solo');
+});
+
+test('latest settings omit the visible ID, local lock screen and music controls', async (t) => {
+  const render = await mount(t);
+  await render(SettingsPanel, {
+    game: { state: fresh(), busy: false, mode: 'local' },
+    audio: { playing: false, volume: 25 },
+  });
+  assert.doesNotMatch(document.body.textContent, /게임 ID|플레이 화면 잠그기|배경음악|BGM/);
+});
+
+test('finishing an interview does not suppress the next automatic story scene', async (t) => {
+  const render = await mount(t);
+  let state = fresh();
+  state.week = 36;
+  state.pending = ['interview_day'];
+  for (let i = 0; i < 3; i++)
+    state = transition(state, { type: 'choose', event: 'interview_day', option: 'answer:0' });
+  assert.equal(state.minigames.interview.phase, 'finished');
+  state.week = 38;
+  state.pending = ['dorm_cards'];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  await render(YearGame);
+  assert.ok(document.querySelector('.event-stage'));
+  assert.match(document.querySelector('.event-stage').textContent, /고스톱/);
+});
+
+test('developer mode applies stats, skips weekly applications and opens actual ending choices', async (t) => {
+  const render = await mount(t, 'https://game.example/?developer=1');
+  const normal = JSON.stringify(fresh());
+  localStorage.setItem(SAVE_KEY, normal);
+  localStorage.setItem(DEVELOPER_SAVE_KEY, JSON.stringify(fresh()));
+  await render(YearGame);
+  await click(document.querySelector('[aria-label="개발자 모드"]'));
+  const panel = document.querySelector('.developer-panel');
+  assert.ok(panel);
+  panel.querySelector('[name="hp"]').value = '85';
+  const button = (label) =>
+    [...document.querySelectorAll('dialog button')].find(
+      (entry) => entry.textContent.trim() === label,
+    );
+  await click(button('스탯 적용'));
+  assert.equal(JSON.parse(localStorage.getItem(DEVELOPER_SAVE_KEY)).stats.hp, 85);
+  await click(button('자습신청 건너뛰고 다음 주로'));
+  assert.equal(JSON.parse(localStorage.getItem(DEVELOPER_SAVE_KEY)).week, 1);
+  await click(button('자동 진행하고 최종 결과 보기'));
+  assert.equal(JSON.parse(localStorage.getItem(DEVELOPER_SAVE_KEY)).week, 41);
+  assert.ok(button('재도전'));
+  await click(button('재도전'));
+  assert.match(document.querySelector('.ending-ribbon').textContent, /재도전/);
+  assert.equal(localStorage.getItem(SAVE_KEY), normal);
 });

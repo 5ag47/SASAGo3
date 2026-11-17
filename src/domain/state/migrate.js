@@ -4,9 +4,10 @@ import { courses, TUTORIAL_LAST_WEEK, TUTORIAL_TASKS } from '../catalog.js';
 import { emptyMinigames } from '../minigames.js';
 import { upgradeTaskFlow } from '../task-flow-migration.js';
 import { defaultTaskGame } from '../task-modules/registry.js';
-import { SCHEMA_VERSION } from '../version.js';
+import { SCHEMA_VERSION, CONTENT_VERSION } from '../version.js';
 import { refreshDocuments } from '../admission-documents.js';
 import { admissionDefinitions } from '../school-record.js';
+import { migratePlanner } from './planner-migration.js';
 const LEGACY_SAVE_MIGRATIONS = Object.freeze([
   {
     id: 'task-module-snapshots',
@@ -326,6 +327,19 @@ export const SAVE_MIGRATIONS = Object.freeze([
         return next;
       const focus = concentration(next.stats);
       return next.stats.focus === focus ? next : { ...next, stats: { ...next.stats, focus } };
+    },
+  },
+  { id: 'weekly-planner-1117', apply: migratePlanner },
+  {
+    id: 'scenario-contract-v1',
+    apply(next) {
+      if (next.flags?.scenarioVersion === 1) return next;
+      // Existing task snapshots keep their original deadline, cost and progress.
+      return {
+        ...next,
+        contentVersion: CONTENT_VERSION,
+        flags: { ...next.flags, scenarioVersion: 1 },
+      };
     },
   },
 ]);

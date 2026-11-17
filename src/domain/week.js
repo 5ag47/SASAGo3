@@ -123,6 +123,7 @@ function finishRunSlot(state, slot) {
     activity: slot.activity,
     target: slot.target,
     note: slot.note,
+    outcome: slot.outcome ?? 'success',
     delta: Object.fromEntries(
       Object.keys(STATS).map((key) => [
         key,
@@ -209,7 +210,22 @@ function executeSlot(state) {
     definition = activities.sleep;
     note = '진행할 대상 없음 → 호실 휴식';
   }
-  state.money = Math.max(0, state.money - (definition.cost ?? 0) + (definition.income ?? 0));
+  // Structured tasks define their own per-slot costs; never charge the generic
+  // task activity again on top of the content's explicit work contract.
+  const configuredWork = id === 'task' ? state.tasks[slot.target]?.work : null;
+  if (
+    configuredWork &&
+    state.money < configuredWork.perAction.cost.money / configuredWork.perAction.timeSlots
+  ) {
+    id = 'sleep';
+    definition = activities.sleep;
+    note = '작업 비용 부족 → 호실 휴식';
+  }
+  const explicitWork = id === 'task' && configuredWork;
+  state.money = Math.max(
+    0,
+    state.money - (explicitWork ? 0 : (definition.cost ?? 0)) + (definition.income ?? 0),
+  );
   const study = WORK_ACTIVITIES.includes(id);
   if (study) run.workCount++;
   counts[id] = (counts[id] ?? 0) + 1;
@@ -222,13 +238,17 @@ function executeSlot(state) {
     : 1;
   const efficiency = learningEfficiency(state) * environment * repetition;
   const recovery = RECOVERY_ACTIVITIES.includes(id) ? recoveryFactor(recoveryOrdinal(counts)) : 1;
-  for (const [key, value, multiplier] of slotEffectParts(id, definition.effect, {
-    efficiency,
-    recovery,
-    pressure: seasonAt(state.week).pressure,
-  }))
+  for (const [key, value, multiplier] of slotEffectParts(
+    id,
+    explicitWork ? {} : definition.effect,
+    {
+      efficiency,
+      recovery,
+      pressure: seasonAt(state.week).pressure,
+    },
+  ))
     applyEffects(state, { [key]: value }, multiplier);
-  applyEffects(state, courseLoad(state, id, slot.target));
+  if (!explicitWork) applyEffects(state, courseLoad(state, id, slot.target));
   if (recovery < 1) note = `회복 효과 ×${Math.round(recovery * 100) / 100}`;
   if (id === 'csat_study') {
     const config = balance.admissions;
@@ -316,6 +336,7 @@ function executeSlot(state) {
     note,
     before: slotBefore,
     beforeCourses: courseBefore,
+    outcome: id === slot.activity && id !== 'skip' ? 'success' : 'failure',
   });
 }
 export function finishRunTask(state, task) {
@@ -331,7 +352,7 @@ export function finishRunTask(state, task) {
   workTask(state, task.id, run.messages, run.slot.amount);
   const completed = task.status === 'completed';
   run.slot.note =
-    task.name + ' · 작업 ' + task.progress + '/' + task.target + ' · 품질 ' + result.quality;
+    task.name + ' · 작업 ' + task.progress + '/' + task.target + ' · 완성도 ' + result.quality;
   finishRunSlot(state, run.slot);
   run.waiting = {
     kind: 'task_result',
@@ -354,23 +375,37 @@ export function skipRunTask(state) {
   run.waiting = null;
   return true;
 }
-export function resolveWeek(source) {
+function pauseForNotice(run, automatic) {
+  if (automatic) run.alerts.length = 0;
+  if (!run.alerts.length) return false;
+  run.waiting = run.alerts.shift();
+  return true;
+}
+
+export function resolveWeek(source, { automatic = false, until } = {}) {
   const state = structuredClone(source);
   if (!state.weekRun) startWeek(state);
   const run = state.weekRun;
-  if (run.waiting?.kind === 'task') return state;
-  run.waiting = null;
-  if (run.alerts.length) {
-    run.waiting = run.alerts.shift();
-    return state;
+  if (run.waiting?.kind === 'task') {
+    if (!automatic) return state;
+    skipRunTask(state);
   }
+  run.waiting = null;
+  if (pauseForNotice(run, automatic)) return state;
   while (run.cursor < 21) {
     const day = Math.floor(run.cursor / 3);
     if (day !== run.lastDay) {
-      if (run.lastDay >= 0) closeRunDay(state, run.lastDay);
+      if (run.lastDay >= 0) {
+        if (run.lastDay === until?.day && !until.afterNight) return state;
+        closeRunDay(state, run.lastDay);
+        if (pauseForNotice(run, automatic)) return state;
+      }
+      if (until && day > until.day) {
+        pauseForNotice(run, automatic);
+        return state;
+      }
       run.lastDay = day;
-      const beforePending = new Set(state.pending),
-        beforeTasks = new Set(Object.keys(state.tasks));
+      const beforePending = new Set(state.pending);
       dispatchDayEvents(state, day);
       const result = resolveStudyApplication(state, dateOrdinal(weekDate(state.week, day)));
       if (result) run.alerts.push(result);
@@ -383,21 +418,19 @@ export function resolveWeek(source) {
           text: events[event].description,
           event,
         });
-      for (const task of Object.keys(state.tasks).filter((id) => !beforeTasks.has(id)))
-        run.alerts.push({ kind: 'notice', title: '새 할 일', text: state.tasks[task].name, task });
-      if (run.alerts.length) {
-        run.waiting = run.alerts.shift();
-        return state;
-      }
+      // New tasks appear in the planner without interrupting the activity replay.
+      if (pauseForNotice(run, automatic)) return state;
     }
+    if (until && run.cursor >= until.cursor) return state;
     executeSlot(state);
-    if (run.waiting) return state;
+    if (run.waiting) {
+      if (!automatic) return state;
+      skipRunTask(state);
+    }
   }
+  if (until && !until.afterNight) return state;
   closeRunDay(state, 6);
-  if (run.alerts.length) {
-    run.waiting = run.alerts.shift();
-    return state;
-  }
+  if (pauseForNotice(run, automatic) || until) return state;
   const { messages, actions, plan, workCount, before, beforeCourses, moneyBefore } = run;
   const load = weeklyLoad(run.week, workCount);
   applyEffects(state, { stress: load.stress, hp: load.hp, math: -balance.weekly.mathDecay });
@@ -521,6 +554,15 @@ function closeRunDay(state, day) {
     ),
   });
   expireTasks(state, run.messages, day);
+  const beforePending = new Set(state.pending);
+  dispatchDayEvents(state, day, 'end');
+  for (const event of state.pending.filter((id) => !beforePending.has(id)))
+    run.alerts.push({
+      kind: 'notice',
+      title: events[event].name,
+      text: events[event].description,
+      event,
+    });
   for (const exam of assessmentsOnDay(state.week, day)) {
     if (
       exam.kind === 'quiz' &&

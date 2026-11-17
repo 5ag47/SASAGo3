@@ -16,7 +16,7 @@
     "short": "과제",
     "category": "학습",
     "color": "purple",
-    "description": "배정한 시간에 미니게임으로 과제를 진행해요. 성공한 진척은 즉시 반영됩니다.",
+    "description": "배정한 자습시간만큼 과제를 자동으로 진행해요. 필요한 시간을 채우면 완료됩니다.",
     "effect": {
       "hp": -2,
       "stress": 2
@@ -47,7 +47,7 @@
   "interview": {
     "name": "면접 연습",
     "short": "면접",
-    "category": "진로",
+    "category": "학습",
     "color": "blue",
     "description": "설명하는 힘을 기르고 면접 실전 점수를 준비해요.",
     "effect": {
@@ -60,7 +60,7 @@
   "essay": {
     "name": "자소서 쓰기",
     "short": "자소서",
-    "category": "진로",
+    "category": "학습",
     "color": "purple",
     "description": "9월 자기소개서를 진행해요. 높은 평판은 쓸 이야기를 늘려 줘요.",
     "effect": {
@@ -137,7 +137,7 @@
   "lecture": {
     "name": "입시 강연",
     "short": "강연",
-    "category": "진로",
+    "category": "학습",
     "color": "sand",
     "description": "선배의 조언과 입시 정보를 얻어요. 자습 한 칸을 사용해요.",
     "effect": {

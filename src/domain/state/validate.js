@@ -22,6 +22,7 @@ import { SCHEMA_VERSION, CONTENT_VERSION } from '../version.js';
 import { validDocuments } from '../admission-documents.js';
 import { validRecommendation } from '../recommendation.js';
 import { validCampaign } from '../campaign-state.js';
+import { workIssues, resolutionIssues } from '../scenarios.js';
 export function validateState(s) {
   if (!validCampaign(s?.campaign, Object.keys(courses))) return false;
   if (!s || !validDocuments(s.documents) || !validRecommendation(s.recommendation)) return false;
@@ -122,12 +123,19 @@ export function validateState(s) {
         t.id === id &&
         typeof t.name === 'string' &&
         ['active', 'completed', 'expired'].includes(t.status) &&
+        (t.retired === undefined || typeof t.retired === 'boolean') &&
         Number.isFinite(t.progress) &&
         t.progress >= 0 &&
         Number.isFinite(t.target) &&
         t.target > 0 &&
         t.progress <= t.target &&
         validTaskStages(t) &&
+        (t.work === undefined || workIssues(t.work, STATS).length === 0) &&
+        (t.resolution === undefined || resolutionIssues(t.resolution, STATS).length === 0) &&
+        (t.grade === undefined ||
+          (t.grade &&
+            typeof t.grade.assessmentId === 'string' &&
+            Object.hasOwn(courses[t.course]?.assessments ?? {}, t.grade.kind))) &&
         (t.deadlineDay === undefined ||
           (Number.isInteger(t.deadlineDay) && t.deadlineDay >= 0 && t.deadlineDay <= 6)) &&
         moduleIssues(t.module).length === 0 &&

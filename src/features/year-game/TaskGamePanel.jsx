@@ -66,7 +66,7 @@ export default function TaskGamePanel({
           <span>
             {task.progress} / {task.target}
             {module.unit}
-            {outcome ? ' · 품질 ' + outcome.quality + '점' : ''}
+            {outcome ? ' · 완성도 ' + outcome.quality + '점' : ''}
           </span>
           <button className="primary full" disabled={busy} onClick={outcome ? onContinue : onBack}>
             {outcome ? '계속 진행' : '완료 기록 보기'}

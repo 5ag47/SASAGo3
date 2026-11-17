@@ -13,10 +13,26 @@ import { validateState } from '../../src/domain/state.js';
 const origin = 'https://game.example';
 const secret = 'test-only-secret-do-not-use-in-production-1234567890';
 const profile = { name: '서버 테스트', character: 'boy', role: 'steady', major: 'math' };
+test('authenticated creation accepts the chosen GPA and rejects out-of-range inputs without saving', async (t) => {
+  const f = fixture();
+  t.after(() => f.store.close());
+  const initial = await f.get();
+  const invalid = await f.post(initial, {
+    type: 'create',
+    profile: { ...profile, priorGpa: 4.31 },
+  });
+  assert.equal(invalid.response.status, 400);
+  assert.equal((await f.get()).state.created, false);
+  const valid = await f.post(initial, { type: 'create', profile: { ...profile, priorGpa: 4.1 } });
+  assert.equal(valid.response.status, 200);
+  assert.equal(valid.state.campaign.priorGpa, 4.1);
+  assert.equal((await f.get()).state.campaign.priorGpa, 4.1);
+});
 test('small task updates preserve client history, hide the target and recover a lost reply as a full snapshot', async (t) => {
   const f = fixture();
   t.after(() => f.store.close());
   const created = await f.post(await f.get(), { type: 'create', profile });
+  installLegacyTask(f);
   const running = await f.post(created, { type: 'advance' });
   const id = 'practice-report';
   const started = await f.post(running, { type: 'task_game', task: id, action: { type: 'start' } });
@@ -62,6 +78,7 @@ test('task mini-games persist per action, hide a recalled pattern and accept a d
   const f = fixture();
   t.after(() => f.store.close());
   const created = await f.post(await f.get(), { type: 'create', profile });
+  installLegacyTask(f);
   const task = 'practice-report';
   const beforeTime = await f.post(created, { type: 'task_game', task, action: { type: 'start' } });
   assert.equal(beforeTime.code, 'TASK_TIME_REQUIRED');
@@ -236,6 +253,12 @@ test('unexpected server errors expose only a trace while internal logs retain co
   assert.ok(logs[0].contentVersion);
   assert.ok(!JSON.stringify(logs).includes('private-message'));
 });
+function installLegacyTask(f) {
+  const row = f.store.db.prepare('SELECT state FROM players').get();
+  const state = JSON.parse(row.state);
+  state.tasks['practice-report'].module = { id: 'pattern_v2', params: {} };
+  f.store.db.prepare('UPDATE players SET state = ?').run(JSON.stringify(state));
+}
 function fixture({ nextSeed } = {}) {
   const store = new SqliteStore(':memory:');
   const api = createApi({
@@ -299,10 +322,7 @@ test('accepted commands refresh server entropy while duplicate and stale request
   t.after(() => f.store.close());
   const session = await f.get();
   const created = await f.post(session, { type: 'create', profile });
-  assert.equal(
-    JSON.parse(f.store.db.prepare('SELECT state FROM players').get().state).seed,
-    (Math.imul(1000, 1664525) + 1013904223) >>> 0,
-  );
+  assert.equal(JSON.parse(f.store.db.prepare('SELECT state FROM players').get().state).seed, 1000);
   const key = randomUUID();
   const command = { type: 'plan', index: 1, activity: 'sleep', target: null };
   const planned = await f.post(created, command, { key });

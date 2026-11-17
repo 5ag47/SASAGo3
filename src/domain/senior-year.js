@@ -109,6 +109,7 @@ export const monthlyAllowance = (week) =>
   week >= 1 && (week - 1) % 4 === 0 ? balance.money.monthlyAllowance : 0;
 
 export function activityLock(state, id) {
+  if (id === 'club') return '동아리 활동은 종료되었습니다.';
   if (id === 'work' && !isVacation(state.week)) return '아르바이트는 방학에만 할 수 있어요.';
   if (id === 'csat_study' && state.flags.csat !== 'prepare')
     return '여름 진학 상담에서 수능 준비를 정해야 열려요.';

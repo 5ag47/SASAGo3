@@ -98,18 +98,17 @@ test('recommendation preparation uses the actual teacher schedule and arrives on
   assert.ok(state.notices.some((notice) => notice.title === '추천서 준비 완료'));
   assert.ok(validateState(migrateState(JSON.parse(JSON.stringify(state)))));
 });
-test('the authored essay applies the same gradual support model during real scheduled attempts', () => {
+test('the authored essay applies the same gradual support model during scheduled time investment', () => {
   let state = fresh();
   state.week = 25;
   addTask(state, 'essay', events.essay);
-  assert.equal(state.tasks.essay.module.params.support, 'essay');
+  assert.equal(state.tasks.essay.module.id, 'time_v1');
   state.plan = Array.from({ length: 21 }, (_, index) =>
     index === 0 ? { activity: 'task', target: 'essay' } : { activity: 'sleep', target: null },
   );
   state = runPlannedWeek(state);
   const task = state.tasks.essay;
-  assert.equal(task.attempts.successful, 1);
-  assert.ok(task.attempts.lastQuality > 0 && task.attempts.lastQuality < 100);
+  assert.equal(task.attempts, undefined);
   assert.ok(task.progress > 1 && task.progress < 2);
 });
 test('submitted records stay fixed while subsequent interview preparation can still change its own factor', () => {

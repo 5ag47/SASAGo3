@@ -37,9 +37,9 @@ export function addTask(state, id, definition) {
 export function academyTasks(state) {
   if (!state.flags.academy || state.week < 1 || state.week > 16) return;
   const first = 1 + Math.floor((state.week - 1) / 4) * 4;
-  for (let i = 1; i <= 2; i++)
+  for (let i = 1; i <= 1; i++)
     addTask(state, `academy-${first}-${i}`, {
-      name: `해냄 심층 숙제 ${i}`,
+      name: '해냄 심층 숙제',
       description: '월말까지 2칸 투자 · 완료 시 수학·평판 상승',
       target: 2,
       deadline: first + 3,
@@ -67,7 +67,8 @@ export function finishTask(state, task, messages) {
     state.assessments.push({
       id: task.id,
       course: task.course,
-      kind: 'project',
+      kind: task.grade?.kind ?? 'project',
+      assessmentId: task.grade?.assessmentId,
       score: result.score,
       ...(result.difficulty !== undefined ? { difficulty: result.difficulty } : {}),
       term: state.week <= 16 ? 1 : 2,
@@ -98,6 +99,20 @@ export function finishTask(state, task, messages) {
 export function workTask(state, id, messages, progress = 1) {
   const task = state.tasks[id];
   if (!task || task.status !== 'active') return false;
+  if (task.work) {
+    const action = task.work.perAction;
+    const cost = action.cost.money / action.timeSlots;
+    if (state.money < cost) {
+      messages.push(`${task.name} · 작업 비용 부족`);
+      return false;
+    }
+    state.money -= cost;
+    const effects = {};
+    for (const effect of action.effects)
+      effects[effect.stat] = (effects[effect.stat] ?? 0) + effect.amount / action.timeSlots;
+    applyEffects(state, effects);
+    progress *= action.progress / action.timeSlots;
+  }
   const gained = processTaskWork(state, task, progress);
   if (task.course)
     learnCourse(state, task.course, 1, 2 * Math.min(gained, task.target - task.progress));
@@ -122,7 +137,8 @@ export function expireTasks(state, messages, day = 6) {
       state.assessments.push({
         id: task.id,
         course: task.course,
-        kind: 'project',
+        kind: task.grade?.kind ?? 'project',
+        assessmentId: task.grade?.assessmentId,
         score: result.score,
         term: state.week <= 16 ? 1 : 2,
         week: state.week,

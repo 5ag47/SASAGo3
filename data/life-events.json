@@ -143,7 +143,7 @@
         },
         "reserve": {
           "count": 1,
-          "activity": "club"
+          "activity": "lecture"
         },
         "flags": {
           "schoolContest": "build"
@@ -159,7 +159,7 @@
         },
         "reserve": {
           "count": 1,
-          "activity": "club"
+          "activity": "lecture"
         },
         "flags": {
           "schoolContest": "video"
@@ -356,7 +356,7 @@
     }
   },
   "testdy_home_week": {
-    "name": "귀가주 학원 · 동아리",
+    "name": "귀가주를 보내는 방법",
     "description": "이번 귀가주에는 무엇을 할까요?",
     "week": 5,
     "kind": "choice",
@@ -372,19 +372,6 @@
         },
         "reserve": {
           "activity": "lecture",
-          "count": 2
-        }
-      },
-      {
-        "id": "club",
-        "label": "동아리",
-        "detail": "평판 +3 · 스트레스 −3 · 2칸",
-        "effect": {
-          "reputation": 3,
-          "stress": -3
-        },
-        "reserve": {
-          "activity": "club",
           "count": 2
         }
       },

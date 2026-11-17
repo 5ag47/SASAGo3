@@ -8,7 +8,6 @@ export default function SettingsPanel({ game, audio, onClose, onLeave }) {
     <div className="settings-panel">
       {game.state.created && (
         <section className="profile-settings">
-          <p>ID · {game.state.campaign.playerId}</p>
           <label>
             닉네임
             <input
@@ -30,14 +29,14 @@ export default function SettingsPanel({ game, audio, onClose, onLeave }) {
         <span>
           <Volume2 size={18} />
           <span>
-            <b>작은 피아노 소리</b>
+            <b>효과음</b>
           </span>
         </span>
         <button
           className={`toggle ${audio.playing ? 'on' : ''}`}
           role="switch"
           aria-checked={audio.playing}
-          aria-label="배경음 켜기"
+          aria-label="효과음 켜기"
           onClick={audio.toggle}
         >
           <i />
@@ -88,22 +87,22 @@ export default function SettingsPanel({ game, audio, onClose, onLeave }) {
             진단 보고서 다운로드<small>오류 코드·행동·주차·버전 · 이름은 가려져요</small>
           </span>
         </button>
-        <button
-          disabled={game.busy}
-          onClick={async () => {
-            if (await game.logout()) onClose();
-          }}
-        >
-          <LogOut size={16} />
-          <span>
-            {game.mode === 'server' ? 'Google 로그아웃' : '플레이 화면 잠그기'}
-            <small>
-              {game.mode === 'server'
-                ? '서버 기록을 유지하고 로그인 화면으로 돌아가요'
-                : '인증 기능 없이 시작 화면으로 나가요'}
-            </small>
-          </span>
-        </button>
+        {game.mode === 'server' && (
+          <button
+            disabled={game.busy}
+            onClick={async () => {
+              if (await game.logout()) onClose();
+            }}
+          >
+            <LogOut size={16} />
+            Google 로그아웃
+          </button>
+        )}
+        {game.developerAvailable && (
+          <a className="developer-entry" href={game.developer ? '/' : '?developer=1'}>
+            {game.developer ? '일반 모드로 돌아가기' : '개발자 테스트 모드 열기'}
+          </a>
+        )}
       </div>
       <input
         ref={fileRef}

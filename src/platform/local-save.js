@@ -1,14 +1,17 @@
 import { baseState, migrateState, SAVE_KEY, validateState } from '../domain/state.js';
 import { transition, GameError } from '../domain/engine.js';
+import { developerTransition, DEVELOPER_ACTIONS } from '../domain/developer.js';
 
 export const BACKUP_KEY = `${SAVE_KEY}-backup`;
+export const DEVELOPER_SAVE_KEY = `${SAVE_KEY}-developer`;
 export const MAX_SAVE_BYTES = 1500000;
 export function resetLocal(
   source,
   { allowDamaged = false } = {},
   storage = globalThis.localStorage,
+  saveKey = SAVE_KEY,
 ) {
-  const raw = storage.getItem(SAVE_KEY);
+  const raw = storage.getItem(saveKey);
   if (raw) {
     let previous;
     try {
@@ -21,11 +24,11 @@ export function resetLocal(
         'SAVE_CONFLICT',
         '다른 창에서 기록이 바뀌었습니다. 최신 저장을 확인해 주세요.',
       );
-    storage.setItem(previous ? BACKUP_KEY : `${SAVE_KEY}-damaged`, raw);
+    storage.setItem(`${saveKey}-${previous ? 'backup' : 'damaged'}`, raw);
   }
   const fresh = baseState(crypto.getRandomValues(new Uint32Array(1))[0]);
   fresh.revision = source.revision + 1;
-  storage.setItem(SAVE_KEY, JSON.stringify(fresh));
+  storage.setItem(saveKey, JSON.stringify(fresh));
   return fresh;
 }
 export function parseSave(raw) {
@@ -44,15 +47,15 @@ export function parseSave(raw) {
   }
   throw new GameError('SAVE_SCHEMA', '현재 버전과 맞지 않거나 손상된 저장 파일이에요.');
 }
-export function loadLocal(storage = globalThis.localStorage) {
+export function loadLocal(storage = globalThis.localStorage, saveKey = SAVE_KEY) {
   try {
-    const raw = storage.getItem(SAVE_KEY);
+    const raw = storage.getItem(saveKey);
     if (!raw)
       return { state: baseState(crypto.getRandomValues(new Uint32Array(1))[0]), issue: null };
     return { state: parseSave(raw), issue: null };
   } catch (error) {
     try {
-      const backup = storage.getItem(BACKUP_KEY);
+      const backup = storage.getItem(`${saveKey}-backup`);
       if (backup)
         return {
           state: parseSave(backup),
@@ -71,8 +74,8 @@ export function loadLocal(storage = globalThis.localStorage) {
     };
   }
 }
-export function commitLocal(state, command, storage = globalThis.localStorage) {
-  const raw = storage.getItem(SAVE_KEY);
+export function commitLocal(state, command, storage = globalThis.localStorage, saveKey = SAVE_KEY) {
+  const raw = storage.getItem(saveKey);
   if (raw && parseSave(raw).revision !== state.revision)
     throw new GameError(
       'SAVE_CONFLICT',
@@ -83,15 +86,18 @@ export function commitLocal(state, command, storage = globalThis.localStorage) {
       'SAVE_CONFLICT',
       '다른 창에서 저장이 초기화됐어요. 최신 저장을 확인하세요.',
     );
-  const next = transition(state, command);
-  if (raw) storage.setItem(BACKUP_KEY, raw);
-  storage.setItem(SAVE_KEY, JSON.stringify(next));
+  const next =
+    saveKey === DEVELOPER_SAVE_KEY && DEVELOPER_ACTIONS.includes(command.type)
+      ? developerTransition(state, command)
+      : transition(state, command);
+  if (raw) storage.setItem(`${saveKey}-backup`, raw);
+  storage.setItem(saveKey, JSON.stringify(next));
   return next;
 }
-export function replaceLocal(raw, storage = globalThis.localStorage) {
+export function replaceLocal(raw, storage = globalThis.localStorage, saveKey = SAVE_KEY) {
   const state = parseSave(raw);
-  const existing = storage.getItem(SAVE_KEY);
-  if (existing) storage.setItem(BACKUP_KEY, existing);
-  storage.setItem(SAVE_KEY, JSON.stringify(state));
+  const existing = storage.getItem(saveKey);
+  if (existing) storage.setItem(`${saveKey}-backup`, existing);
+  storage.setItem(saveKey, JSON.stringify(state));
   return state;
 }

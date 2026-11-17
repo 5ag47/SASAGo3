@@ -36,7 +36,7 @@ export function recurringCampaignTasks(state) {
   const { month, weekOfMonth } = period(w);
   if (assessmentsAt(w).some((e) => e.kind === 'quiz'))
     timeTask(state, `quiz-prep-${w}`, '과목 퀴즈 공부', 1, { math: 1 }, { special: 'quiz_prep' });
-  timeTask(state, `weekly-clean-${w}`, '방 청소', 1, { stress: -2 });
+  // Room upkeep is an activity; only the monthly inspection is a task.
   if (state.group === 'focused' || (state.group === 'friends' && weekOfMonth === 2))
     timeTask(
       state,
@@ -51,9 +51,9 @@ export function recurringCampaignTasks(state) {
     (state.group === 'playful' && w % 2 === 0)
   )
     queueStory(state, `story_dinner_${w}`);
-  if (month === 4 && w % 2 === 1)
+  if (month === 4 && weekOfMonth === 1)
     timeTask(state, `home-academy-${w}`, '귀가주 학원', 2, { math: 3 });
-  if (month === 5 || (month >= 9 && month <= 11)) {
+  if ((month === 5 || (month >= 9 && month <= 11)) && weekOfMonth === 2) {
     timeTask(
       state,
       `mock-${w}`,
@@ -61,18 +61,16 @@ export function recurringCampaignTasks(state) {
       1,
       { speech: 3 },
     );
-    if (w !== 27)
-      for (let i = 1; i <= 3; i++)
-        timeTask(state, `union-${w}-${i}`, `연합스터디 ${i}`, 1, { math: 2 });
+    if (w !== 27) timeTask(state, `union-${w}-1`, '연합스터디', 1, { math: 2 });
   }
-  if (state.flags.academy && month >= 9 && month <= 11)
+  if (state.flags.academy && month >= 9 && month <= 11 && weekOfMonth === 1)
     timeTask(
       state,
       `haenaem-autumn-${w}`,
       '해냄 수학 문제풀기',
       2,
       { math: 4 },
-      { penalty: { math: -2, reputation: -2, stress: 2 } },
+      { deadline: w + 3, penalty: { math: -2, reputation: -2, stress: 2 } },
     );
   if (state.campaign.relationship === 'dating') {
     timeTask(state, `date-${w}`, '데이트', 1, { hp: 5, stress: -5 }, { special: 'date' });

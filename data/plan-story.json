@@ -197,7 +197,7 @@
   "story_confession": {
     "week": 20,
     "name": "바나나우유와 편지",
-    "description": "동아리 후배가 매점에서 바나나우유와 편지를 건넸다. 고백을 받았다!",
+    "description": "같은 학교 후배가 매점에서 바나나우유와 편지를 건넸다. 고백을 받았다!",
     "kind": "choice",
     "options": [
       {
@@ -993,45 +993,6 @@
         "id": "skip",
         "label": "오늘은 아껴 둔다",
         "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다."
-      }
-    ]
-  },
-  "story_delivery": {
-    "week": 14,
-    "name": "미션 임파서블 · 배달음식",
-    "description": "점호 전에 주문한 피자를 찾아오자.",
-    "kind": "choice",
-    "options": [
-      {
-        "id": "try",
-        "label": "조심해서 가져온다",
-        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
-        "cost": 3000,
-        "chanceResult": {
-          "chance": 0.9,
-          "success": {
-            "stress": -12,
-            "reputation": 5
-          },
-          "failure": {
-            "stress": 10,
-            "reputation": -10
-          }
-        }
-      },
-      {
-        "id": "wait",
-        "label": "허용 시간에 받는다",
-        "detail": "선택 결과는 이야기와 다음 일정에 반영됩니다.",
-        "effect": {
-          "stress": -3
-        },
-        "cost": 3000
-      },
-      {
-        "id": "skip",
-        "label": "오늘은 주문하지 않는다",
-        "detail": "비용 없음"
       }
     ]
   },

@@ -1,3 +1,4 @@
+import { withLegacyPractice, legacyThesisModule } from '../helpers/legacy-tasks.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, transition } from '../../src/domain/engine.js';
@@ -9,7 +10,9 @@ import { attemptCost } from '../../src/domain/task-attempts.js';
 import { TASK_MODULES } from '../../src/domain/task-modules/registry.js';
 import { solveTaskGame, runPlannedWeek } from '../helpers/task-games.js';
 const fresh = () =>
-  createGame({ name: '시간 진행 검사', character: 'girl', role: 'steady', major: 'math' }, 1107);
+  withLegacyPractice(
+    createGame({ name: '시간 진행 검사', character: 'girl', role: 'steady', major: 'math' }, 1107),
+  );
 const act = (state, task, action) => transition(state, { type: 'task_game', task, action });
 function onlyTask(state, task, amount) {
   state.plan = Array.from({ length: 21 }, (_, index) =>
@@ -93,7 +96,7 @@ test('long projects allow multiple rounds per week, expose repeat costs, and sup
   source.week = 1;
   source.tasks = {};
   source.pending = [];
-  addTask(source, 'thesis', assignments.thesis);
+  addTask(source, 'thesis', { ...assignments.thesis, module: legacyThesisModule });
   const cram = runPlannedWeek(onlyTask(structuredClone(source), 'thesis', 12));
   assert.equal(cram.tasks.thesis.status, 'completed');
   assert.equal(cram.tasks.thesis.attempts.successful, 12);

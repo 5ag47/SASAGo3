@@ -29,7 +29,7 @@ export default function SchoolPanels(context) {
         <TaskGamePanel
           task={state.tasks[modal.taskId]}
           state={state}
-          draftKey={`sasa-input:${game.user ?? 'local'}:${state.flags.runRevision ?? 0}:${modal.taskId}:${state.tasks[modal.taskId].attempts?.total ?? 0}`}
+          draftKey={`sasa-input:${game.developer ? 'developer' : (game.user ?? 'local')}:${state.flags.runRevision ?? 0}:${modal.taskId}:${state.tasks[modal.taskId].attempts?.total ?? 0}`}
           busy={busy}
           onAction={(action) => send({ type: 'task_game', task: modal.taskId, action })}
           onReload={game.reload}
@@ -43,7 +43,11 @@ export default function SchoolPanels(context) {
       {modal.type === 'stats' && <StatsPanel state={state} />}
       {modal.type === 'courses' && <CoursesPanel state={state} />}
       {modal.type === 'calendar' && (
-        <CalendarPanel state={state} onMonth={(month) => tutorial.observe(`calendar:${month}`)} />
+        <CalendarPanel
+          state={state}
+          developer={game.developer}
+          onMonth={(month) => tutorial.observe(`calendar:${month}`)}
+        />
       )}
       {modal.type === 'group' && (
         <GroupPanel state={state} onRecruit={() => openEvent('winter_study')} />

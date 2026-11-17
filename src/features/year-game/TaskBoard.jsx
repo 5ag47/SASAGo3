@@ -19,9 +19,7 @@ export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
     .sort((a, b) => a.deadline - b.deadline);
   return (
     <>
-      <p className="dialog-lead">
-        자습시간에 할 일을 배정하세요. 한 주를 진행하면 배정한 시간에 직접 작업합니다.
-      </p>
+      <p className="dialog-lead">자습시간을 배정하면 한 주를 진행할 때 자동으로 작업합니다.</p>
       <div className="filter-tabs">
         {[
           ['active', '진행 중'],
@@ -53,7 +51,9 @@ export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
                   {t.status === 'completed'
                     ? '완료'
                     : t.status === 'expired'
-                      ? '마감 지남'
+                      ? t.retired
+                        ? '과제 제외 · 불이익 없음'
+                        : '마감 지남'
                       : t.deadline === state.week
                         ? '이번 주 마감'
                         : `${t.deadline - state.week}주 남음`}

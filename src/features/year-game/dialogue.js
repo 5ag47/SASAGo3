@@ -4,7 +4,10 @@ export function dialogueLines(stats) {
   if (stats.stress >= 70)
     return ['머리가 안 돌아간다… 잠깐만.', '산책이라도 하고 올까?', '아무 생각 없이 쉬고 싶다.'];
   if (stats.focus < 30)
-    return ['문장을 세 번 읽었는데 기억이 안 나.', '따뜻한 차 한 잔이면 좀 나을까?'];
+    return [
+      '피곤해서 집중이 잘 안 되네. 이번 자습 뒤에는 쉬어야겠다.',
+      '오늘 할 일부터 하나씩 정리해 보자.',
+    ];
   if (stats.reputation >= 70)
     return ['같이 공부하자는 연락이 왔네!', '친구들 덕분에 오늘도 버틴다.'];
   if (stats.math >= 80)

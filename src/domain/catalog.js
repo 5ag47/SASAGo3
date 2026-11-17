@@ -9,10 +9,20 @@ import quizzes from '../../data/quizzes.json' with { type: 'json' };
 import resources from '../../data/resources.json' with { type: 'json' };
 import assignments from '../../data/assignments.json' with { type: 'json' };
 import CHARACTERS from '../../data/characters.json' with { type: 'json' };
+import scenarios from '../../data/scenarios.json' with { type: 'json' };
+import { expandScenarios } from './scenarios.js';
 import { expandAssignments } from './assignments.js';
 import { calendarTiming } from './calendar-date.js';
 const assignmentEvents = expandAssignments(assignments);
-const events = { ...storyEvents, ...lifeEvents, ...assignmentEvents, ...planStory };
+const scenarioEvents = expandScenarios(scenarios);
+const events = {
+  ...storyEvents,
+  ...lifeEvents,
+  ...assignmentEvents,
+  ...planStory,
+  ...scenarioEvents,
+};
+export { scenarios, scenarioEvents };
 
 export {
   CHARACTERS,
@@ -180,7 +190,7 @@ export function choiceDeadline(id) {
 }
 export function effectText(effect = {}) {
   return Object.entries(effect)
-    .filter(([key]) => key !== 'focus')
+    .filter(([key]) => !['focus', 'writing', 'speech', 'charm'].includes(key))
     .map(([key, value]) => `${STATS[key]?.name ?? key} ${value > 0 ? '▲' : '▼'}${Math.abs(value)}`)
     .join(' · ');
 }

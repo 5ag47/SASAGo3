@@ -1,5 +1,5 @@
 import { yearReport } from '../../domain/year-report.js';
-import { Delta } from './ui.jsx';
+import { Delta, PUBLIC_STATS } from './ui.jsx';
 import './year-report.css';
 export default function YearReportPanel({ state }) {
   const report = yearReport(state);
@@ -35,16 +35,18 @@ export default function YearReportPanel({ state }) {
           </tr>
         </thead>
         <tbody>
-          {report.stats.map((stat) => (
-            <tr key={stat.id}>
-              <th>{stat.name}</th>
-              <td>{stat.start}</td>
-              <td>{Math.round(stat.end * 10) / 10}</td>
-              <td>
-                <Delta value={stat.delta} stat={stat.id} />
-              </td>
-            </tr>
-          ))}
+          {report.stats
+            .filter((stat) => PUBLIC_STATS.includes(stat.id))
+            .map((stat) => (
+              <tr key={stat.id}>
+                <th>{stat.name}</th>
+                <td>{stat.start}</td>
+                <td>{Math.round(stat.end * 10) / 10}</td>
+                <td>
+                  <Delta value={stat.delta} stat={stat.id} />
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <h4>내가 보낸 시간</h4>

@@ -1,10 +1,13 @@
 import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { events, quizzes } from '../../domain/catalog.js';
 import { choiceOptions } from '../../domain/choices.js';
 import { ChoiceButton, Empty } from './ui.jsx';
 import InterviewPanel from './InterviewPanel.jsx';
 import CardGamePanel from './CardGamePanel.jsx';
+import { publicText } from './public-text.js';
 export default function EventDialog({ state, busy, onChoose, onDone, eventId }) {
+  const [selection, setSelection] = useState(null);
   const id = eventId ?? state.pending[0];
   const savedGame =
     id === 'interview_day'
@@ -40,19 +43,34 @@ export default function EventDialog({ state, busy, onChoose, onDone, eventId }) 
       </span>
       <h3 className="event-title">{event.name}</h3>
       <p className="dialog-lead">
-        {event.kind === 'quiz' ? quizzes[event.quiz].question : event.description}
+        {publicText(event.kind === 'quiz' ? quizzes[event.quiz].question : event.description)}
       </p>
       <div className="choices">
         {choiceOptions(state, id).map((option) => (
           <ChoiceButton
             key={option.id}
             title={option.label}
-            description={option.locked ? option.requirement : option.detail}
-            onClick={() => onChoose({ event: id, option: option.id })}
+            description={publicText(option.locked ? option.requirement : option.detail)}
+            selected={selection === option.id}
+            onClick={() => setSelection(option.id)}
             disabled={busy || option.locked || state.money < (option.cost ?? 0)}
           />
         ))}
       </div>
+      <p className="choice-help">확정 전에는 다른 선택지로 바꿀 수 있어요.</p>
+      <button
+        className="primary full"
+        disabled={
+          busy ||
+          !selection ||
+          !choiceOptions(state, id).some(
+            (o) => o.id === selection && !o.locked && state.money >= (o.cost ?? 0),
+          )
+        }
+        onClick={() => onChoose({ event: id, option: selection })}
+      >
+        선택 확정
+      </button>
     </>
   );
 }

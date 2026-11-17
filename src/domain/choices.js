@@ -201,6 +201,7 @@ export function applyChoice(state, id, selected, answers) {
         target: 3,
         deadline: 22,
         special: 'contest',
+        module: { id: 'contest_v1', params: {} },
         reward: { science: 4, writing: 3 },
         penalty: { stress: 4 },
       });

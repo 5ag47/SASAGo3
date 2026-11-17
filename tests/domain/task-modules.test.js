@@ -1,3 +1,4 @@
+import { withLegacyPractice } from '../helpers/legacy-tasks.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createGame, transition } from '../../src/domain/engine.js';
@@ -11,6 +12,7 @@ import { publicTasks } from '../../src/domain/task-processing.js';
 import { solveTaskGame, runPlannedWeek } from '../helpers/task-games.js';
 const context = { courses, stats: STATS };
 const definition = {
+  module: { id: 'pattern_v2', params: {} },
   kind: 'task',
   name: '검증용 과제',
   description: '',
@@ -21,7 +23,9 @@ const definition = {
   penalty: { stress: 2 },
 };
 const fresh = () =>
-  createGame({ name: '모듈 검증', character: 'boy', role: 'steady', major: 'math' });
+  withLegacyPractice(
+    createGame({ name: '모듈 검증', character: 'boy', role: 'steady', major: 'math' }),
+  );
 const move = (state, task, action) => transition(state, { type: 'task_game', task, action });
 function atWork(state, task, slots = 1) {
   state.plan = Array.from({ length: 21 }, (_, i) =>
@@ -30,23 +34,23 @@ function atWork(state, task, slots = 1) {
   return transition(state, { type: 'advance' });
 }
 
-test('all authored tasks and runtime tutorial tasks have playable modules', () => {
+test('all live authored tasks and tutorial tasks use time investment', () => {
   assert.equal(
     Object.keys(assignments).filter((id) => assignments[id].kind === 'task').length,
     100,
   );
-  for (const task of Object.values(assignmentEvents)) assert.ok(taskModule(task).game, task.name);
-  for (const task of Object.values(fresh().tasks))
-    assert.ok(
-      task.special === 'tutorial' ? task.module.id === 'time_v1' : taskModule(task).game,
-      task.id,
-    );
+  for (const task of Object.values(assignmentEvents))
+    assert.equal(taskModule(task).game, undefined, task.name);
+  for (const task of Object.values(
+    createGame({ name: '일반', character: 'boy', role: 'steady', major: 'math' }).tasks,
+  ))
+    assert.ok(task.module.id === 'time_v1', task.id);
   assert.equal(assignmentIssues(assignments, context).length, 0);
 });
 test('individual module overrides group modules; conflicting groups fail before application', () => {
   const defs = {
-    first_task: { ...definition },
-    second_task: { ...definition },
+    first_task: { ...definition, module: undefined },
+    second_task: { ...definition, module: undefined },
     shared_group: {
       kind: 'group',
       name: '공유',
@@ -159,14 +163,15 @@ test('stages advance with work after the game; expiry and completion rewards can
   assert.equal(state.stats.stress, stress);
   assert.equal(state.tasks.staged_task.status, 'expired');
 });
-test('old active saves retain progress and grades while gaining game modules once', () => {
+test('old active saves retain progress and grades while switching to time investment once', () => {
   const old = fresh();
   delete old.flags.taskGamesVersion;
+  delete old.flags.plannerVersion;
   old.tasks['practice-report'].progress = 1;
   delete old.tasks['practice-report'].module;
   const next = migrateState(old);
   assert.equal(next.tasks['practice-report'].progress, 1);
-  assert.ok(taskModule(next.tasks['practice-report']).game);
+  assert.equal(taskModule(next.tasks['practice-report']).game, undefined);
   assert.deepEqual(next.assessments, old.assessments);
   assert.equal(old.tasks['practice-report'].module, undefined);
 });

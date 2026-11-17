@@ -2,6 +2,7 @@ import { characterImage } from '../../assets.js';
 import { useEffect, useState } from 'react';
 import { DAYS, STATS } from '../../domain/catalog.js';
 import { ActivityIcon, activityName, Delta, SESSIONS } from './ui.jsx';
+import { publicText } from './public-text.js';
 export default function ActivityReplay({ actions = [], character = 'boy' }) {
   const [index, setIndex] = useState(0),
     [playing, setPlaying] = useState(true);
@@ -23,6 +24,10 @@ export default function ActivityReplay({ actions = [], character = 'boy' }) {
           {DAYS[Math.floor(a.index / 3)]} · {a.night ? '연장 자습' : SESSIONS[a.index % 3]}
         </small>
         <h3>{activityName(a.activity)}</h3>
+        <strong className={`activity-outcome ${a.outcome ?? 'success'}`}>
+          {a.outcome === 'failure' ? 'FAIL · 예정 활동 미진행' : 'SUCCESS · 활동 완료'}
+        </strong>
+        {a.note && <small className="activity-note">{publicText(a.note)}</small>}
         <p>
           {Object.entries(a.delta ?? {})
             .filter(
