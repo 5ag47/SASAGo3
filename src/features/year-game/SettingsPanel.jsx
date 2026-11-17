@@ -30,7 +30,7 @@ export default function SettingsPanel({ game, audio, onClose, onLeave }) {
         <span>
           <Volume2 size={18} />
           <span>
-            <b>작은 피아노 소리</b>
+            <b>기숙사의 오후 · 칩튠</b>
           </span>
         </span>
         <button

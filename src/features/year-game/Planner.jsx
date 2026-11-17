@@ -1,194 +1,247 @@
-import CampaignPlanner from './CampaignPlanner.jsx';
 import { useState } from 'react';
-import { ArrowRight, LayoutGrid, PencilLine, LockKeyhole, Play, X } from 'lucide-react';
-import { activities, courses, DAYS, period } from '../../domain/catalog.js';
-import { SESSION_TIMES } from '../../domain/game-time.js';
-import { effectivePlan, lockedSlots } from '../../domain/week.js';
-import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
-import ContextHint from './ContextHint.jsx';
-import DayCopy from './DayCopy.jsx';
+import { ArrowRight, CalendarDays, LockKeyhole, Play, WandSparkles, X } from 'lucide-react';
+import { activities, activeTasks, courses, DAYS } from '../../domain/catalog.js';
+import { effectivePlan, lockedSlots } from '../../domain/schedule.js';
+import { activityLock } from '../../domain/senior-year.js';
+import { taskEstimate } from '../../domain/task-modules/registry.js';
 import { weekForecast } from '../../domain/week-forecast.js';
-import { STRAIN_STAGES, WORK_ACTIVITIES } from '../../domain/senior-year.js';
+import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
+import CampaignPlanner from './CampaignPlanner.jsx';
 
 export default function Planner({
   state,
   busy,
   send,
-  onSlot,
   onPreset,
-  onCopy,
   onStart,
   onWeek,
   assignment,
   cancelAssignment,
   onClose,
 }) {
-  const [day, setDay] = useState(0);
-  const plan = effectivePlan(state);
-  const locked = lockedSlots(state);
-  const studyCount = plan.filter((s) => WORK_ACTIVITIES.includes(s.activity)).length;
+  const [selected, setSelected] = useState(1);
+  const [course, setCourse] = useState(state.courses[0]);
+  const [extra, setExtra] = useState('teacher');
+  const plan = effectivePlan(state),
+    locked = lockedSlots(state);
+  const tasks = activeTasks(state).sort((a, b) => a.deadline - b.deadline);
   const forecast = state.week <= 40 ? weekForecast(state) : null;
-  const fee = plan.reduce((sum, slot) => sum + (activities[slot.activity].cost ?? 0), 0);
+  const disabled = busy || Boolean(state.ending) || state.week > 40;
+  const eligible = (index, activity) =>
+    !locked[index] &&
+    (activity === 'skip' ? index % 3 === 0 : index % 3 !== 0 || activity === 'study');
+  async function place(activity, target = null, from = selected) {
+    const order = Array.from({ length: 21 }, (_, i) => (from + i) % 21);
+    const index = order.find((i) => eligible(i, activity));
+    if (index === undefined) return;
+    const next = await send({ type: 'plan', index, activity, target });
+    if (next) {
+      setSelected(
+        Array.from({ length: 21 }, (_, i) => (index + i + 1) % 21).find((i) =>
+          eligible(i, activity),
+        ) ?? index,
+      );
+      cancelAssignment?.();
+    }
+  }
+  function placeTask(task, from) {
+    return task.special === 'tutorial'
+      ? place(
+          'study',
+          state.courses.find((id) => courses[id].ability === 'math'),
+          from,
+        )
+      : place(task.special === 'clean' ? 'clean' : 'task', task.id, from);
+  }
+  const chosenCourse = state.courses.includes(course) ? course : state.courses[0];
   return (
-    <aside className="planner-panel">
+    <aside className="planner-panel weekly-planner" aria-label="주간 시간표 편집">
       <header>
-        <h2>
-          자습 신청
-          {forecast && (
-            <span
-              className={forecast.season.pressure >= 1.4 ? 'season-label busy' : 'season-label'}
-            >
-              {forecast.season.label}
-            </span>
-          )}
-        </h2>
-        <button className="schedule-button" onClick={onWeek}>
-          <LayoutGrid size={15} /> 전체 일정
+        <div>
+          <span className="planner-eyebrow">MY WEEK</span>
+          <h2>
+            <CalendarDays size={22} /> 이번 주 시간표
+          </h2>
+        </div>
+        <button
+          className="auto-plan-button"
+          disabled={disabled}
+          onClick={() => onPreset('balanced')}
+        >
+          <WandSparkles size={17} /> 자동 배정
         </button>
         <button className="planner-close icon-button" onClick={onClose} aria-label="자습 신청 닫기">
           <X size={18} />
         </button>
       </header>
-      <ContextHint state={state} onTry={onWeek} />
-      {assignment && (
-        <div className="assignment-banner">
-          할 일을 넣을 시간을 선택하세요.
-          <button onClick={cancelAssignment} aria-label="할 일 배정 취소">
-            취소
-          </button>
-        </div>
-      )}
-      <div className="planner-days">
-        {DAYS.map((label, i) => (
-          <button
-            key={label}
-            className={day === i ? 'selected' : ''}
-            onClick={() => setDay(i)}
-            aria-pressed={day === i}
-          >
-            <span>
-              {state.week === 12 && state.courses.includes('general_biology') && i >= 4
-                ? '🍊'
-                : label}
-            </span>
-            <i className={i >= 5 ? 'weekend' : ''} />
-          </button>
-        ))}
-      </div>
-      <div className="session-cards" data-tutorial="schedule">
-        {SESSIONS.map((label, i) => {
-          const index = day * 3 + i;
-          const slot = plan[index];
-          const activity = activities[slot.activity];
-          return (
-            <button
-              key={label}
-              className={`session-card ${activity.color} ${assignment && !locked[index] ? 'assignable' : ''}`}
-              onClick={() => onSlot(index)}
-              disabled={Boolean(locked[index]) || busy || state.week > 40 || Boolean(state.ending)}
-              title={`${label} 활동 변경`}
-            >
-              <span className="session-time">
-                {label}
-                <small>{SESSION_TIMES[i]}</small>
-              </span>
-              <span className="session-icon">
-                <ActivityIcon id={slot.activity} />
-              </span>
-              <span className="session-label">
-                <b>{activityName(slot.activity)}</b>
-                <small>
-                  {slot.activity === 'study'
-                    ? courses[slot.target]?.name
-                    : slot.activity === 'task'
-                      ? (state.tasks[slot.target]?.name ?? '과제 선택')
-                      : locked[index]
-                        ? '고정 일정'
-                        : ''}
-                </small>
-              </span>
-              {locked[index] ? <LockKeyhole size={12} /> : <PencilLine size={14} />}
-            </button>
-          );
-        })}
-      </div>
-      <CampaignPlanner state={state} day={day} busy={busy} send={send} />
-      <div className="preset-row">
-        <span>{state.week === 0 && !state.flags.editedSchedule ? '예시 일정' : '빠른 편성'}</span>
-        <button disabled={busy} onClick={() => onPreset('math')}>
-          수학 집중
-        </button>
-        <button disabled={busy} onClick={() => onPreset('tasks')}>
-          할 일 우선
-        </button>
-        <button disabled={busy} onClick={() => onPreset('rest')}>
-          회복
-        </button>
-      </div>
-      <DayCopy state={state} busy={busy} sourceDay={day} onCopy={onCopy} />
-      <div className="week-minimap" aria-label="한 주 전체 일정">
-        {DAYS.map((label, d) => (
-          <button
-            key={label}
-            onClick={() => setDay(d)}
-            className={d === day ? 'selected' : ''}
-            aria-label={`${label}요일 일정 보기`}
-          >
-            <span>
-              {state.week === 12 && state.courses.includes('general_biology') && d >= 4
-                ? '🍊'
-                : label}
-            </span>
-            <i
-              className={state.campaign.nights[d].activity === 'study' ? 'blue' : 'sage'}
-              title="연장"
-            />
-            {[0, 1, 2].map((s) => (
-              <i key={s} className={activities[plan[d * 3 + s].activity].color} />
+      <p className="planner-instruction" aria-live="polite">
+        {assignment
+          ? '넣을 시간 칸을 선택하세요.'
+          : `${DAYS[Math.floor(selected / 3)]}요일 ${SESSIONS[selected % 3]} 선택 중 · 할 일을 누르면 바로 배정됩니다.`}
+      </p>
+      <div className="planning-workspace">
+        <div className="week-grid-wrap" data-tutorial="schedule">
+          <div className="week-grid" role="group" aria-label="일주일 시간표">
+            <span className="grid-corner">시간</span>
+            {DAYS.map((day) => (
+              <b className="grid-day" key={day}>
+                {day}
+              </b>
             ))}
-          </button>
-        ))}
-      </div>
-      <div className="plan-summary">
-        <span>
-          <i className="blue-dot" />
-          학습 {studyCount}칸
-        </span>
-        <span>
-          <i className="sage-dot" />
-          생활·회복 {21 - studyCount}칸
-        </span>
-      </div>
-      {forecast && (
-        <div
-          className={`week-forecast stage-${forecast.stage}`}
-          title="미니게임·이벤트·시험 결과를 뺀 예상값"
-        >
-          <span>주말 예상</span>
-          <b>체력 {forecast.hp}</b>
-          <b>스트레스 {forecast.stress}</b>
-          {forecast.stage > 0 && <em>{STRAIN_STAGES[forecast.stage].name}</em>}
+            {SESSIONS.map((label, session) => (
+              <div className="grid-row" key={label}>
+                <span className="grid-time">{label}</span>
+                {DAYS.map((day, d) => {
+                  const index = d * 3 + session,
+                    slot = plan[index];
+                  return (
+                    <button
+                      key={day}
+                      className={`week-cell ${activities[slot.activity].color} ${selected === index ? 'selected' : ''}`}
+                      aria-pressed={selected === index}
+                      aria-label={`${day}요일 ${label} ${activityName(slot.activity)} ${slot.activity === 'task' ? state.tasks[slot.target]?.name : slot.activity === 'study' ? courses[slot.target]?.name : ''}`}
+                      disabled={disabled || Boolean(locked[index])}
+                      onClick={() =>
+                        assignment ? placeTask(state.tasks[assignment], index) : setSelected(index)
+                      }
+                    >
+                      {locked[index] ? (
+                        <LockKeyhole size={14} />
+                      ) : (
+                        <ActivityIcon id={slot.activity} size={18} />
+                      )}
+                      <b>
+                        {slot.activity === 'study'
+                          ? courses[slot.target]?.short
+                          : activityName(slot.activity)}
+                      </b>
+                      <small>
+                        {slot.activity === 'task'
+                          ? state.tasks[slot.target]?.name
+                          : locked[index]
+                            ? '고정'
+                            : ''}
+                      </small>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+          <p className="grid-help">
+            배정 후 다음 칸으로 이동해요. 바꾸고 싶은 칸을 눌러 언제든 수정하세요.
+          </p>
+          <details className="planner-extra">
+            <summary>연장 자습 · 저장한 시간표</summary>
+            <CampaignPlanner state={state} day={Math.floor(selected / 3)} busy={busy} send={send} />
+          </details>
         </div>
-      )}
-      {fee > 0 && <p className="plan-cost">예정 지출 {fee.toLocaleString()}원</p>}
-      <button
-        className="primary start-week"
-        data-tutorial="confirm"
-        disabled={busy || Boolean(state.ending)}
-        onClick={onStart}
-      >
-        <Play size={17} fill="currentColor" />
-        <span>
-          {state.week > 40
-            ? '나의 결말 선택하기'
-            : busy
-              ? '기록하는 중…'
-              : state.weekRun
-                ? '이어서 진행'
-                : '한 주 진행'}
-        </span>
-        <ArrowRight size={18} />
-      </button>
+        <div className="plan-palette" data-tutorial="tasks">
+          <h3>
+            할 일 <span>{tasks.length}</span>
+          </h3>
+          <div className="palette-tasks">
+            {tasks.map((task) => (
+              <button
+                key={task.id}
+                disabled={
+                  disabled ||
+                  !plan.some((_, i) => eligible(i, task.special === 'tutorial' ? 'study' : 'task'))
+                }
+                className="palette-task"
+                onClick={() => placeTask(task)}
+              >
+                <span>
+                  <b>{task.name}</b>
+                  <small>
+                    {task.deadline === state.week
+                      ? '이번 주 마감'
+                      : `${task.deadline - state.week}주 남음`}{' '}
+                    · 남은 {taskEstimate(state, task)}칸
+                  </small>
+                </span>
+                <ArrowRight size={16} />
+              </button>
+            ))}
+            {!tasks.length && <p className="palette-empty">할 일을 모두 마쳤어요!</p>}
+          </div>
+          <label className="palette-course">
+            공부할 과목
+            <select
+              aria-label="공부할 과목"
+              value={chosenCourse}
+              onChange={(e) => setCourse(e.target.value)}
+            >
+              {state.courses.map((id) => (
+                <option key={id} value={id}>
+                  {courses[id].name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            className="palette-study"
+            disabled={disabled}
+            onClick={() => place('study', chosenCourse)}
+          >
+            <ActivityIcon id="study" /> 공부 배정 <ArrowRight size={15} />
+          </button>
+          <div className="palette-rest" data-tutorial="slot">
+            {['sleep', 'exercise', 'game'].map((id) => (
+              <button key={id} disabled={disabled} onClick={() => place(id)}>
+                <ActivityIcon id={id} />
+                {id === 'sleep' ? '휴식' : id === 'exercise' ? '운동' : '놀기'}
+              </button>
+            ))}
+          </div>
+          <details className="planner-extra">
+            <summary>다른 활동</summary>
+            <select aria-label="다른 활동" value={extra} onChange={(e) => setExtra(e.target.value)}>
+              {Object.keys(activities)
+                .filter(
+                  (id) =>
+                    !['club', 'field_trip', 'study', 'task', 'sleep', 'exercise', 'game'].includes(
+                      id,
+                    ),
+                )
+                .map((id) => (
+                  <option key={id} value={id} disabled={Boolean(activityLock(state, id))}>
+                    {activityName(id)}
+                  </option>
+                ))}
+            </select>
+            <button
+              className="subtle"
+              disabled={disabled || Boolean(activityLock(state, extra))}
+              onClick={() => place(extra, extra === 'teacher' ? 'homeroom' : null)}
+            >
+              이 활동 배정
+            </button>
+          </details>
+        </div>
+      </div>
+      <footer className="planner-bottom">
+        <div>
+          {forecast && (
+            <p>
+              주말 예상 <b>건강 {forecast.hp}</b> <b>스트레스 {forecast.stress}</b>
+            </p>
+          )}
+          <button className="subtle" onClick={onWeek}>
+            일정 크게 보기
+          </button>
+        </div>
+        <button
+          className="primary start-week"
+          data-tutorial="confirm"
+          disabled={busy || Boolean(state.ending)}
+          onClick={onStart}
+        >
+          <Play size={18} fill="currentColor" />
+          {state.week > 40 ? '나의 결말 선택' : state.weekRun ? '이어서 진행' : '한 주 시작'}
+          <ArrowRight size={19} />
+        </button>
+      </footer>
     </aside>
   );
 }

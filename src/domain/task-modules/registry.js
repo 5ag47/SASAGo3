@@ -72,9 +72,9 @@ export const moduleSignature = (value) =>
 export function taskModuleSpec(task) {
   return task.module ?? { id: task.special === 'contest' ? 'contest_v1' : 'time_v1', params: {} };
 }
-export const defaultTaskGame = (task) => ({
-  id: task.course || task.special === 'tutorial' ? 'order_v2' : 'pattern_v2',
-  params: task.special === 'essay' ? { support: 'essay' } : {},
+export const defaultTaskGame = () => ({
+  id: 'time_v1',
+  params: {},
 });
 export const taskGameReady = (task) =>
   Boolean(task) && (!taskModule(task).game || taskGameStatus(task) === 'success');

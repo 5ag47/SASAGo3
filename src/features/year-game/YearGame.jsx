@@ -9,6 +9,7 @@ import {
   LockKeyhole,
   Maximize2,
   MoreHorizontal,
+  Music2,
   PencilLine,
   Settings,
   ShieldCheck,
@@ -29,6 +30,7 @@ import { tutorialOpen } from './tutorial.js';
 import TutorialGuide from './TutorialGuide.jsx';
 import Setup from './Setup.jsx';
 import Scene from './Scene.jsx';
+import EventScene from './EventScene.jsx';
 import Planner from './Planner.jsx';
 import SettingsPanel from './SettingsPanel.jsx';
 import { GamePanel, panelDefinition, NAV } from './panels/index.jsx';
@@ -62,7 +64,7 @@ export default function YearGame() {
     const next = await send({ type: 'create', profile });
     if (next) {
       tutorial.reset();
-      setModal({ type: 'story', chapterId: availableChapters(next)[0].id });
+      close();
     }
   }
   function lesson(lesson) {
@@ -135,6 +137,12 @@ export default function YearGame() {
       notify('현재 브라우저에서는 전체 화면 전환이 지원되지 않습니다.');
     }
   }
+  const sceneEvent =
+    modal?.type === 'events'
+      ? (modal.eventId ?? state.pending[0])
+      : !modal || modal.type === 'running'
+        ? state.pending[0]
+        : null;
   if (!state.created || (game.mode === 'server' && !game.user))
     return (
       <>
@@ -144,6 +152,7 @@ export default function YearGame() {
           busy={busy}
           mode={game.mode}
           developer={game.developer}
+          developerAvailable={game.developerAvailable}
           onLogin={game.login}
           loginRequired={game.mode === 'server' && !game.user}
         />
@@ -196,17 +205,31 @@ export default function YearGame() {
         <section className={`game-window ${state.week >= 37 ? 'christmas' : ''}`}>
           <div className="window-toolbar">
             <div>
+              <strong className="player-name">{state.name}</strong>
               <b>{p.label}</b>
               <span className="world-time">
                 {gameDate} {DAYS[gameDay]}요일{time && ` ${time}`}
               </span>
               {tutorialOpen(state, tutorial.count, tutorial.total) && (
-                <button className="tutorial-badge" onClick={() => open('tutorial')}>
-                  튜토리얼 {tutorial.count}/{tutorial.total}
+                <button
+                  className="tutorial-badge"
+                  onClick={() => {
+                    close();
+                    tutorial.visit(null);
+                  }}
+                >
+                  조작 안내
                 </button>
               )}
             </div>
             <div className="hud-tools">
+              <button
+                onClick={audio.toggle}
+                aria-label={audio.playing ? '배경음악 끄기' : '배경음악 켜기'}
+                aria-pressed={audio.playing}
+              >
+                <Music2 size={18} />
+              </button>
               <span
                 className="save-indicator"
                 data-status={game.issue || game.conflict ? 'error' : busy ? 'busy' : 'saved'}
@@ -254,6 +277,12 @@ export default function YearGame() {
               </button>
             </div>
           </div>
+          <TutorialGuide
+            tutorial={tutorial}
+            state={state}
+            modal={modal?.type}
+            onDismiss={() => tutorial.visit('dismissed')}
+          />
           <div className="game-content">
             {state.weekRun && (
               <button className="run-resume" disabled={busy} onClick={() => showRun(state)}>
@@ -276,7 +305,7 @@ export default function YearGame() {
               }}
               onCopy={copyDay}
               onStart={() =>
-                state.weekRun ? showRun(state) : open(state.week > 40 ? 'admissions' : 'confirm')
+                state.weekRun ? showRun(state) : state.week > 40 ? open('admissions') : advance()
               }
               onWeek={() => open('schedule')}
               assignment={assignment}
@@ -352,25 +381,23 @@ export default function YearGame() {
           {game.message}
         </div>
       )}
-      <TutorialGuide
-        tutorial={tutorial}
-        state={state}
-        modal={modal?.type}
-        onHelp={() => open('tutorial')}
-        onDismiss={() => tutorial.visit(null)}
-      />
-      {modal && (
+      {sceneEvent && (
+        <EventScene
+          state={state}
+          busy={busy}
+          night={night}
+          eventId={sceneEvent}
+          onChoose={choose}
+          onDone={close}
+        />
+      )}
+      {modal && !sceneEvent && (
         <div className={['story', 'events'].includes(modal.type) ? 'narrative-overlay' : ''}>
           <Modal
             title={panelDefinition(modal.type).title}
             onClose={close}
             wide={panelDefinition(modal.type).wide}
           >
-            {state.week === 0 && tutorial.active && !['tutorial', 'help'].includes(modal.type) && (
-              <button className="tutorial-return" onClick={() => open('tutorial')}>
-                ← 튜토리얼 목록 {tutorial.count}/{tutorial.total}
-              </button>
-            )}
             <GamePanel
               context={{
                 state,

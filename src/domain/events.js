@@ -14,6 +14,7 @@ import { announceChapters } from './story.js';
 import { calendarTiming } from './calendar-date.js';
 import { activityLock } from './senior-year.js';
 import { deliverClassmateNews } from './classmates.js';
+import { buildPreset } from './auto-plan.js';
 export { notice } from './notifications.js';
 export function beginWeek(state) {
   announceChapters(state);
@@ -55,6 +56,7 @@ export function beginWeek(state) {
     if (activityLock(state, slot.activity)) return { activity: 'sleep', target: null };
     return slot;
   });
+  state.plan = buildPreset(state);
 }
 
 export function dispatchDayEvents(state, day) {

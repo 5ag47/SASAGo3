@@ -197,7 +197,7 @@
   "story_confession": {
     "week": 20,
     "name": "바나나우유와 편지",
-    "description": "동아리 후배가 매점에서 바나나우유와 편지를 건넸다. 고백을 받았다!",
+    "description": "같은 학교 후배가 매점에서 바나나우유와 편지를 건넸다. 고백을 받았다!",
     "kind": "choice",
     "options": [
       {

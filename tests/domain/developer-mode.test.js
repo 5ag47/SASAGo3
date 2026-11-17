@@ -70,6 +70,7 @@ test('automatic progress stops at the chosen slots, runs night activities once a
 
 test('skipping applications resumes a task without credit and can run a full year to real results', () => {
   const fresh = createGame(profile);
+  fresh.tasks['practice-report'].module = { id: 'pattern_v2', params: {} };
   const planned = transition(fresh, {
     type: 'plan',
     index: 1,

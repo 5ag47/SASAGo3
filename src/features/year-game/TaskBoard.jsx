@@ -53,7 +53,9 @@ export default function TaskBoard({ state, onAssign, onPlay, focusTask }) {
                   {t.status === 'completed'
                     ? '완료'
                     : t.status === 'expired'
-                      ? '마감 지남'
+                      ? t.retired
+                        ? '과제 제외 · 불이익 없음'
+                        : '마감 지남'
                       : t.deadline === state.week
                         ? '이번 주 마감'
                         : `${t.deadline - state.week}주 남음`}

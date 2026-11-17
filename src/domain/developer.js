@@ -33,7 +33,10 @@ function setClock(state, time) {
 
 function replayFromStart(state) {
   const initialSeed = /^SASA-([\da-f]{1,8})$/i.exec(state.campaign.playerId)?.[1];
-  const replay = createGame(state, initialSeed ? Number.parseInt(initialSeed, 16) : state.seed);
+  const replay = createGame(
+    { ...state, priorGpa: state.campaign.priorGpa },
+    initialSeed ? Number.parseInt(initialSeed, 16) : state.seed,
+  );
   replay.flags.runRevision = state.revision + 1;
   return replay;
 }

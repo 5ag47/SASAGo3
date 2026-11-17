@@ -32,3 +32,22 @@
 .elective-registration h3 {
   font-size: 14px;
 }
+.setup-developer-entry {
+  display: grid;
+  gap: 4px;
+  margin: 16px 0;
+  padding: 12px 16px;
+  border: 1px solid #839dc1;
+  border-radius: 8px;
+  background: #eaf0f8;
+  color: #304c70;
+  text-decoration: none;
+  font-weight: 600;
+}
+.setup-developer-entry small {
+  font-size: 12px;
+  font-weight: 400;
+}
+.setup-developer-entry:hover {
+  background: #dbe6f3;
+}

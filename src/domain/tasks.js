@@ -37,9 +37,9 @@ export function addTask(state, id, definition) {
 export function academyTasks(state) {
   if (!state.flags.academy || state.week < 1 || state.week > 16) return;
   const first = 1 + Math.floor((state.week - 1) / 4) * 4;
-  for (let i = 1; i <= 2; i++)
+  for (let i = 1; i <= 1; i++)
     addTask(state, `academy-${first}-${i}`, {
-      name: `해냄 심층 숙제 ${i}`,
+      name: '해냄 심층 숙제',
       description: '월말까지 2칸 투자 · 완료 시 수학·평판 상승',
       target: 2,
       deadline: first + 3,

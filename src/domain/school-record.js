@@ -16,7 +16,8 @@ const round = (value) => Math.round(clamp(value) * 10) / 10;
 export function schoolRecord(state) {
   const config = definitions.school_record;
   const eligible = Object.values(state.tasks).filter(
-    (task) => task.course && (task.status === 'completed' || task.deadline <= state.week),
+    (task) =>
+      !task.retired && task.course && (task.status === 'completed' || task.deadline <= state.week),
   );
   const completed = eligible.filter((task) => task.status === 'completed');
   const quality = (task) => task.result?.quality ?? task.result?.score ?? 60;

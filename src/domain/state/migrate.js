@@ -7,6 +7,7 @@ import { defaultTaskGame } from '../task-modules/registry.js';
 import { SCHEMA_VERSION } from '../version.js';
 import { refreshDocuments } from '../admission-documents.js';
 import { admissionDefinitions } from '../school-record.js';
+import { migratePlanner } from './planner-migration.js';
 const LEGACY_SAVE_MIGRATIONS = Object.freeze([
   {
     id: 'task-module-snapshots',
@@ -328,4 +329,5 @@ export const SAVE_MIGRATIONS = Object.freeze([
       return next.stats.focus === focus ? next : { ...next, stats: { ...next.stats, focus } };
     },
   },
+  { id: 'weekly-planner-1117', apply: migratePlanner },
 ]);

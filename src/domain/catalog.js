@@ -180,7 +180,7 @@ export function choiceDeadline(id) {
 }
 export function effectText(effect = {}) {
   return Object.entries(effect)
-    .filter(([key]) => key !== 'focus')
+    .filter(([key]) => !['focus', 'writing', 'speech', 'charm'].includes(key))
     .map(([key, value]) => `${STATS[key]?.name ?? key} ${value > 0 ? '▲' : '▼'}${Math.abs(value)}`)
     .join(' · ');
 }

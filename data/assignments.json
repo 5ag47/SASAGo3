@@ -16,18 +16,8 @@
     },
     "special": "research",
     "module": {
-      "id": "pattern_v2",
-      "params": {
-        "earlyWeeks": 4,
-        "earlyQuality": 90,
-        "earlyEffect": {
-          "science": 0.75,
-          "focus": 0.25
-        },
-        "overloadAfter": 2,
-        "overloadHealth": 0.75,
-        "overloadStress": 1.5
-      }
+      "id": "time_v1",
+      "params": {}
     }
   },
   "reflection": {
@@ -43,7 +33,12 @@
     },
     "penalty": {
       "reputation": -4
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "essay": {
     "week": 25,
@@ -54,10 +49,8 @@
     "deadline": 28,
     "special": "essay",
     "module": {
-      "id": "pattern_v2",
-      "params": {
-        "support": "essay"
-      }
+      "id": "time_v1",
+      "params": {}
     },
     "reward": {
       "writing": 6,
@@ -81,6 +74,10 @@
     },
     "penalty": {
       "stress": 10
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "memory_book": {
@@ -96,7 +93,12 @@
     },
     "penalty": {
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "math_problem_analysis": {
     "week": 13,
@@ -112,7 +114,12 @@
     },
     "penalty": {
       "reputation": -2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-2-ai_project": {
     "week": 2,
@@ -129,6 +136,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-linear_algebra": {
@@ -146,6 +157,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-general_physics": {
@@ -163,6 +178,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-physics_seminar": {
@@ -180,6 +199,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-general_chemistry": {
@@ -197,6 +220,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-chemistry_seminar": {
@@ -214,6 +241,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-general_biology": {
@@ -231,6 +262,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-biology_seminar": {
@@ -248,6 +283,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-cs_project": {
@@ -265,6 +304,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-algorithms": {
@@ -282,6 +325,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-2-tech_english": {
@@ -299,7 +346,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-2-visual_communication": {
     "week": 2,
@@ -316,7 +368,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-2-math_seminar": {
     "week": 2,
@@ -333,7 +390,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-2-foreign_language": {
     "week": 2,
@@ -350,7 +412,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-ai_project": {
     "week": 10,
@@ -367,7 +434,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-linear_algebra": {
     "week": 10,
@@ -384,7 +456,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-general_physics": {
     "week": 10,
@@ -401,7 +478,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-physics_seminar": {
     "week": 10,
@@ -418,7 +500,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-general_chemistry": {
     "week": 10,
@@ -435,7 +522,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-chemistry_seminar": {
     "week": 10,
@@ -452,7 +544,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-general_biology": {
     "week": 10,
@@ -469,7 +566,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-biology_seminar": {
     "week": 10,
@@ -486,7 +588,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-cs_project": {
     "week": 10,
@@ -503,7 +610,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-algorithms": {
     "week": 10,
@@ -520,7 +632,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-tech_english": {
     "week": 10,
@@ -537,7 +654,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-visual_communication": {
     "week": 10,
@@ -554,7 +676,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-math_seminar": {
     "week": 10,
@@ -571,7 +698,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-10-foreign_language": {
     "week": 10,
@@ -588,7 +720,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-26-ai_project": {
     "week": 26,
@@ -605,6 +742,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-linear_algebra": {
@@ -622,6 +763,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-general_physics": {
@@ -639,6 +784,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-physics_seminar": {
@@ -656,6 +805,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-general_chemistry": {
@@ -673,6 +826,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-chemistry_seminar": {
@@ -690,6 +847,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-general_biology": {
@@ -707,6 +868,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-biology_seminar": {
@@ -724,6 +889,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-cs_project": {
@@ -741,6 +910,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-algorithms": {
@@ -758,6 +931,10 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
     }
   },
   "project-26-tech_english": {
@@ -775,7 +952,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-26-visual_communication": {
     "week": 26,
@@ -792,7 +974,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-26-math_seminar": {
     "week": 26,
@@ -809,7 +996,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-26-foreign_language": {
     "week": 26,
@@ -826,7 +1018,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-ai_project": {
     "week": 30,
@@ -843,7 +1040,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-linear_algebra": {
     "week": 30,
@@ -860,7 +1062,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-general_physics": {
     "week": 30,
@@ -877,7 +1084,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-physics_seminar": {
     "week": 30,
@@ -894,7 +1106,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-general_chemistry": {
     "week": 30,
@@ -911,7 +1128,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-chemistry_seminar": {
     "week": 30,
@@ -928,7 +1150,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-general_biology": {
     "week": 30,
@@ -945,7 +1172,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-biology_seminar": {
     "week": 30,
@@ -962,7 +1194,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-cs_project": {
     "week": 30,
@@ -979,7 +1216,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-algorithms": {
     "week": 30,
@@ -996,7 +1238,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-tech_english": {
     "week": 30,
@@ -1013,7 +1260,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-visual_communication": {
     "week": 30,
@@ -1030,7 +1282,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-math_seminar": {
     "week": 30,
@@ -1047,7 +1304,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "project-30-foreign_language": {
     "week": 30,
@@ -1064,7 +1326,12 @@
     "penalty": {
       "reputation": -1,
       "stress": 2
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-1": {
     "week": 1,
@@ -1080,7 +1347,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-2": {
     "week": 2,
@@ -1096,7 +1368,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-3": {
     "week": 3,
@@ -1112,7 +1389,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-4": {
     "week": 4,
@@ -1128,7 +1410,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-5": {
     "week": 5,
@@ -1144,7 +1431,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-6": {
     "week": 6,
@@ -1160,7 +1452,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-7": {
     "week": 7,
@@ -1176,7 +1473,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-8": {
     "week": 8,
@@ -1192,7 +1494,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-9": {
     "week": 9,
@@ -1208,7 +1515,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-10": {
     "week": 10,
@@ -1224,7 +1536,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-11": {
     "week": 11,
@@ -1240,7 +1557,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-12": {
     "week": 12,
@@ -1256,7 +1578,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-13": {
     "week": 13,
@@ -1272,7 +1599,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-14": {
     "week": 14,
@@ -1288,7 +1620,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-15": {
     "week": 15,
@@ -1304,7 +1641,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-16": {
     "week": 16,
@@ -1320,7 +1662,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-25": {
     "week": 25,
@@ -1336,7 +1683,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-26": {
     "week": 26,
@@ -1352,7 +1704,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-27": {
     "week": 27,
@@ -1368,7 +1725,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-28": {
     "week": 28,
@@ -1384,7 +1746,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-29": {
     "week": 29,
@@ -1400,7 +1767,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-30": {
     "week": 30,
@@ -1416,7 +1788,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-31": {
     "week": 31,
@@ -1432,7 +1809,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-32": {
     "week": 32,
@@ -1448,7 +1830,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-33": {
     "week": 33,
@@ -1464,7 +1851,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-34": {
     "week": 34,
@@ -1480,7 +1872,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-35": {
     "week": 35,
@@ -1496,7 +1893,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-36": {
     "week": 36,
@@ -1512,7 +1914,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-37": {
     "week": 37,
@@ -1528,7 +1935,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-38": {
     "week": 38,
@@ -1544,7 +1956,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-39": {
     "week": 39,
@@ -1560,7 +1977,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "urban-project-40": {
     "week": 40,
@@ -1576,7 +1998,12 @@
     },
     "penalty": {
       "reputation": -1
-    }
+    },
+    "module": {
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "subject_game_group": {
     "kind": "group",
@@ -1620,9 +2047,10 @@
       "urban-project-40"
     ],
     "module": {
-      "id": "order_v2",
+      "id": "time_v1",
       "params": {}
-    }
+    },
+    "enabled": false
   },
   "report_game_group": {
     "kind": "group",
@@ -1646,11 +2074,10 @@
       "project-30-general_biology"
     ],
     "module": {
-      "id": "report_v1",
-      "params": {
-        "layout": "report"
-      }
-    }
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "presentation_game_group": {
     "kind": "group",
@@ -1674,11 +2101,10 @@
       "project-30-foreign_language"
     ],
     "module": {
-      "id": "report_v1",
-      "params": {
-        "layout": "presentation"
-      }
-    }
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "biology_experiment_group": {
     "kind": "group",
@@ -1690,11 +2116,10 @@
       "project-30-biology_seminar"
     ],
     "module": {
-      "id": "experiment_v1",
-      "params": {
-        "variables": ["온도", "빛", "물의 양", "영양분"]
-      }
-    }
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "ai_experiment_group": {
     "kind": "group",
@@ -1706,11 +2131,10 @@
       "project-30-ai_project"
     ],
     "module": {
-      "id": "experiment_v1",
-      "params": {
-        "variables": ["학습률", "데이터 양", "층 수", "학습 횟수"]
-      }
-    }
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "problem_game_group": {
     "kind": "group",
@@ -1731,18 +2155,20 @@
       "project-30-algorithms"
     ],
     "module": {
-      "id": "sum_v1",
+      "id": "time_v1",
       "params": {}
-    }
+    },
+    "enabled": false
   },
   "common_game_group": {
     "kind": "group",
     "name": "공통 과제 미니게임",
     "members": ["thesis", "reflection", "essay", "application_form", "memory_book"],
     "module": {
-      "id": "pattern_v2",
+      "id": "time_v1",
       "params": {}
-    }
+    },
+    "enabled": false
   },
   "subject-game-math": {
     "kind": "task",
@@ -1758,12 +2184,11 @@
       "stress": 2
     },
     "module": {
-      "id": "subject_quiz_v1",
-      "params": {
-        "subject": "math"
-      }
+      "id": "time_v1",
+      "params": {}
     },
-    "course": "math_seminar"
+    "course": "math_seminar",
+    "enabled": false
   },
   "subject-game-physics": {
     "kind": "task",
@@ -1779,12 +2204,11 @@
       "stress": 2
     },
     "module": {
-      "id": "subject_quiz_v1",
-      "params": {
-        "subject": "physics"
-      }
+      "id": "time_v1",
+      "params": {}
     },
-    "course": "general_physics"
+    "course": "general_physics",
+    "enabled": false
   },
   "subject-game-chemistry": {
     "kind": "task",
@@ -1800,12 +2224,11 @@
       "stress": 2
     },
     "module": {
-      "id": "subject_quiz_v1",
-      "params": {
-        "subject": "chemistry"
-      }
+      "id": "time_v1",
+      "params": {}
     },
-    "course": "general_chemistry"
+    "course": "general_chemistry",
+    "enabled": false
   },
   "subject-game-biology": {
     "kind": "task",
@@ -1821,12 +2244,11 @@
       "stress": 2
     },
     "module": {
-      "id": "subject_quiz_v1",
-      "params": {
-        "subject": "biology"
-      }
+      "id": "time_v1",
+      "params": {}
     },
-    "course": "biodiversity"
+    "course": "biodiversity",
+    "enabled": false
   },
   "subject-game-earth": {
     "kind": "task",
@@ -1842,11 +2264,10 @@
       "stress": 2
     },
     "module": {
-      "id": "subject_quiz_v1",
-      "params": {
-        "subject": "earth"
-      }
-    }
+      "id": "time_v1",
+      "params": {}
+    },
+    "enabled": false
   },
   "subject-game-information": {
     "kind": "task",
@@ -1862,11 +2283,10 @@
       "stress": 2
     },
     "module": {
-      "id": "subject_quiz_v1",
-      "params": {
-        "subject": "information"
-      }
+      "id": "time_v1",
+      "params": {}
     },
-    "course": "algorithms"
+    "course": "algorithms",
+    "enabled": false
   }
 }

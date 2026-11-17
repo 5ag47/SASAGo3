@@ -9,7 +9,6 @@ import {
   TEACHERS,
 } from '../../domain/catalog.js';
 import { activityPreview } from '../../domain/activity-preview.js';
-import { courseMastery } from '../../domain/course-progress.js';
 import { activityLock } from '../../domain/senior-year.js';
 import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
 
@@ -79,7 +78,7 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
       </div>
       {morning && <p>아침은 과목 공부 또는 불참여를 선택하세요.</p>}
       <div className="filter-tabs">
-        {['전체', '학습', '함께', '진로', '생활', '회복'].map((c) => (
+        {['전체', '학습', '함께', '생활', '회복'].map((c) => (
           <button
             key={c}
             onClick={() => setCategory(c)}
@@ -94,7 +93,7 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
           .filter(
             ([id, a]) =>
               (!morning || ['study', 'skip'].includes(id)) &&
-              !['field_trip'].includes(id) &&
+              !['field_trip', 'club'].includes(id) &&
               (morning || id !== 'skip') &&
               (category === '전체' || a.category === category),
           )
@@ -127,7 +126,7 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
             {activity === 'study'
               ? state.courses.map((id) => (
                   <option key={id} value={id}>
-                    {courses[id].name} · 이해도 {Math.round(courseMastery(state, id))}
+                    {courses[id].name}
                   </option>
                 ))
               : activity === 'task'
@@ -148,7 +147,6 @@ export default function ActivityPicker({ state, index, busy, onApply }) {
         <summary>효과·비용 보기</summary>
         <p>
           {effectText(preview.effects)}
-          {preview.courseGain !== null ? ` · 과목 이해도 +${preview.courseGain}` : ''}
           {definition.cost ? ` · ${definition.cost.toLocaleString()}원` : ''}
           {definition.income ? ` · 용돈 +${definition.income.toLocaleString()}원` : ''}
         </p>

@@ -122,6 +122,7 @@ export function validateState(s) {
         t.id === id &&
         typeof t.name === 'string' &&
         ['active', 'completed', 'expired'].includes(t.status) &&
+        (t.retired === undefined || typeof t.retired === 'boolean') &&
         Number.isFinite(t.progress) &&
         t.progress >= 0 &&
         Number.isFinite(t.target) &&

@@ -3,7 +3,7 @@ import { courses, period } from '../../domain/catalog.js';
 const names = {
   coursework: '교과 활동',
   exploration: '탐구 활동',
-  participation: '동아리·협업',
+  participation: '학교 활동·협업',
   continuity: '지속성',
 };
 export default function SchoolRecordPanel({ state }) {
@@ -26,7 +26,7 @@ export default function SchoolRecordPanel({ state }) {
         ))}
       </div>
       <p>
-        동아리·협업 {record.community}칸 · 벌점 {state.discipline}점
+        학교 활동·협업 {record.community}칸 · 벌점 {state.discipline}점
       </p>
       {record.entries.length ? (
         <table>
@@ -35,7 +35,7 @@ export default function SchoolRecordPanel({ state }) {
               <th>활동</th>
               <th>과목</th>
               <th>완료</th>
-              <th>품질</th>
+              <th>완성도</th>
             </tr>
           </thead>
           <tbody>

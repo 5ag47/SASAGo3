@@ -2,9 +2,10 @@ import ActivityReplay from './ActivityReplay.jsx';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Check, ChevronDown, Clock, Sparkles } from 'lucide-react';
 import { courses, DAYS, events, period, STATS } from '../../domain/catalog.js';
-import { Delta, Empty, activityName, SESSIONS } from './ui.jsx';
+import { Delta, Empty, activityName, SESSIONS, PUBLIC_STATS } from './ui.jsx';
 import './academic.css';
 import { StoryLibrary } from './StoryPanel.jsx';
+import { publicText } from './public-text.js';
 
 export function WeekResult({ entry, character, onContinue, onRead, children }) {
   useEffect(() => {
@@ -29,17 +30,19 @@ export function WeekResult({ entry, character, onContinue, onRead, children }) {
           </tr>
         </thead>
         <tbody>
-          {Object.entries(entry.delta).map(([key, value]) => (
-            <tr key={key}>
-              <td>{STATS[key].name}</td>
-              <td>
-                {number(entry.beforeStats?.[key])} → {number(entry.afterStats?.[key])}
-              </td>
-              <td>
-                <Delta value={value} stat={key} />
-              </td>
-            </tr>
-          ))}
+          {Object.entries(entry.delta)
+            .filter(([key]) => PUBLIC_STATS.includes(key))
+            .map(([key, value]) => (
+              <tr key={key}>
+                <td>{STATS[key].name}</td>
+                <td>
+                  {number(entry.beforeStats?.[key])} → {number(entry.afterStats?.[key])}
+                </td>
+                <td>
+                  <Delta value={value} stat={key} />
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <div className="result-money">
@@ -53,7 +56,7 @@ export function WeekResult({ entry, character, onContinue, onRead, children }) {
         {entry.messages.map((text, i) => (
           <p key={i}>
             <span>{text.startsWith('완료') ? <Check size={14} /> : <Clock size={13} />}</span>
-            {text}
+            {publicText(text)}
           </p>
         ))}
       </div>
@@ -68,10 +71,10 @@ export function WeekResult({ entry, character, onContinue, onRead, children }) {
             </small>
             <b>{activityName(a.activity)}</b>
             <span>
-              {a.note}
+              {publicText(a.note)}
               <em className="action-deltas">
                 {Object.entries(a.delta)
-                  .filter(([, v]) => v !== 0)
+                  .filter(([key, v]) => PUBLIC_STATS.includes(key) && v !== 0)
                   .map(([stat, value]) => (
                     <span key={stat}>
                       {STATS[stat].name} <Delta value={value} stat={stat} />
@@ -166,7 +169,7 @@ export function NoticesPanel({ state, onReview, onTask, onStory }) {
                       : '안내'}
               </small>
               <h3>{n.title}</h3>
-              <p>{n.text}</p>
+              <p>{publicText(n.text)}</p>
               {n.chapter && onStory && (
                 <button className="subtle" onClick={() => onStory(n.chapter)}>
                   이야기 읽기

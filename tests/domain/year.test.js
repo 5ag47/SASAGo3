@@ -135,12 +135,17 @@ test('recovery restores health and reduces stress but weekly baseline is still l
   assert.ok(after.stats.stress < state.stats.stress);
   assert.ok(after.history[0].messages.some((m) => m.includes('정규수업·생활 부담')));
 });
-test('a finished task is not silently reassigned to a new task next week', () => {
+test('a new week refreshes the automatic plan without reassigning completed tasks', () => {
   const state = fill(ready(), 'task', 'practice-report');
   const after = resolveWeek(state);
   assert.equal(after.tasks['practice-report'].status, 'completed');
   assert.equal(after.tasks.thesis.status, 'active');
-  assert.ok(after.plan.every((slot) => slot.activity === 'sleep'));
+  assert.ok(
+    after.plan.every(
+      (slot) => slot.activity !== 'task' || after.tasks[slot.target]?.status === 'active',
+    ),
+  );
+  assert.ok(after.plan.some((slot) => slot.activity === 'study'));
 });
 test('workload adds stress and a fatigue debuff applies to the following week', () => {
   const state = fill(ready(), 'study', 'linear_algebra');

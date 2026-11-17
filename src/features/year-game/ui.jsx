@@ -36,6 +36,7 @@ export const ACTIVITY_ICONS = {
   out: Coffee,
   work: Users,
 };
+export const PUBLIC_STATS = ['hp', 'focus', 'stress', 'reputation', 'math', 'science'];
 export function ActivityIcon({ id, size = 17 }) {
   const Icon = ACTIVITY_ICONS[id] ?? BookOpen;
   return <Icon size={size} strokeWidth={1.65} />;
@@ -59,7 +60,7 @@ export function Progress({ value, max = 100, min = 0, color, label }) {
     </div>
   );
 }
-export function StatList({ stats, keys = Object.keys(STATS), compact = false }) {
+export function StatList({ stats, keys = PUBLIC_STATS, compact = false }) {
   return (
     <div className={`stat-list ${compact ? 'compact' : ''}`}>
       {keys.map((key) => (
@@ -81,7 +82,7 @@ export function Delta({ value, stat }) {
   const good = stat === 'stress' ? value < 0 : value > 0;
   return (
     <span className={`delta ${value === 0 ? 'neutral' : good ? 'good' : 'bad'}`}>
-      {value > 0 ? '▲' : value < 0 ? '▼' : ''}
+      {value > 0 ? '+' : value < 0 ? '−' : ''}
       {Math.abs(value)}
     </span>
   );

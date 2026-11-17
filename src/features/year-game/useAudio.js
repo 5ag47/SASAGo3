@@ -47,13 +47,16 @@ export default function useAudio(christmas = false) {
       gain.current.connect(context.current.destination);
     }
     await context.current.resume();
-    const notes = [261.63, 329.63, 392, 329.63, 293.66, 349.23, 440, 392];
+    const notes = [
+      523.25, 0, 659.25, 783.99, 659.25, 523.25, 440, 0, 587.33, 698.46, 880, 698.46, 587.33,
+      659.25, 523.25, 0,
+    ];
     let i = 0;
     const play = () => {
       const ctx = context.current;
       const oscillator = ctx.createOscillator();
       const envelope = ctx.createGain();
-      oscillator.type = 'sine';
+      oscillator.type = 'triangle';
       const carol = [
         329.63, 329.63, 329.63, 329.63, 329.63, 329.63, 329.63, 392, 261.63, 293.66, 329.63, 349.23,
         349.23, 349.23, 349.23, 349.23, 329.63, 329.63, 329.63, 392, 392, 349.23, 293.66, 261.63,
@@ -61,15 +64,15 @@ export default function useAudio(christmas = false) {
       const melody = seasonal.current ? carol : notes;
       oscillator.frequency.value = melody[i++ % melody.length];
       envelope.gain.setValueAtTime(0, ctx.currentTime);
-      envelope.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.05);
-      envelope.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
+      envelope.gain.linearRampToValueAtTime(0.45, ctx.currentTime + 0.01);
+      envelope.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
       oscillator.connect(envelope);
       envelope.connect(gain.current);
       oscillator.start();
-      oscillator.stop(ctx.currentTime + 2);
+      oscillator.stop(ctx.currentTime + 0.25);
     };
     play();
-    timer.current = setInterval(play, 850);
+    timer.current = setInterval(play, 250);
     setPlaying(true);
   }
   function cue() {

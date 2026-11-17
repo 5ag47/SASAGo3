@@ -6,17 +6,22 @@ import { dayRoom } from '../../assets.js';
 import CharacterPicker from './CharacterPicker.jsx';
 import { MAJORS, REQUIRED, courses, roles, ELECTIVES } from '../../domain/catalog.js';
 import './enrollment.css';
+import { publicText } from './public-text.js';
 
 export default function Setup({
   onCreate,
   busy,
   onLogin,
   loginRequired,
-  mode,
   developer,
+  developerAvailable,
   seed = 20261013,
 }) {
   const [step, setStep] = useState(0);
+  const [priorGpa, setPriorGpa] = useState('');
+  const gpaValid =
+    priorGpa === '' ||
+    (Number.isFinite(Number(priorGpa)) && Number(priorGpa) >= 0 && Number(priorGpa) <= 4.3);
   const [profile, setProfile] = useState({
     name: '',
     character: 'boy',
@@ -33,6 +38,17 @@ export default function Setup({
           SASA<span>Go3</span>
         </h1>
         {developer && <p>개발자 모드 · 테스트 저장</p>}
+        {developerAvailable && !developer && (
+          <a
+            className="setup-developer-entry"
+            href="?developer=1"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            개발자 모드로 시작
+            <small>자습 건너뛰기 · 날짜 이동 · 스탯 조정</small>
+          </a>
+        )}
         {loginRequired ? (
           <>
             <h2>게임 시작</h2>
@@ -91,7 +107,7 @@ export default function Setup({
                       onClick={() => change('role', id)}
                     >
                       <span>{role.name}</span>
-                      <small>{role.tag}</small>
+                      <small>{publicText(role.tag)}</small>
                     </button>
                   ))}
                 </div>
@@ -99,12 +115,21 @@ export default function Setup({
                   stats={preview.stats}
                   keys={['hp', 'reputation', 'stress', 'math', 'science']}
                 />
-                <p>
-                  이전 학점 ·{' '}
-                  {mode === 'server'
-                    ? '시작할 때 배정'
-                    : preview.campaign.priorGpa.toFixed(2) + ' / 4.30'}
-                </p>
+                <label className="gpa-input">
+                  이전 학점 <small>기본 4.00 / 4.30 · 원하는 경우 직접 입력</small>
+                  <input
+                    aria-label="이전 학점"
+                    type="number"
+                    min="0"
+                    max="4.3"
+                    step="0.01"
+                    placeholder="4.00"
+                    value={priorGpa}
+                    onChange={(e) => setPriorGpa(e.target.value)}
+                    disabled={busy}
+                  />
+                </label>
+                {!gpaValid && <p role="alert">0.00~4.30 사이로 입력해 주세요.</p>}
               </>
             )}
             {step === 2 && (
@@ -132,28 +157,47 @@ export default function Setup({
                   <p>{MAJORS[profile.major].courses.map((id) => courses[id].name).join(' · ')}</p>
                   <small>공통 필수 · {REQUIRED.map((id) => courses[id].name).join(' · ')}</small>
                 </div>
-                {ELECTIVES.map((id) => (
-                  <label className="elective-choice" key={id}>
+                <fieldset className="elective-options" disabled={busy}>
+                  <legend>교양 선택 · 선택하지 않아도 괜찮아요</legend>
+                  <label
+                    className={`elective-choice ${!profile.electives.length ? 'selected' : ''}`}
+                  >
                     <input
-                      type="checkbox"
-                      disabled={busy}
-                      checked={profile.electives.includes(id)}
-                      onChange={(e) =>
-                        change(
-                          'electives',
-                          e.target.checked
-                            ? [...profile.electives, id]
-                            : profile.electives.filter((course) => course !== id),
-                        )
-                      }
+                      type="radio"
+                      name="elective"
+                      checked={!profile.electives.length}
+                      onChange={() => change('electives', [])}
                     />
                     <span>
-                      {courses[id].name}
-                      <small>교양 선택</small>
+                      추가 교양 없음<small>전공과 공통 필수에 집중해요.</small>
                     </span>
                   </label>
-                ))}
-                <p className="enrollment-lock-note">확정한 수강 과목은 변경할 수 없습니다.</p>
+                  {ELECTIVES.map((id) => (
+                    <label className="elective-choice" key={id}>
+                      <input
+                        type="radio"
+                        name="elective"
+                        disabled={busy}
+                        checked={profile.electives.includes(id)}
+                        onChange={(e) =>
+                          change(
+                            'electives',
+                            e.target.checked
+                              ? [...profile.electives, id]
+                              : profile.electives.filter((course) => course !== id),
+                          )
+                        }
+                      />
+                      <span>
+                        {courses[id].name}
+                        <small>{courses[id].credits}학점 · 추가 과제 없음</small>
+                      </span>
+                    </label>
+                  ))}
+                </fieldset>
+                <p className="enrollment-lock-note">
+                  게임 시작 전에는 이전 단계로 돌아가 선택을 바꿀 수 있어요.
+                </p>
               </>
             )}
             <div className="setup-submit">
@@ -165,13 +209,19 @@ export default function Setup({
               {step < 2 ? (
                 <button
                   className="primary"
-                  disabled={busy || !profile.name.trim()}
+                  disabled={busy || !profile.name.trim() || !gpaValid}
                   onClick={() => setStep(step + 1)}
                 >
                   다음으로 <ArrowRight size={17} />
                 </button>
               ) : (
-                <button className="primary" disabled={busy} onClick={() => onCreate(profile)}>
+                <button
+                  className="primary"
+                  disabled={busy || !gpaValid}
+                  onClick={() =>
+                    onCreate({ ...profile, priorGpa: priorGpa === '' ? 4 : Number(priorGpa) })
+                  }
+                >
                   수강신청 완료 <ArrowRight size={17} />
                 </button>
               )}

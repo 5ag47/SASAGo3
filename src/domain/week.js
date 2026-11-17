@@ -123,6 +123,7 @@ function finishRunSlot(state, slot) {
     activity: slot.activity,
     target: slot.target,
     note: slot.note,
+    outcome: slot.outcome ?? 'success',
     delta: Object.fromEntries(
       Object.keys(STATS).map((key) => [
         key,
@@ -316,6 +317,7 @@ function executeSlot(state) {
     note,
     before: slotBefore,
     beforeCourses: courseBefore,
+    outcome: id === slot.activity && id !== 'skip' ? 'success' : 'failure',
   });
 }
 export function finishRunTask(state, task) {
@@ -331,7 +333,7 @@ export function finishRunTask(state, task) {
   workTask(state, task.id, run.messages, run.slot.amount);
   const completed = task.status === 'completed';
   run.slot.note =
-    task.name + ' · 작업 ' + task.progress + '/' + task.target + ' · 품질 ' + result.quality;
+    task.name + ' · 작업 ' + task.progress + '/' + task.target + ' · 완성도 ' + result.quality;
   finishRunSlot(state, run.slot);
   run.waiting = {
     kind: 'task_result',
@@ -383,8 +385,7 @@ export function resolveWeek(source, { automatic = false, until } = {}) {
         return state;
       }
       run.lastDay = day;
-      const beforePending = new Set(state.pending),
-        beforeTasks = new Set(Object.keys(state.tasks));
+      const beforePending = new Set(state.pending);
       dispatchDayEvents(state, day);
       const result = resolveStudyApplication(state, dateOrdinal(weekDate(state.week, day)));
       if (result) run.alerts.push(result);
@@ -397,8 +398,7 @@ export function resolveWeek(source, { automatic = false, until } = {}) {
           text: events[event].description,
           event,
         });
-      for (const task of Object.keys(state.tasks).filter((id) => !beforeTasks.has(id)))
-        run.alerts.push({ kind: 'notice', title: '새 할 일', text: state.tasks[task].name, task });
+      // New tasks appear in the planner without interrupting the activity replay.
       if (pauseForNotice(run, automatic)) return state;
     }
     if (until && run.cursor >= until.cursor) return state;

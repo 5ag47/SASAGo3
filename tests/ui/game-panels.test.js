@@ -80,6 +80,54 @@ async function mount(t, url = 'https://game.example') {
     act(async () => root.render(component ? React.createElement(component, props) : null));
 }
 const click = async (button) => act(async () => button.click());
+test('main planner places repeated task clicks into consecutive editable sessions', async (t) => {
+  const render = await mount(t),
+    state = fresh();
+  state.pending = [];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  await render(YearGame);
+  const report = () =>
+    [...document.querySelectorAll('.palette-task')].find((b) =>
+      b.textContent.includes('연습 보고서'),
+    );
+  await click(report());
+  assert.equal(
+    document
+      .querySelector('.week-cell.selected')
+      .getAttribute('aria-label')
+      .startsWith('월요일 2자'),
+    true,
+  );
+  await click(report());
+  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+  assert.equal(saved.plan[1].target, 'practice-report');
+  assert.equal(saved.plan[2].target, 'practice-report');
+  assert.equal(
+    document
+      .querySelector('.week-cell.selected')
+      .getAttribute('aria-label')
+      .startsWith('화요일 1자'),
+    true,
+  );
+  assert.doesNotMatch(document.querySelector('.plan-palette').textContent, /이해도|동아리|진로/);
+});
+test('event selection can change before confirmation and only confirms the final selection', async (t) => {
+  const render = await mount(t),
+    commands = [];
+  await render(EventDialog, {
+    state: fresh(),
+    eventId: 'winter_study',
+    onChoose: (c) => commands.push(c),
+  });
+  const choices = document.querySelectorAll('.choice-row');
+  await click(choices[0]);
+  await click(choices[3]);
+  assert.equal(commands.length, 0);
+  assert.equal(choices[0].getAttribute('aria-pressed'), 'false');
+  assert.equal(choices[3].getAttribute('aria-pressed'), 'true');
+  await click([...document.querySelectorAll('button')].find((b) => b.textContent === '선택 확정'));
+  assert.deepEqual(commands, [{ event: 'winter_study', option: 'solo' }]);
+});
 test('developer mode applies stats, skips weekly applications and opens actual ending choices', async (t) => {
   const render = await mount(t, 'https://game.example/?developer=1');
   const normal = JSON.stringify(fresh());
@@ -217,6 +265,7 @@ test('pattern task UI responds immediately, resumes and confirms completion at p
   const render = await mount(t);
   let state = fresh(),
     continued = false;
+  state.tasks['practice-report'].module = { id: 'pattern_v2', params: {} };
   state.tasks['practice-report'].target = 1;
   state.plan = Array.from({ length: 21 }, (_, index) =>
     index === 0
@@ -292,49 +341,34 @@ test('the authoring editor exposes task group membership and the two playable ex
   );
   assert.ok([...document.querySelectorAll('option')].some((option) => option.value === 'order_v1'));
 });
-test('tutorial practice leads to the actual calendar button without opening the feature itself', async (t) => {
+test('tutorial is inline on the actual game screen and can be dismissed', async (t) => {
   const render = await mount(t);
-  localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
+  const state = fresh();
+  state.pending = [];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   await render(YearGame);
-  await click(document.querySelector('.tutorial-badge'));
-  await click(
-    [...document.querySelectorAll('.tutorial-workbook nav button')].find((button) =>
-      button.textContent.includes('시험과 학사'),
-    ),
-  );
-  await click(document.querySelector('.lesson-content .primary'));
   assert.equal(document.querySelector('dialog'), null);
-  assert.ok(document.querySelector('.tutorial-guide').textContent.includes('왼쪽 아래'));
-  assert.equal(document.querySelector('.calendar-grid'), null);
-  await click(document.querySelector('[data-tutorial="calendar"]'));
-  assert.equal(document.querySelectorAll('.calendar-grid [role="gridcell"]').length, 42);
-  await click(document.querySelector('[aria-label="다음 달"]'));
-  await click(document.querySelector('[aria-label="다음 달"]'));
-  assert.match(document.querySelector('.calendar-heading h3').textContent, /4월/);
-  assert.match(document.querySelector('.tutorial-badge').textContent, /1\/8/);
+  assert.match(document.querySelector('.inline-tutorial').textContent, /자동으로 시간표/);
+  await click(document.querySelector('.inline-tutorial button'));
+  assert.match(document.querySelector('.inline-tutorial').textContent, /다음 칸은 자동/);
+  await click(document.querySelector('[aria-label="안내 닫기"]'));
+  assert.equal(document.querySelector('.inline-tutorial'), null);
+  await click(document.querySelector('.tutorial-badge'));
+  assert.ok(document.querySelector('.inline-tutorial'));
 });
-test('the full game plans first, performs two work rounds and completes the report before the week ends', async (t) => {
+test('normal mode auto-plans work and completes it without a task mini-game', async (t) => {
   const render = await mount(t);
-  localStorage.setItem(SAVE_KEY, JSON.stringify(fresh()));
+  const state = fresh();
+  state.pending = [];
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   await render(YearGame);
+  assert.equal(document.querySelectorAll('.week-cell').length, 21);
   await click(document.querySelector('.start-week'));
-  await click(document.querySelector('.week-review > .primary'));
-  for (let round = 0; round < 2; round++) {
-    await click(document.querySelector('.task-game-panel .primary'));
-    const goal = [...document.querySelectorAll('.task-pattern-grid button')].flatMap(
-      (button, index) => (button.classList.contains('lit') ? [index] : []),
-    );
-    await click(document.querySelector('.task-game-panel .primary'));
-    for (const cell of goal)
-      await click(document.querySelectorAll('.task-pattern-grid button')[cell]);
-    await click(document.querySelector('.task-game-panel .primary'));
-    const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
-    assert.equal(saved.tasks['practice-report'].progress, round + 1);
-    assert.equal(saved.week, 0);
-    assert.equal(saved.tasks['practice-report'].status, round === 1 ? 'completed' : 'active');
-    await click(document.querySelector('.task-game-passed .primary'));
-  }
-  assert.equal(JSON.parse(localStorage.getItem(SAVE_KEY)).week, 1);
+  const saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+  assert.equal(saved.tasks['practice-report'].status, 'completed');
+  assert.equal(saved.tasks['practice-report'].progress, 2);
+  assert.equal(saved.week, 1);
+  assert.equal(document.querySelector('.task-game-panel'), null);
   assert.match(document.querySelector('dialog').textContent, /주간 결과/);
 });
 
@@ -430,15 +464,10 @@ test('the complete game keeps the interview result open and supports closing and
   state.pending = ['interview_day'];
   localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   await render(YearGame);
-  const openInterview = async () => {
-    await click(document.querySelector('button[aria-label="알림"]'));
-    await click(document.querySelector('.pending-notices button'));
-  };
-  await openInterview();
   await click(document.querySelectorAll('dialog .choice-row')[1]);
   assert.match(document.querySelector('dialog').textContent, /질문 2 \/ 3/);
-  await click(document.querySelector('dialog button[aria-label="닫기"]'));
-  await openInterview();
+  await render(null);
+  await render(YearGame);
   assert.match(document.querySelector('dialog').textContent, /질문 2 \/ 3/);
   await click(document.querySelectorAll('dialog .choice-row')[2]);
   await click(document.querySelectorAll('dialog .choice-row')[0]);
@@ -517,7 +546,7 @@ test('main navigation omits help and admissions room while weekly overview expos
   await render(YearGame);
   assert.doesNotMatch(document.querySelector('.window-toolbar').textContent, /도움말|진학실/);
   await click(
-    [...document.querySelectorAll('button')].find((b) => b.textContent.includes('전체 일정')),
+    [...document.querySelectorAll('button')].find((b) => b.textContent.includes('일정 크게 보기')),
   );
   assert.equal(document.querySelectorAll('.night-overview select').length, 7);
 });

@@ -7,11 +7,11 @@
       "participation": 0.15,
       "continuity": 0.15
     },
-    "courseSamples": 6,
-    "explorationSamples": 6,
+    "courseSamples": 3,
+    "explorationSamples": 4,
     "generalCourseCredit": 0.5,
     "communitySlots": 10,
-    "thesisCredit": 1.5,
+    "thesisCredit": 1,
     "disciplinePenalty": 2
   },
   "essay_support": {

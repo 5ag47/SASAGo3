@@ -30,7 +30,7 @@ test('an information student with the urban elective can complete every school w
   }
   assert.equal(
     Object.values(state.tasks).filter((task) => task.course === 'urban_planning').length,
-    32,
+    0,
   );
   assert.equal(state.history.length, 41);
 });
@@ -47,29 +47,14 @@ test('information includes AI project and the urban course stays optional', () =
       (error) => error.code === 'ELECTIVES_INVALID',
     );
 });
-test('urban planning creates one recurring project in each school week, not during vacation', () => {
+test('elective courses remain enrolled without weekly extra assignments', () => {
   const state = createGame({ ...profile, electives: ['urban_planning'] });
-  assert.equal(state.tasks['urban-project-0'], undefined);
-  state.week = 2;
-  state.pending = [];
-  beginWeek(state);
-  beginWeek(state);
-  assert.equal(
-    Object.values(state.tasks).filter((task) => task.course === 'urban_planning').length,
-    1,
-  );
-  state.plan = Array.from({ length: 21 }, (_, index) =>
-    index === 0
-      ? { activity: 'task', target: 'urban-project-2' }
-      : { activity: 'sleep', target: null },
-  );
-  const after = resolveWeek(solveActiveTaskGames(state));
-  assert.equal(after.tasks['urban-project-2'].status, 'completed');
-  assert.equal(after.tasks['urban-project-3'].status, 'active');
-  assert.equal(after.assessments.filter((mark) => mark.course === 'urban_planning').length, 1);
-  after.week = 17;
-  beginWeek(after);
-  assert.equal(after.tasks['urban-project-17'], undefined);
+  for (let week = 1; week <= 40; week++) {
+    state.week = week;
+    beginWeek(state);
+  }
+  assert.ok(state.courses.includes('urban_planning'));
+  assert.equal(Object.values(state.tasks).filter((t) => t.course === 'urban_planning').length, 0);
 });
 test('registration is final for both terms and active assignments cannot be avoided', () => {
   for (const week of [0, 1, 11, 25]) {
@@ -122,10 +107,11 @@ test('old information saves gain AI without retroactive missing-work penalties',
   assert.deepEqual(Object.keys(next.tasks), originalTasks);
   assert.ok(validateState(next));
 });
-test('mathematical problem analysis is a math seminar assignment rather than a new course', () => {
+test('common math seminar stays enrolled without an extra assignment', () => {
   const state = createGame(profile);
   state.week = 13;
   beginWeek(state);
-  assert.equal(state.tasks.math_problem_analysis.course, 'math_seminar');
+  assert.equal(state.tasks.math_problem_analysis, undefined);
+  assert.ok(state.courses.includes('math_seminar'));
   assert.ok(!state.courses.includes('math_problem_analysis'));
 });
