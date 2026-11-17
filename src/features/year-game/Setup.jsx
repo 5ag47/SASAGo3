@@ -7,7 +7,15 @@ import CharacterPicker from './CharacterPicker.jsx';
 import { MAJORS, REQUIRED, courses, roles, ELECTIVES } from '../../domain/catalog.js';
 import './enrollment.css';
 
-export default function Setup({ onCreate, busy, onLogin, loginRequired, mode, seed = 20261013 }) {
+export default function Setup({
+  onCreate,
+  busy,
+  onLogin,
+  loginRequired,
+  mode,
+  developer,
+  seed = 20261013,
+}) {
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState({
     name: '',
@@ -24,6 +32,7 @@ export default function Setup({ onCreate, busy, onLogin, loginRequired, mode, se
         <h1 className="logo">
           SASA<span>Go3</span>
         </h1>
+        {developer && <p>개발자 모드 · 테스트 저장</p>}
         {loginRequired ? (
           <>
             <h2>게임 시작</h2>

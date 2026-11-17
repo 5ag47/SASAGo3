@@ -63,6 +63,17 @@ export default function SettingsPanel({ game, audio, onClose, onLeave }) {
         </p>
       </div>
       <div className="settings-actions">
+        {game.developerAvailable && (
+          <p>
+            {game.developer ? (
+              <a href="./">일반 플레이로 돌아가기</a>
+            ) : (
+              <a href="?developer=1" target="_blank" rel="noopener noreferrer">
+                개발자 모드 열기 · 별도 테스트 저장
+              </a>
+            )}
+          </p>
+        )}
         <button onClick={game.backup}>
           <Download size={16} />
           <span>

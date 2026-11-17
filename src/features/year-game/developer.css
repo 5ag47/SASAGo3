@@ -1,0 +1,33 @@
+.developer-panel,
+.developer-panel section,
+.developer-panel form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.developer-panel section {
+  padding-block: 0.75rem;
+  border-top: 1px solid var(--line, #d7dedb);
+}
+
+.developer-panel :is(h3, p) {
+  margin: 0;
+}
+
+.developer-panel label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.developer-panel input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem;
+}
+
+.developer-actions,
+.developer-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}

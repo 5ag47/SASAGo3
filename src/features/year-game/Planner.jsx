@@ -2,6 +2,7 @@ import CampaignPlanner from './CampaignPlanner.jsx';
 import { useState } from 'react';
 import { ArrowRight, LayoutGrid, PencilLine, LockKeyhole, Play, X } from 'lucide-react';
 import { activities, courses, DAYS, period } from '../../domain/catalog.js';
+import { SESSION_TIMES } from '../../domain/game-time.js';
 import { effectivePlan, lockedSlots } from '../../domain/week.js';
 import { ActivityIcon, activityName, SESSIONS } from './ui.jsx';
 import ContextHint from './ContextHint.jsx';
@@ -89,7 +90,7 @@ export default function Planner({
             >
               <span className="session-time">
                 {label}
-                <small>{['07:30', '19:00', '21:00'][i]}</small>
+                <small>{SESSION_TIMES[i]}</small>
               </span>
               <span className="session-icon">
                 <ActivityIcon id={slot.activity} />

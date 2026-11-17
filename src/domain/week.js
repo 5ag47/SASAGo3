@@ -354,20 +354,34 @@ export function skipRunTask(state) {
   run.waiting = null;
   return true;
 }
-export function resolveWeek(source) {
+function pauseForNotice(run, automatic) {
+  if (automatic) run.alerts.length = 0;
+  if (!run.alerts.length) return false;
+  run.waiting = run.alerts.shift();
+  return true;
+}
+
+export function resolveWeek(source, { automatic = false, until } = {}) {
   const state = structuredClone(source);
   if (!state.weekRun) startWeek(state);
   const run = state.weekRun;
-  if (run.waiting?.kind === 'task') return state;
-  run.waiting = null;
-  if (run.alerts.length) {
-    run.waiting = run.alerts.shift();
-    return state;
+  if (run.waiting?.kind === 'task') {
+    if (!automatic) return state;
+    skipRunTask(state);
   }
+  run.waiting = null;
+  if (pauseForNotice(run, automatic)) return state;
   while (run.cursor < 21) {
     const day = Math.floor(run.cursor / 3);
     if (day !== run.lastDay) {
-      if (run.lastDay >= 0) closeRunDay(state, run.lastDay);
+      if (run.lastDay >= 0) {
+        if (run.lastDay === until?.day && !until.afterNight) return state;
+        closeRunDay(state, run.lastDay);
+      }
+      if (until && day > until.day) {
+        pauseForNotice(run, automatic);
+        return state;
+      }
       run.lastDay = day;
       const beforePending = new Set(state.pending),
         beforeTasks = new Set(Object.keys(state.tasks));
@@ -385,19 +399,18 @@ export function resolveWeek(source) {
         });
       for (const task of Object.keys(state.tasks).filter((id) => !beforeTasks.has(id)))
         run.alerts.push({ kind: 'notice', title: '새 할 일', text: state.tasks[task].name, task });
-      if (run.alerts.length) {
-        run.waiting = run.alerts.shift();
-        return state;
-      }
+      if (pauseForNotice(run, automatic)) return state;
     }
+    if (until && run.cursor >= until.cursor) return state;
     executeSlot(state);
-    if (run.waiting) return state;
+    if (run.waiting) {
+      if (!automatic) return state;
+      skipRunTask(state);
+    }
   }
+  if (until && !until.afterNight) return state;
   closeRunDay(state, 6);
-  if (run.alerts.length) {
-    run.waiting = run.alerts.shift();
-    return state;
-  }
+  if (pauseForNotice(run, automatic) || until) return state;
   const { messages, actions, plan, workCount, before, beforeCourses, moneyBefore } = run;
   const load = weeklyLoad(run.week, workCount);
   applyEffects(state, { stress: load.stress, hp: load.hp, math: -balance.weekly.mathDecay });

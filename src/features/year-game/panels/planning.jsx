@@ -100,6 +100,7 @@ export default function PlanningPanels(context) {
         <WeekRunPanel
           state={state}
           busy={busy}
+          developer={context.game.developer}
           onContinue={() => advance()}
           onTask={() =>
             setModal({

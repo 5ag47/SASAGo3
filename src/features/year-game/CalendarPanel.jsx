@@ -3,10 +3,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { monthCells, weekDate } from '../../domain/calendar-date.js';
 import { calendarEntries } from '../../domain/calendar-entries.js';
 import { DAYS } from '../../domain/catalog.js';
+import { gameClockPosition } from '../../domain/game-time.js';
 import { activityName } from './ui.jsx';
 import './calendar.css';
-export function CalendarPanel({ state, onMonth }) {
-  const today = weekDate(state.week, Math.min(6, Math.floor((state.weekRun?.cursor ?? 0) / 3)));
+export function CalendarPanel({ state, onMonth, developer }) {
+  const today = developer
+    ? gameClockPosition(state).slice(0, 10)
+    : weekDate(state.week, Math.min(6, Math.floor((state.weekRun?.cursor ?? 0) / 3)));
   const [visible, setVisible] = useState(today.slice(0, 7)),
     [selected, setSelected] = useState(today);
   const [year, month] = visible.split('-').map(Number);

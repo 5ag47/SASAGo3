@@ -2,7 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { baseState, SAVE_KEY } from '../../domain/state.js';
 import { GameError } from '../../domain/engine.js';
 import { progressSummary } from '../../platform/command-log.js';
-import { commitLocal, loadLocal, replaceLocal, resetLocal } from '../../platform/local-save.js';
+import {
+  commitLocal,
+  DEVELOPER_SAVE_KEY,
+  loadLocal,
+  replaceLocal,
+  resetLocal,
+} from '../../platform/local-save.js';
 import { downloadJson, exportDiagnostics, record } from '../../platform/diagnostics.js';
 import {
   SERVER_MODE,
@@ -19,8 +25,12 @@ import {
   taskCommandSummary,
 } from '../../platform/command-log.js';
 
-async function withSaveLock(fn) {
-  if (navigator.locks) return navigator.locks.request('sasago3-year-save', fn);
+async function withSaveLock(saveKey, fn) {
+  if (navigator.locks)
+    return navigator.locks.request(
+      saveKey === DEVELOPER_SAVE_KEY ? 'sasago3-year-save-developer' : 'sasago3-year-save',
+      fn,
+    );
   return fn();
 }
 export default function useGame({
@@ -29,7 +39,15 @@ export default function useGame({
   readServer = serverLoad,
   bootTimeoutMs = 15000,
 } = {}) {
-  const [loaded] = useState(() => (serverMode ? { state: baseState(), issue: null } : loadLocal()));
+  const developerAvailable = import.meta.env?.DEV === true && !serverMode;
+  const [developer] = useState(
+    () =>
+      developerAvailable && new URLSearchParams(window.location.search).get('developer') === '1',
+  );
+  const saveKey = developer ? DEVELOPER_SAVE_KEY : SAVE_KEY;
+  const [loaded] = useState(() =>
+    serverMode ? { state: baseState(), issue: null } : loadLocal(undefined, saveKey),
+  );
   const [state, setState] = useState(loaded.state);
   const current = useRef(state);
   current.current = state;
@@ -51,7 +69,7 @@ export default function useGame({
   useEffect(() => {
     let alive = true;
     const onStorage = (e) => {
-      if (e.key === SAVE_KEY && e.newValue !== JSON.stringify(current.current)) setConflict(true);
+      if (e.key === saveKey && e.newValue !== JSON.stringify(current.current)) setConflict(true);
     };
     window.addEventListener('storage', onStorage);
     if (serverMode) {
@@ -96,7 +114,7 @@ export default function useGame({
         throw new GameError('SAVE_CONFLICT', '저장 문제를 먼저 해결해 주세요.');
       const next = serverMode
         ? await serverCommand(source, command, crypto.randomUUID())
-        : await withSaveLock(() => commitLocal(source, command));
+        : await withSaveLock(saveKey, () => commitLocal(source, command, undefined, saveKey));
       const safeCommand =
         command.type === 'create'
           ? { ...command, profile: { ...command.profile, name: '[비공개]' } }
@@ -174,7 +192,7 @@ export default function useGame({
     running.current = true;
     setBusy(true);
     try {
-      const loaded = serverMode ? { state: await readServer() } : loadLocal();
+      const loaded = serverMode ? { state: await readServer() } : loadLocal(undefined, saveKey);
       if (serverMode) setUser((await readAuth()).currentUser?.uid ?? null);
       current.current = loaded.state;
       setState(loaded.state);
@@ -263,7 +281,9 @@ export default function useGame({
     try {
       const next = serverMode
         ? await serverReset(current.current)
-        : await withSaveLock(() => resetLocal(current.current, { allowDamaged: blocked.current }));
+        : await withSaveLock(saveKey, () =>
+            resetLocal(current.current, { allowDamaged: blocked.current }, undefined, saveKey),
+          );
       current.current = next;
       setState(next);
       blocked.current = false;
@@ -300,7 +320,7 @@ export default function useGame({
     try {
       if (file.size > 1500000) throw new Error('size');
       const raw = await file.text();
-      const next = await withSaveLock(() => replaceLocal(raw));
+      const next = await withSaveLock(saveKey, () => replaceLocal(raw, undefined, saveKey));
       current.current = next;
       setState(next);
       blocked.current = false;
@@ -328,12 +348,15 @@ export default function useGame({
     reset,
     importSave,
     mode: serverMode ? 'server' : 'local',
+    developer,
+    developerAvailable,
     user,
     login,
     logout,
     signedOut,
     resume: () => setSignedOut(false),
-    backup: () => downloadJson('sasago3-save.json', state),
+    backup: () =>
+      downloadJson(developer ? 'sasago3-developer-save.json' : 'sasago3-save.json', state),
     diagnostics: () => exportDiagnostics(state, serverMode ? 'server' : 'local'),
   };
 }

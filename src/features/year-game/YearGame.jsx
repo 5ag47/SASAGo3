@@ -5,6 +5,7 @@ import {
   CalendarDays,
   ChevronRight,
   CircleHelp,
+  FlaskConical,
   LockKeyhole,
   Maximize2,
   MoreHorizontal,
@@ -19,6 +20,7 @@ import { courses, DAYS, events, period } from '../../domain/catalog.js';
 import { ENDINGS } from '../../domain/engine.js';
 import { availableChapters, chapterProgress } from '../../domain/story.js';
 import { weekDate } from '../../domain/calendar-date.js';
+import { developerTime } from '../../domain/game-time.js';
 import useGame from './useGame.js';
 import useAudio from './useAudio.js';
 import useWorldClock from './useWorldClock.js';
@@ -34,8 +36,11 @@ export default function YearGame() {
   const game = useGame();
   const { state, busy, send, notify } = game;
   const audio = useAudio(state.week >= 37);
-  const { night } = useWorldClock();
-  const tutorial = useTutorial(state, game.user);
+  const clock = useWorldClock();
+  const testTime = game.developer ? developerTime(state) : null;
+  const time = testTime?.slice(11);
+  const night = time ? time < '07:00' || time >= '19:00' : clock.night;
+  const tutorial = useTutorial(state, game.developer ? 'developer' : game.user);
   const [modal, setModal] = useState(null);
   const [assignment, setAssignment] = useState(null);
   const [planOpen, setPlanOpen] = useState(false);
@@ -49,7 +54,9 @@ export default function YearGame() {
     setModal({ type: 'events', eventId: id });
   };
   const p = period(state.week);
-  const gameDay = Math.min(6, Math.floor((state.weekRun?.cursor ?? 0) / 3));
+  const gameDay = game.developer
+    ? Math.max(0, state.weekRun?.lastDay ?? 0)
+    : Math.min(6, Math.floor((state.weekRun?.cursor ?? 0) / 3));
   const gameDate = weekDate(state.week, gameDay).slice(5).replace('-', '.');
   async function create(profile) {
     const next = await send({ type: 'create', profile });
@@ -136,6 +143,7 @@ export default function YearGame() {
           seed={state.seed}
           busy={busy}
           mode={game.mode}
+          developer={game.developer}
           onLogin={game.login}
           loginRequired={game.mode === 'server' && !game.user}
         />
@@ -190,7 +198,7 @@ export default function YearGame() {
             <div>
               <b>{p.label}</b>
               <span className="world-time">
-                {gameDate} {DAYS[gameDay]}요일
+                {gameDate} {DAYS[gameDay]}요일{time && ` ${time}`}
               </span>
               {tutorialOpen(state, tutorial.count, tutorial.total) && (
                 <button className="tutorial-badge" onClick={() => open('tutorial')}>
@@ -232,6 +240,15 @@ export default function YearGame() {
               <button onClick={fullScreen} aria-label="전체 화면 전환">
                 <Maximize2 size={18} />
               </button>
+              {game.developer && (
+                <button
+                  onClick={() => open('developer')}
+                  aria-label="개발자 모드"
+                  title="개발자 모드"
+                >
+                  <FlaskConical size={18} />
+                </button>
+              )}
               <button onClick={() => open('settings')} aria-label="설정">
                 <Settings size={18} />
               </button>
@@ -240,8 +257,7 @@ export default function YearGame() {
           <div className="game-content">
             {state.weekRun && (
               <button className="run-resume" disabled={busy} onClick={() => showRun(state)}>
-                {DAYS[Math.min(6, Math.floor(state.weekRun.cursor / 3))]}요일 · 일정 진행 중 ·
-                이어하기
+                {DAYS[gameDay]}요일 · 일정 진행 중 · 이어하기
               </button>
             )}
             <Scene
@@ -374,6 +390,10 @@ export default function YearGame() {
                   continueWeek,
                   lesson,
                   setModal,
+                  finishDeveloperAdvance: (next) => {
+                    setAssignment(null);
+                    if (next.week > 40) open('admissions');
+                  },
                 },
               }}
             />

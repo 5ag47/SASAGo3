@@ -7,6 +7,7 @@ import { createServer } from 'vite';
 import { createGame, transition } from '../../src/domain/engine.js';
 import { beginWeek } from '../../src/domain/events.js';
 import { SAVE_KEY } from '../../src/domain/state.js';
+import { DEVELOPER_SAVE_KEY } from '../../src/platform/local-save.js';
 
 const vite = await createServer({
   configFile: false,
@@ -42,10 +43,17 @@ test.after(() => vite.close());
 function fresh() {
   return createGame({ name: '화면 테스트', character: 'boy', role: 'steady', major: 'math' });
 }
-async function mount(t) {
-  const dom = new JSDOM('<div id="root"></div>', { url: 'https://game.example' });
+async function mount(t, url = 'https://game.example') {
+  const dom = new JSDOM('<div id="root"></div>', { url });
   const previous = Object.getOwnPropertyDescriptors(globalThis);
-  for (const name of ['window', 'document', 'navigator', 'localStorage', 'sessionStorage'])
+  for (const name of [
+    'window',
+    'document',
+    'navigator',
+    'localStorage',
+    'sessionStorage',
+    'FormData',
+  ])
     Object.defineProperty(globalThis, name, { configurable: true, value: dom.window[name] });
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   dom.window.HTMLDialogElement.prototype.showModal = function () {
@@ -61,6 +69,7 @@ async function mount(t) {
       'navigator',
       'localStorage',
       'sessionStorage',
+      'FormData',
       'IS_REACT_ACT_ENVIRONMENT',
     ]) {
       if (previous[name]) Object.defineProperty(globalThis, name, previous[name]);
@@ -71,6 +80,31 @@ async function mount(t) {
     act(async () => root.render(component ? React.createElement(component, props) : null));
 }
 const click = async (button) => act(async () => button.click());
+test('developer mode applies stats, skips weekly applications and opens actual ending choices', async (t) => {
+  const render = await mount(t, 'https://game.example/?developer=1');
+  const normal = JSON.stringify(fresh());
+  localStorage.setItem(SAVE_KEY, normal);
+  localStorage.setItem(DEVELOPER_SAVE_KEY, JSON.stringify(fresh()));
+  await render(YearGame);
+  await click(document.querySelector('[aria-label="개발자 모드"]'));
+  const panel = document.querySelector('.developer-panel');
+  assert.ok(panel);
+  panel.querySelector('[name="hp"]').value = '85';
+  const button = (label) =>
+    [...document.querySelectorAll('dialog button')].find(
+      (entry) => entry.textContent.trim() === label,
+    );
+  await click(button('스탯 적용'));
+  assert.equal(JSON.parse(localStorage.getItem(DEVELOPER_SAVE_KEY)).stats.hp, 85);
+  await click(button('자습신청 건너뛰고 다음 주로'));
+  assert.equal(JSON.parse(localStorage.getItem(DEVELOPER_SAVE_KEY)).week, 1);
+  await click(button('자동 진행하고 최종 결과 보기'));
+  assert.equal(JSON.parse(localStorage.getItem(DEVELOPER_SAVE_KEY)).week, 41);
+  assert.ok(button('재도전'));
+  await click(button('재도전'));
+  assert.match(document.querySelector('.ending-card').textContent, /재도전/);
+  assert.equal(localStorage.getItem(SAVE_KEY), normal);
+});
 test('calendar authoring exposes actual dates and known source bindings while an incomplete new record cannot export', async (t) => {
   const render = await mount(t);
   await render(CalendarEditor, {

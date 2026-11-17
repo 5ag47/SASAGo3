@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { courses, DAYS } from '../../domain/catalog.js';
+import { EXTENSION_TIME } from '../../domain/game-time.js';
 export default function CampaignPlanner({ state, day, busy, send }) {
   const [name, setName] = useState('내 주간 계획');
   const c = state.campaign,
@@ -13,7 +14,7 @@ export default function CampaignPlanner({ state, day, busy, send }) {
   return (
     <div className="campaign-planner">
       <label>
-        연장 자습 · {DAYS[day]} 23:00
+        연장 자습 · {DAYS[day]} {EXTENSION_TIME}
         <select
           aria-label="연장 자습"
           disabled={locked}

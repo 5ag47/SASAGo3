@@ -145,6 +145,9 @@ async function waitForGame(url, child) {
 async function main() {
   const args = new Set(process.argv.slice(2));
   const shouldOpen = !args.has('--no-open');
+  const developer = args.has('--developer');
+  const playUrl = (url) => (developer ? `${url}?developer=1` : url);
+  if (developer && args.has('--login')) fail('개발자 모드는 로그인 없는 로컬 게임에서 사용하세요.');
   if (!nodeVersionOk())
     fail(
       `지금 Node.js ${process.versions.node}이 설치되어 있어요. 22.12 이상이 필요해요. https://nodejs.org 에서 LTS 버전을 설치한 뒤 다시 실행해 주세요.`,
@@ -158,8 +161,8 @@ async function main() {
 
   const existing = await runningSession();
   if (existing?.mode === mode) {
-    say(`이미 실행 중인 게임이 있어요. ${existing.url} 을 열어요.`);
-    if (shouldOpen) openBrowser(existing.url);
+    say(`이미 실행 중인 게임이 있어요. ${playUrl(existing.url)} 을 열어요.`);
+    if (shouldOpen) openBrowser(playUrl(existing.url));
     return;
   }
   if (existing)
@@ -228,13 +231,13 @@ async function main() {
     say(
       mode === 'login'
         ? `준비됐어요 → ${url}  (Google 로그인 · 기록은 이 컴퓨터의 로컬 서버에 저장)`
-        : `준비됐어요 → ${url}  (로그인 없음 · 기록은 이 브라우저에만 저장)`,
+        : `준비됐어요 → ${playUrl(url)}  (${developer ? '개발자 모드 · 별도 테스트 저장' : '로그인 없음 · 기록은 이 브라우저에만 저장'})`,
     );
     say('끄려면 이 창에서 Ctrl+C를 누르세요.');
     console.log('');
-    if (shouldOpen) openBrowser(url);
+    if (shouldOpen) openBrowser(playUrl(url));
   } else if (child.exitCode === null) {
-    say(`아직 열리지 않았어요. 잠시 뒤 브라우저에서 ${url} 을 열어 보세요.`);
+    say(`아직 열리지 않았어요. 잠시 뒤 브라우저에서 ${playUrl(url)} 을 열어 보세요.`);
   }
 }
 

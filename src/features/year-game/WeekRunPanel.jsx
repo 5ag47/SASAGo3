@@ -1,7 +1,16 @@
 import ActivityReplay from './ActivityReplay.jsx';
 import { DAYS } from '../../domain/catalog.js';
+import { developerTime } from '../../domain/game-time.js';
 import { SESSIONS } from './ui.jsx';
-export default function WeekRunPanel({ state, busy, onContinue, onTask, onSkip, onEvent }) {
+export default function WeekRunPanel({
+  state,
+  busy,
+  onContinue,
+  onTask,
+  onSkip,
+  onEvent,
+  developer,
+}) {
   const run = state.weekRun;
   if (!run) return null;
   const waiting = run.waiting;
@@ -15,8 +24,14 @@ export default function WeekRunPanel({ state, busy, onContinue, onTask, onSkip, 
           .slice(-4)}
       />
       <span className="event-kicker">
-        {DAYS[Math.min(6, Math.floor(run.cursor / 3))]}요일 ·{' '}
-        {SESSIONS[run.cursor % 3] ?? '하루 마무리'}
+        {developer && !waiting ? (
+          `${DAYS[Math.max(0, run.lastDay)]}요일 · ${developerTime(state).slice(11)}`
+        ) : (
+          <>
+            {DAYS[Math.min(6, Math.floor(run.cursor / 3))]}요일 ·{' '}
+            {SESSIONS[run.cursor % 3] ?? '하루 마무리'}
+          </>
+        )}
       </span>
       <h3>
         {waiting?.kind === 'notice'
